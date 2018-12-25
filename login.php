@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+
 <?php
   require_once 'core/init.php';
 
@@ -31,7 +31,54 @@
     }
   }
 ?>
-<html lang="en" dir="ltr">
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Jomhuria" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <meta charset="UTF-8">
+    <meta name="author" content="Taoufik FAROUKI">
+    <title>تسجيل الدخول / برنامج مكتب الضبط</title>
+    <!------ Include the above in your HEAD tag ---------->
+  </head>
+  <body id="LoginForm">
+    <div class="container">
+      <h1 class="form-heading">برنامج مكتب الضبط</h1>
+      <div class="login-form">
+          <div class="main-div">
+            <div class="panel">
+              <h2>تسجيل الدخول</h2>
+              <p>المرجوا ادخال اسم المستخدم و كلمة السر</p>
+            </div>
+              <form id="Login" action="" method="post">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="username" name="username" placeholder="اسم المستخدم">
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="كلمة السر">
+                </div>
+                <div class="remember">
+                  <label for="remember">
+                    <input type="checkbox" name="remember" id="remember"><span class="remspan">تذكرني.</span>
+                  </label>
+                </div>
+                <div class="forgot">
+                  <a href="reset.html">هل نسيت كلمة السر ؟</a>
+                </div>
+                <input type="hidden" name="token" id="token" value="<?php echo Token::generate(); ?>">
+                <button type="submit" class="btn btn-primary">تأكيد</button>
+              </form>
+            </div>
+            <p class="botto-text"> @المحكمة الادارية باكادير</p>
+          </div>
+        </div>
+      </div>
+    </body>
+</html>
+<!--
   <head>
     <meta charset="utf-8">
     <title>OOPLR</title>
@@ -54,4 +101,4 @@
       <button type="submit" name="submit">submit</button>
     </form>
   </body>
-</html>
+</html-->
