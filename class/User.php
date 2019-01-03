@@ -93,7 +93,9 @@
       $group = $this->_db->get('groups',array('id', '=', $this->data()->group));
       if ($group->count()) {
           $permissions = json_decode($group->first()->permissions,true);
-          return $permissions[$key];
+          if (isset($permissions[$key])) {
+            return $permissions[$key];
+          }
       }
       return false;
     }

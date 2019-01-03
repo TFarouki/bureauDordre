@@ -1,3 +1,11 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
 <?php
 require_once 'core/init.php';
 
@@ -20,12 +28,16 @@ if($user->isLoggedIn()){
 if ($user->hasPermissions("admin")) {
   echo "<p>You are an Administrator</p>";
 }
-if ($user->hasPermissions("moderator")) {
-  echo "<p>You are a Modirator</p>";
-}
+if ($user->hasPermissions("modirator")) {
+    echo "<p>You are a Modirator</p>";
+  }
 }else{
 ?>
+
   <p>You need to <a href="login.php">login</a> or <a href="register.php">register</a>!</p>
 <?php
 }
 ?>
+
+</body>
+</html>
