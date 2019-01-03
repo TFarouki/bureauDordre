@@ -1,11 +1,11 @@
 
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
   <head>
-    <meta charset="utf-8">
-    <title>OOPLR</title>
+    <?php include  'includes/include_head.php';?>
+    <title>فتح حساب جديد / برنامج مكتب الضبط</title>
+    <!------ Include the above in your HEAD tag ---------->
   </head>
-  <body>
     <?php
       require_once 'core/init.php';
       if(Input::exists() && Token::check(Input::get("token"))){
@@ -58,26 +58,34 @@
         }
       }
     ?>
-    <form class="" action="" method="post">
-      <div class="field">
-        <label for="username">Username</label>
-        <input type="text" name="username" id="Username" value="<?php echo escape(Input::get('username'));?>" autocomplete="off">
-      </div>
-      <div class="field">
-        <label for="password">choose a password</label>
-        <input type="password" name="password" id="password">
-      </div>
-      <div class="field">
-        <label for="password_again">Retape password again</label>
-        <input type="password" name="password_again" id="password_again">
-      </div>
-      <div class="field">
-        <label for="name">Full Name</label>
-        <input type="text" name="name" id="name" value="<?php echo escape(Input::get('name'));?>">
-      </div>
-      <input type="hidden" name="token" value="<?php echo Token::generate();?>">
+    <body id="LoginForm">
+      <div class="container">
+        <h1 class="form-heading">برنامج مكتب الضبط</h1>
+        <div class="login-form">
+            <div class="main-div">
+              <div class="panel">
+                <h2>فتح حساب جديد</h2>
+                <p>المرجوا ملأ استمارة التسجيل التالية</p>
+              </div>
+                <form id="Login" action="" method="post">
+                  <div class="form-group">
+                    <input type="text" class="form-control" name="username" id="Username" value="<?php echo escape(Input::get('username'));?>" autocomplete="off" placeholder="اسم المستخدم">
+                  </div>
+                  <div class="form-group">
+                    <input type="password" class="form-control" name="password" id="password" placeholder="كلمة السر">
+                  </div>
+                  <div class="form-group">
+                    <input type="password" class="form-control" name="password_again" id="password_again" placeholder="كلمة السر من جديد">
+                  </div>
+                  <div class="form-group">
+                    <input type="text" class="form-control" name="name" id="name" value="<?php echo escape(Input::get('name'));?>" placeholder="الاسم الكامل للسمتخدم">
+                  </div>
+                  <input type="hidden" name="token" value="<?php echo Token::generate();?>">
 
-      <button type="submit" name="button" value="Register">Submit</button>
-    </form>
-  </body>
+                  <button type="submit" class="btn btn-primary font-weight-bold">تسجيل</button>
+                </form>
+            </div>
+        </div>
+      </div>
+    </body>
 </html>

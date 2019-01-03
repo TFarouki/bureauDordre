@@ -34,13 +34,7 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
   <head>
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <link href="https://fonts.googleapis.com/css?family=Jomhuria" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css">
-    <meta charset="UTF-8">
-    <meta name="author" content="Taoufik FAROUKI">
+    <?php include 'includes/include_head.php';?>
     <title>تسجيل الدخول / برنامج مكتب الضبط</title>
     <!------ Include the above in your HEAD tag ---------->
   </head>
@@ -69,7 +63,7 @@
                   <a href="reset.html">هل نسيت كلمة السر ؟</a>
                 </div>
                 <input type="hidden" name="token" id="token" value="<?php echo Token::generate(); ?>">
-                <button type="submit" class="btn btn-primary">تأكيد</button>
+                <button type="submit" class="btn btn-primary font-weight-bold">تأكيد</button>
               </form>
             </div>
             <p class="botto-text"> @المحكمة الادارية باكادير</p>
