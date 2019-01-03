@@ -1,7 +1,7 @@
 
 <?php
   require_once 'core/init.php';
-
+  $html_code = '';
   $checklogout = new User();
   if ($checklogout->exists()) {
     $checklogout->logout();
@@ -12,8 +12,8 @@
     if(Token::check(Input::get("token"))){
       $validate = new Validate();
       $validation = $validate->check($_POST,array(
-        "username" => array('required' => true,'max' => 20),
-        "password" => array('required' => true, 'max' => 30)
+        "username" => array('name_ar' => 'اسم المستخدم','required' => true,'max' => 20),
+        "password" => array('name_ar' => 'كلمة السر','required' => true, 'max' => 30)
       ));
       if($validation->passed()){
         $user = new User();
@@ -24,9 +24,11 @@
           echo "Sorry, username and password are incorrect ,please try again.";
         }
       }else{
-        foreach ($validation->errors() as $error) {
-          echo "<p>". $error . "</p>";
-        }
+        $html_code = '<div class="alert alert-warning alert-dismissible fade show text-center">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>تحدير!</strong> '. $validation->error(0) .'.
+          </div>
+        ';
       }
     }
   }
@@ -36,9 +38,9 @@
   <head>
     <?php include 'includes/include_head.php';?>
     <title>تسجيل الدخول / برنامج مكتب الضبط</title>
-    <!------ Include the above in your HEAD tag ---------->
   </head>
   <body id="LoginForm">
+    <?php echo $html_code;?>
     <div class="container">
       <h1 class="form-heading">برنامج مكتب الضبط</h1>
       <div class="login-form">
@@ -72,27 +74,3 @@
       </div>
     </body>
 </html>
-<!--
-  <head>
-    <meta charset="utf-8">
-    <title>OOPLR</title>
-  </head>
-  <body>
-    <form class="" action="" method="post">
-      <div class="field">
-        <label for="username">username</label>
-        <input type="text" name="username" id="username" value="">
-      </div>
-      <div class="field">
-        <label for="passwprd">password</label>
-        <input type="password" name="password" id="password" value="">
-      </div>
-      <div class="field">
-        <label for="remember">
-        <input type="checkbox" name="remember" id="remember">Remember me</label>
-      </div>
-      <input type="hidden" name="token" id="token" value="<?php echo Token::generate(); ?>">
-      <button type="submit" name="submit">submit</button>
-    </form>
-  </body>
-</html-->
