@@ -12,16 +12,19 @@ if (Input::exists()) {
     $validation = $validate->check($_POST,array(
       "current_password" => array(
         'required' => true,
-        'min' => 6
+        'min' => 6,
+        'name_ar' => 'كلمة السر الحالية'
       ),
       "new_password" => array(
         'required' => true,
-        'min' => 6
+        'min' => 6,
+        'name_ar' => 'كلمة السر الجديدة'
       ),
       "again_password" => array(
         'required' => true,
         'min' => 6,
-        'matches' => 'new_password'
+        'matches' => 'new_password',
+        'name_ar' => 'تأكيد كلمة السر'
       )
     ));
 

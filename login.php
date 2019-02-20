@@ -21,12 +21,16 @@
         if($user->login(Input::get("username"),Input::get("password"),$remember)){
           Redirect::to("index.php");
         }else{
-          echo "Sorry, username and password are incorrect ,please try again.";
+          $html_code = '<div class="alert alert-warning alert-dismissible fade show text-center">
+              <button type="button" class="close" data-dismiss="alert">&times;</button>
+              <strong>تحدير!</strong>  اسم المستخدم او كلمة السر غير صحيحة!المرجوا المحاولة من جديد.
+            </div>
+          ';
         }
       }else{
         $html_code = '<div class="alert alert-warning alert-dismissible fade show text-center">
             <button type="button" class="close" data-dismiss="alert">&times;</button>
-            <strong>تحدير!</strong> '. $validation->error(0) .'.
+            <strong>تحدير!</strong> حقل '. $validation->error(0) .'.
           </div>
         ';
       }

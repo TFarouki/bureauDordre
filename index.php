@@ -32,10 +32,11 @@ if ($user->hasPermissions("modirator")) {
     echo "<p>You are a Modirator</p>";
   }
 }else{
-?>
+  Redirect::to("login.php");
+/*?>
 
   <p>You need to <a href="login.php">login</a> or <a href="register.php">register</a>!</p>
-<?php
+<?php*/
 }
 ?>
 
