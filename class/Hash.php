@@ -5,7 +5,7 @@
     }
 
     public static function salt($lenght){
-      return mcrypt_create_iv($lenght);
+      return random_bytes($lenght);
     }
 
     public static function unique(){
