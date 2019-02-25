@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+<nav class="navbar navbar-expand-md navbar-dark bg-dark" style="padding:0;">
     <a class="navbar-brand" href="#">
       <img src="./media/bd2.png" width="40" height="40" class="d-inline-block align-center" alt="">
         برنامج المحكمة الادارية
@@ -8,11 +8,11 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav">
-            <li class="nav-item <?php echo (basename($_SERVER['PHP_SELF'])=='index.php')?'active':''; ?>">
-                <a class="nav-link" href="<?php echo (basename($_SERVER['PHP_SELF'])=='index.php')?'#':'index.php';?>">الصفحة الرئيسية<span class="sr-only">(current)</span></a>
+            <li class="nav-item <?php echo (basename($_SERVER['PHP_SELF'])=='index.php')?'active" style="background-color:#ddd;':''; ?>">
+                <a class="nav-link" href="<?php echo (basename($_SERVER['PHP_SELF'])=='index.php')?'#" style="color:#222;':'index.php';?>">الصفحة الرئيسية<span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item <?php echo (basename($_SERVER['PHP_SELF'])=='order.php')?'active':'';?>">
-                <a class="nav-link" href="<?php echo (basename($_SERVER['PHP_SELF'])=='order.php')?'#':'order.php';?>">مكتب الضبط</a>
+            <li class="nav-item <?php echo (basename($_SERVER['PHP_SELF'])=='order.php')?'active" style="background-color:#ddd;':'';?>">
+                <a class="nav-link" href="<?php echo (basename($_SERVER['PHP_SELF'])=='order.php')?'#" style="color:#222;':'order.php';?>">مكتب الضبط</a>
 
             </li>
         </ul>

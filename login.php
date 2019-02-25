@@ -44,6 +44,17 @@
     <?php
      include 'includes/include_head.php';?>
     <title>تسجيل الدخول / برنامج مكتب الضبط</title>
+    <style>
+    body
+    {
+      direction: rtl;
+      background-image:url("../../media/bg.jpg");
+      background-repeat:no-repeat;
+      background-position:center;
+      background-size:cover;
+      background-attachment: fixed
+    }
+    </style>
   </head>
   <body id="LoginForm">
     <?php echo $html_code;?>
