@@ -1,0 +1,31 @@
+.dropdown-menu {
+    margin-top: 0;
+}
+.dropdown-menu .dropdown-toggle::after {
+    vertical-align: middle;
+    border-right: 4px solid;
+    border-bottom: 4px solid transparent;
+    border-top: 4px solid transparent;
+}
+.dropdown-menu .dropdown .dropdown-menu {
+    right: 100%;
+    top: 0%;
+    margin:0 20px;
+    border-width: 0;
+}
+
+.dropdown-menu > li a:hover,
+.dropdown-menu > li.show {
+	background: #007bff;
+	color: black;
+}
+.dropdown-menu > li.show > a{
+	color: black;
+}
+
+@media (min-width: 768px) {
+    .dropdown-menu .dropdown .dropdown-menu {
+        margin:0;
+        border-width: 1px;
+    }
+}

@@ -40,7 +40,9 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
   <head>
-    <?php include 'includes/include_head.php';?>
+    <meta charset="UTF-8">
+    <?php
+     include 'includes/include_head.php';?>
     <title>تسجيل الدخول / برنامج مكتب الضبط</title>
   </head>
   <body id="LoginForm">

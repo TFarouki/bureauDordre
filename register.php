@@ -48,8 +48,7 @@
               'salt' => $salt,
               'name' => Input::get('name'),
               'joined' => date('Y-m-d H:i:s'),
-              'group' => 1,
-              "actif" => 0
+              'group' => 1
             ));
           }catch(Exception $e){
             die($e->getMessage());

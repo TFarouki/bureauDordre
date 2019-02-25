@@ -1,6 +1,7 @@
 body
 {
-  background-image:url("../media/bg.jpg");
+  direction: rtl;
+  background-image:url("../../media/bg.jpg");
   background-repeat:no-repeat;
   background-position:center;
   background-size:cover;
@@ -53,7 +54,7 @@ body
   padding: 0;
 }
 .forgot {
-  text-align: left; margin-bottom:30px;
+  text-align: right; margin-bottom:30px;
 }
 .remember {
   text-align: right;
@@ -70,5 +71,5 @@ body
 .login-form .btn.btn-primary.reset {
   background: #ff9900 none repeat scroll 0 0;
 }
-.back { text-align: left; margin-top:10px;}
+.back { text-align: right; margin-top:10px;}
 .back a {color: #444444; font-size: 13px;text-decoration: none;}

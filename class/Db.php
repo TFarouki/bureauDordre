@@ -8,9 +8,10 @@
             $_count = 0;
     private function __construct(){
       try {
-        $this->_pdo= new PDO('mysql:host=' . Config::get('MariaDB/host') . ';dbname=' . Config::get('MariaDB/db'),
-                              Config::get('MariaDB/username'),
-                              Config::get('MariaDB/password'));
+
+      $this->_pdo= new PDO('mysql:host=' . Config::get('MariaDB/host') . ';dbname=' . Config::get('MariaDB/db'),
+                            Config::get('MariaDB/username'),
+                            Config::get('MariaDB/password'));
       } catch (PDOException $e) {
         die($e->getMessage());
       }
