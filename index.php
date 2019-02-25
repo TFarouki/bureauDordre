@@ -1,13 +1,13 @@
+<?php
+require_once 'core/init.php'; ?>
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
   <head>
     <?php include 'includes/include_head.php';?>
-    <meta charset="utf-8">
     <title></title>
   </head>
   <body>
 <?php
-require_once 'core/init.php';
 
 if (Session::exists("success")) {
   echo Session::flash("success");
@@ -26,10 +26,10 @@ if($user->isLoggedIn()){
   </ul>
 <?php
 
-if ($user->hasPermissions("admin")) {
-  echo "<p>You are an Administrator</p>";
-}
-if ($user->hasPermissions("modirator")) {
+  if ($user->hasPermissions("admin")) {
+    echo "<p>You are an Administrator</p>";
+  }
+  if ($user->hasPermissions("modirator")) {
     echo "<p>You are a Modirator</p>";
   }
 }else{
