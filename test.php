@@ -8,9 +8,6 @@
   </head>
   <body>
     <?php
-    $db = Db::getInstance();
-    $db->query("SELECT * FROM users");
-    echo $db->first()->name;
 
     ?>
   </body>
