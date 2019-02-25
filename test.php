@@ -8,12 +8,7 @@
   </head>
   <body>
     <?php
-    $salt="taoufik farouki";
-    $string="123456789";
 
-    echo "password: <textarea>".$string."</textarea>";
-    echo "salt    : <textarea>".$salt."</textarea>";
-    echo "hash    : <textarea>".hash('sha256' , $string . $salt)."</textarea>";
     ?>
   </body>
 </html>

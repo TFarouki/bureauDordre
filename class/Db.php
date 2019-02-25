@@ -12,6 +12,9 @@
       $this->_pdo= new PDO('mysql:host=' . Config::get('MariaDB/host') . ';dbname=' . Config::get('MariaDB/db'),
                             Config::get('MariaDB/username'),
                             Config::get('MariaDB/password'));
+      $this->_pdo->query("SET NAMES utf-8");
+      $this->_pdo->query("SET CHARACTER SET utf-8");
+
       } catch (PDOException $e) {
         die($e->getMessage());
       }

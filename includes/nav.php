@@ -8,11 +8,12 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav">
-            <li class="nav-item active">
-                <a class="nav-link" href="#">الصفحة الرئيسية<span class="sr-only">(current)</span></a>
+            <li class="nav-item <?php echo (basename($_SERVER['PHP_SELF'])=='index.php')?'active':''; ?>">
+                <a class="nav-link" href="<?php echo (basename($_SERVER['PHP_SELF'])=='index.php')?'#':'index.php';?>">الصفحة الرئيسية<span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">مكتب الضبط</a>
+            <li class="nav-item <?php echo (basename($_SERVER['PHP_SELF'])=='order.php')?'active':'';?>">
+                <a class="nav-link" href="<?php echo (basename($_SERVER['PHP_SELF'])=='order.php')?'#':'order.php';?>">مكتب الضبط</a>
+
             </li>
         </ul>
         <ul class="navbar-nav mr-auto">
