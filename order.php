@@ -18,26 +18,22 @@ $user = new User();
 if($user->isLoggedIn()){
 ?>
 <?php include 'includes/nav.php';?>
-  <p> Hello <a href="profile.php?user=<?php echo escape($user->data()->username); ?>"><?php echo escape($user->data()->username); ?></a>!</p>
-  <ul>
-    <li> <a href="logout.php">Log Out</a></li>
-    <li> <a href="update.php">update details</a></li>
-    <li> <a href="changePassword.php">update password</a></li>
-  </ul>
+
+  <div class="container">
+    <h1> new page </h1>
+  </div>
+
+
 <?php
 
-  if ($user->hasPermissions("admin")) {
+  /*if ($user->hasPermissions("admin")) {
     echo "<p>You are an Administrator</p>";
   }
   if ($user->hasPermissions("modirator")) {
     echo "<p>You are a Modirator</p>";
-  }
+  }*/
 }else{
   Redirect::to("login.php");
-/*?>
-
-  <p>You need to <a href="login.php">login</a> or <a href="register.php">register</a>!</p>
-<?php*/
 }
 ?>
 

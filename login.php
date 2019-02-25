@@ -40,13 +40,15 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
   <head>
-    <?php include 'includes/include_head.php';?>
+    <meta charset="UTF-8">
+    <?php
+     include 'includes/include_head.php';?>
     <title>تسجيل الدخول / برنامج مكتب الضبط</title>
   </head>
   <body id="LoginForm">
     <?php echo $html_code;?>
     <div class="container">
-      <h1 class="form-heading">برنامج مكتب الضبط</h1>
+      <h1 class="form-heading"><img src="./media/bd2.png" width="60" height="60" class="d-inline-block align-center" alt=""> برنامج المحكمة الادارية</h1>
       <div class="login-form">
           <div class="main-div">
             <div class="panel">
