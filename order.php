@@ -18,9 +18,23 @@ $user = new User();
 if($user->isLoggedIn()){
 ?>
 <?php include 'includes/nav.php';?>
-
   <div class="container">
-    <h1> new page </h1>
+    <h1 class="text-center"> new page </h1>
+    <style>
+      #zoom{
+        width:100px;
+        height:100px;
+        background:red;
+      }
+    </style>
+    <script>
+      $("#zoom").click(function(){
+        alert("ok");
+      $(this).animate({height:'300'});
+      $(this).animate({width:'300'});
+    })
+    </script>
+    <div id="zoom"></div>
   </div>
 
 
