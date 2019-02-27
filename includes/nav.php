@@ -19,13 +19,13 @@
         <ul class="navbar-nav mr-auto">
           <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <?php echo escape($user->data()->name); ?>
+                  <?php echo escape($user->data()->name); ?> <i class="fa fa-user-circle"></i>
               </a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                  <li><a class="dropdown-item text-right" href="update.php">الملف الشخصي</a></li>
-                  <li><a class="dropdown-item text-right" href="changePassword.php">تغيير كلمة المرور</a></li>
+                  <li><a class="dropdown-item text-right" href="update.php"><i class="fa fa-folder-open" aria-hidden="true"></i> الملف الشخصي</a></li>
+                  <li><a class="dropdown-item text-right" href="changePassword.php"><i class="fa fa-lock" aria-hidden="true"></i> تغيير كلمة المرور</a></li>
                   <div class="dropdown-divider"></div>
-                  <li><a class="dropdown-item text-right" href="logout.php">تسجيل الخروج</a></li>
+                  <li><a class="dropdown-item text-right" href="logout.php"><i class="fa fa-sign-out" aria-hidden="true"></i> تسجيل الخروج</a></li>
               </ul>
           </li>
         </ul>
