@@ -17,12 +17,11 @@
       if($user->isLoggedIn()){
     ?>
     <?php include 'includes/nav.php';?>
-    <div class="container">
-      <h3 class="text-right title"><i class="fa fa-caret-left" aria-hidden="true"></i> <i class="fa fa-book" aria-hidden="true"></i><u> تدبير سجل مكتب الضبط الالكتروني </u></h3>
-      <style>
+    <style media="screen">
+
         .card-header,.btn-block{
-           margin:0;
-           padding:0;
+         margin:0;
+         padding:0;
         }
 
         #accordion{
@@ -55,7 +54,39 @@
           width: 180px;
           margin: 10px;
         }
-      </style>
+      .bnt-control{
+        margin: 0 auto;
+        width: 24%;
+        padding: 0;
+        height: 40px;
+      }
+    </style>
+    <script type="text/javascript">
+      function getok(){
+        var file = document.getElementById('customFile');
+        var lab = document.getElementById('filelab');
+
+        var fullPath = file.value;
+        if (fullPath) {
+            var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+            var filename = fullPath.substring(startIndex);
+            if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+                filename = filename.substring(1);
+            }
+            lab.innerHTML = filename;
+        }
+      }
+      function setremaind(){
+        var hidden1 = document.getElementById('remaindDate');
+        var hidden2 = document.getElementById('remaindText');
+        hidden1.value = document.getElementById('Rdate').value;
+        hidden2.value = document.getElementById('Rtext').value;
+        document.getElementById('dismiss_modal').click();
+      }
+
+    </script>
+    <div class="container">
+      <h3 class="text-right title"><i class="fa fa-caret-left" aria-hidden="true"></i> <i class="fa fa-book" aria-hidden="true"></i><u> تدبير سجل مكتب الضبط الالكتروني </u></h3>
       <div class="text-center controles">
         <button class="btn btn-success" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"><strong><i class="fa fa-pencil-square-o" aria-hidden="true"></i> اضافة تسجيل جديد</strong></button>
         <button class="btn btn-warning" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo"><strong><i class="fa fa-search" aria-hidden="true"></i> بحث</strong></button>
@@ -67,61 +98,51 @@
           <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
             <div class="card-body">
               <div class="text-right">
-                <div class="form-group row">
-                  <div class="col-2">
-                    <input type="checkbox" class="toogle-switch" checked id="example-switch-input1" data-width="100" data-toggle="toggle" data-on="وارد" data-off="صادر" data-onstyle="success" data-offstyle="warning">
-                  </div>
-                  <div class="col-5">
-                    <input class="form-control" type="text" placeholder="اسم المرسل" id="example-text-input2">
-                  </div>
-                  <div class="col-5">
-                    <input class="form-control" type="text" placeholder="اسم المرسل اليه" id="example-search-input3">
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <div class="col-4">
-                    <input class="form-control" type="text" placeholder="نوعها" id="example-search-input4">
-                  </div>
-                  <div class="col-4">
-                    <input class="form-control" type="text" placeholder="موضوعها" id="example-search-input5">
-                  </div>
-                  <div class="col-4">
-                    <input class="form-control" type="text" placeholder="مرتبطة بملف" id="example-search-input6">
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <div class="col-4">
-                    <input placeholder="تاريخ الوصول" class="form-control" type="text" onfocus="(this.type='date')" onblur="(this.type='text')"  id="example-search-input7">
-                  </div>
-                  <div class="col-4">
-                    <input class="form-control" type="file" placeholder="تاريخ الوصول" id="example-search-input8">
+                <form action="order.php" method="get">
+                  <div class="form-group row">
+                    <div class="col-2">
+                      <input type="checkbox" name="sendorinbox" class="toogle-switch" checked id="sendorinbox" data-width="100" data-toggle="toggle" data-on="وارد" data-off="صادر" data-onstyle="success" data-offstyle="warning">
+                    </div>
+                    <div class="col-5">
+                      <input class="form-control" type="text" name="expediteur" placeholder="اسم المرسل" id="expediteur">
+                    </div>
+                    <div class="col-5">
+                      <input class="form-control" type="text" name="destinataire" placeholder="اسم المرسل اليه" id="destinataire">
+                    </div>
                   </div>
                   <div class="form-group row">
-                    <div class="col-7">
-                      <div class="dropdown">
-                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                          Dropdown button
-                        </button>
-                        <div class="dropdown-menu">
-                          <a class="dropdown-item" href="#">Link 1</a>
-                          <a class="dropdown-item" href="#">Link 2</a>
-                          <a class="dropdown-item" href="#">Link 3</a>
-                        </div>
-                      </div>
+                    <div class="col-3">
+                      <input class="form-control" type="text" name="type" placeholder="نوعها" id="type">
                     </div>
-                    <div class="col-1">
-                      <button class="btn btn-primary">إضافة</button>
+                    <div class="col-3">
+                      <input class="form-control" type="text" name="object" placeholder="موضوعها" id="object">
                     </div>
-                    <div class="col-4">
-                      <button class="btn btn-danger">الغاء</button>
+                    <div class="col-3">
+                      <input class="form-control" type="text" name="dossierAssocier" placeholder="مرتبطة بملف" id="dossierAssocier">
+                    </div>
+                    <div class="col-3">
+                      <input placeholder="تاريخ الوصول" class="form-control" type="text" name="dateArriver" onfocus="(this.type='date')" onblur="(this.type='text')"  id="dateArriver">
                     </div>
                   </div>
-                </div>
+                  <div class="form-group row">
+                      <div class=" bnt-control">
+                        <div class="custom-file mb-3">
+                          <input type="file" onchange="getok();" class="custom-file-input" id="customFile" name="filename">
+                          <label class="custom-file-label text-left" for="customFile" id="filelab">نسخة الماسح الضوئي</label>
+                        </div>
+                      </div>
+                      <input type="button" class="btn btn-info bnt-control" data-toggle="modal" data-target="#ModalSetRemaind" value="ضبط تذكير" />
+                      <input type="hidden" id="remaindDate" name="remaindDate" value="">
+                      <input type="hidden" id="remaindText" name="remaindText" value="">
+                      <button class="btn btn-success bnt-control">إضافة</button>
+                      <input type="button" class="btn btn-danger bnt-control" value="الغاء" data-toggle="collapse" data-target="#collapseOne">
+                  </div>
+                </from>
               </div>
-
             </div>
           </div>
         </div>
+
         <div class="card">
           <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
             <div class="card-body">
@@ -166,7 +187,7 @@
           </tbody>
           <tfooter>
             <tr class="">
-              <td colspan="3" class="text-center bt-marge" ><button class="btn btn-block collapsed btn-default">
+              <td colspan="3" class="text-center bt-marge" ><button type="button" class="btn btn-block collapsed btn-default">
                 <strong><i class="fa fa-caret-down" aria-hidden="true"></i> تحميل المزيد <i class="fa fa-caret-down" aria-hidden="true"></i></strong>
               </button></td>
             </tr>
@@ -174,6 +195,8 @@
         </table>
       </div>
     </div>
+
+
 
 
     <?php
@@ -191,3 +214,31 @@
 
   </body>
 </html>
+
+<div class="modal fade" id="ModalSetRemaind" tabindex="-1" role="dialog" >
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header row">
+        <div class="text-right col-6">
+          <h5 class="modal-title">ضبط تذكير</h5>
+        </div>
+        <div class="col-5"></div>
+        <div class="col-1">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <form>
+          <input placeholder="تاريخ التذكير" class="form-control" type="text" onfocus="(this.type='date')" onblur="(this.type='text')"  id="Rdate">
+          <textarea class="form-control" placeholder="ملاحظة"  id="Rtext"></textarea>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" style="margin-left:5px;" onclick="setremaind();">حفظ</button>
+        <button type="button" class="btn btn-secondary" id="dismiss_modal" data-dismiss="modal">الغاء</button>
+      </div>
+    </div>
+  </div>
+</div>
