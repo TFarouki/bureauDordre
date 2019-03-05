@@ -1,6 +1,10 @@
+*{
+    direction: rtl;
+}
+
 body
 {
-  direction: rtl;
+
   /*background-image:url("../../media/bg.jpg");
   background-repeat:no-repeat;
   background-position:center;
