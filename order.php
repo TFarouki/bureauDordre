@@ -17,6 +17,42 @@
       if($user->isLoggedIn()){
     ?>
     <?php include 'includes/nav.php';?>
+    <style media="screen">
+
+        [type=file] {
+          display : none;
+        }
+        input,
+        [type=file] + label {
+        border-radius: 3px;
+        padding: 5px;
+        }
+        [type=file] + label {
+        text-align: center;
+        vertical-align: middle;
+        /* Decorative */
+        background: #333;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        }
+        [type=file] + label:hover {
+        background: #3399ff;
+        }
+    </style>
+
+    <script type="text/javascript">
+    $("[type=file]").on("change", function(){
+      // Name of file and placeholder
+      var file = this.files[0].name;
+      var dflt = $(this).attr("placeholder");
+      if($(this).val()!=""){
+        $(this).next().text(file);
+      } else {
+        $(this).next().text(dflt);
+      }
+      });
+    </script>
     <div class="container">
       <h3 class="text-right title"><i class="fa fa-caret-left" aria-hidden="true"></i> <i class="fa fa-book" aria-hidden="true"></i><u> تدبير سجل مكتب الضبط الالكتروني </u></h3>
       <style>
@@ -66,7 +102,57 @@
         <div class="card">
           <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
             <div class="card-body">
-              Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+              <div class="text-right">
+                <div class="form-group row">
+                  <div class="col-2">
+                    <input type="checkbox" class="toogle-switch" checked id="example-switch-input1" data-width="100" data-toggle="toggle" data-on="وارد" data-off="صادر" data-onstyle="success" data-offstyle="warning">
+                  </div>
+                  <div class="col-5">
+                    <input class="form-control" type="text" placeholder="اسم المرسل" id="example-text-input2">
+                  </div>
+                  <div class="col-5">
+                    <input class="form-control" type="text" placeholder="اسم المرسل اليه" id="example-search-input3">
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <div class="col-3">
+                    <input class="form-control" type="text" placeholder="نوعها" id="example-search-input4">
+                  </div>
+                  <div class="col-3">
+                    <input class="form-control" type="text" placeholder="موضوعها" id="example-search-input5">
+                  </div>
+                  <div class="col-3">
+                    <input class="form-control" type="text" placeholder="مرتبطة بملف" id="example-search-input6">
+                  </div>
+                  <div class="col-3">
+                    <input placeholder="تاريخ الوصول" class="form-control" type="text" onfocus="(this.type='date')" onblur="(this.type='text')"  id="example-search-input7">
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <div class="col-3">
+                    <input id="f02" type="file" placeholder="Add profile picture" />
+                    <label for="f02">نسحة الماسح الضوئي</label>
+                  </div>
+                  <div class="col-3">
+                    <div class="dropdown">
+                      <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                        ضبط تدكير
+                      </button>
+                      <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#">Link 1</a>
+                        <a class="dropdown-item" href="#">Link 2</a>
+                        <a class="dropdown-item" href="#">Link 3</a>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-3">
+                    <button class="btn btn-primary">إضافة</button>
+                  </div>
+                  <div class="col-3">
+                    <button class="btn btn-danger">الغاء</button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -122,6 +208,8 @@
         </table>
       </div>
     </div>
+
+
 
 
     <?php
