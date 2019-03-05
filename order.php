@@ -128,14 +128,14 @@
                       <div class=" bnt-control">
                         <div class="custom-file mb-3">
                           <input type="file" onchange="getok();" class="custom-file-input" id="customFile" name="filename">
-                          <label class="custom-file-label text-left" for="customFile" id="filelab">نسخة الماسح الضوئي</label>
+                          <label class="custom-file-label text-left" for="customFile" id="filelab"><i class="fa fa-clone" aria-hidden="true"> نسخة الماسح الضوئي</i></label>
                         </div>
                       </div>
-                      <input type="button" class="btn btn-info bnt-control" data-toggle="modal" data-target="#ModalSetRemaind" value="ضبط تذكير" />
+                      <button type="button" class="btn btn-info bnt-control" data-toggle="modal" data-target="#ModalSetRemaind" /><i class="fa fa-bell-o" aria-hidden="true"> ضبط تذكير</i></button
                       <input type="hidden" id="remaindDate" name="remaindDate" value="">
                       <input type="hidden" id="remaindText" name="remaindText" value="">
-                      <button class="btn btn-success bnt-control">إضافة</button>
-                      <input type="button" class="btn btn-danger bnt-control" value="الغاء" data-toggle="collapse" data-target="#collapseOne">
+                      <button class="btn btn-success bnt-control"><i class="fa fa-check" aria-hidden="true"> إضافة</i></button>
+                      <button type="button" type="button" class="btn btn-danger bnt-control" data-toggle="collapse" data-target="#collapseOne"><i class="fa fa-undo" aria-hidden="true"> الغاء</i></button>
                   </div>
                 </from>
               </div>
