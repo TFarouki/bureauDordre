@@ -12,8 +12,8 @@
       $this->_pdo= new PDO('mysql:host=' . Config::get('MariaDB/host') . ';dbname=' . Config::get('MariaDB/db'),
                             Config::get('MariaDB/username'),
                             Config::get('MariaDB/password'));
-      $this->_pdo->query("SET NAMES utf-8");
-      $this->_pdo->query("SET CHARACTER SET utf-8");
+      $this->_pdo->query("SET NAMES utf8");
+      $this->_pdo->query("SET CHARACTER SET utf8");
 
       } catch (PDOException $e) {
         die($e->getMessage());
@@ -34,9 +34,11 @@
         if(count($params)){
           foreach($params as $param){
             $this->_query->bindValue($pos , $param);
+
             $pos++;
           }
         }
+
       }
       if($this->_query->execute()){
         $this->_results = $this->_query->fetchAll(PDO::FETCH_OBJ);

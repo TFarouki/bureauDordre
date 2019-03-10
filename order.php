@@ -83,7 +83,16 @@
         hidden2.value = document.getElementById('Rtext').value;
         document.getElementById('dismiss_modal').click();
       }
-
+      function isChecked(x){
+          $("#sendorinbox").attr('checked', $(x).children().hasClass('off'));
+          if($(x).children().hasClass('off')){
+            $('#destinataire').val('taoufik');
+            $('#expediteur').val('');
+          }else{
+            $('#expediteur').val('taoufik');
+            $('#destinataire').val('');
+          }
+      }
     </script>
     <div class="container">
       <h3 class="text-right title"><i class="fa fa-caret-left" aria-hidden="true"></i> <i class="fa fa-book" aria-hidden="true"></i><u> تدبير سجل مكتب الضبط الالكتروني </u></h3>
@@ -100,11 +109,11 @@
               <div class="text-right">
                 <form action="order.php" method="get">
                   <div class="form-group row">
-                    <div class="col-2">
-                      <input type="checkbox" name="sendorinbox" class="toogle-switch" checked id="sendorinbox" data-width="100" data-toggle="toggle" data-on="وارد" data-off="صادر" data-onstyle="success" data-offstyle="warning">
+                    <div class="col-2" onclick="isChecked(this);">
+                      <input type="checkbox" name="sendorinbox" class="toogle-switch" id="sendorinbox" data-width="100" data-toggle="toggle" data-on="وارد" data-off="صادر" data-onstyle="success" data-offstyle="warning">
                     </div>
                     <div class="col-5">
-                      <input class="form-control" type="text" name="expediteur" placeholder="اسم المرسل" id="expediteur">
+                      <input class="form-control" type="text" name="expediteur" placeholder="اسم المرسل" id="expediteur" value="taoufik">
                     </div>
                     <div class="col-5">
                       <input class="form-control" type="text" name="destinataire" placeholder="اسم المرسل اليه" id="destinataire">

@@ -45,7 +45,6 @@
         Session::put(Config::get("session/session_name"),$this->data()->id);
       }else {
         if($this->find($username)){
-
           if ($this->data()->password === Hash::make($password,$this->data()->salt)){
             Session::put($this->_sessionName,$this->data()->id);
 
