@@ -7,23 +7,18 @@
   </head>
   <body>
     <?php
-
       if (Session::exists("success")) {
         echo Session::flash("success");
       }
-
-
       $user = new User();
       if($user->isLoggedIn()){
     ?>
     <?php include 'includes/nav.php';?>
     <style media="screen">
-
         .card-header,.btn-block{
          margin:0;
          padding:0;
         }
-
         #accordion{
           margin: 30px;
         }
@@ -62,10 +57,55 @@
       }
     </style>
     <script type="text/javascript">
+      $(document).ready(function(){
+            $.ajax({
+              url:"atraf.php",
+              method:"POST",
+              success:function(data){
+                var json = JSON.parse(data);
+                var htm = "";
+                for (var i = 0; i < json.length; i++) {
+                  htm+= '<option value="'+json[i].taraf+'">';
+                }
+                $("#lisDataAtraf").html(htm);
+              }
+            });
+            $.ajax({
+              url:"naw3.php",
+              method:"POST",
+              success:function(data){
+                var json = JSON.parse(data);
+                var htm = "";
+                for (var i = 0; i < json.length; i++) {
+                  htm+= '<option value="'+json[i].naw3+'">';
+                }
+                $("#lisDataNaw3").html(htm);
+              }
+            });
+            $.ajax({
+              url:"mawdo3.php",
+              method:"POST",
+              success:function(data){
+                var json = JSON.parse(data);
+                var htm = "";
+                for (var i = 0; i < json.length; i++) {
+                  htm+= '<option value="'+json[i].mawdo3+'">';
+                }
+                $("#lisDataMawdo3").html(htm);
+              }
+            });
+      });
+      $(document).on('click', '#annulation', function(e){
+        $("#expediteur").val('');
+        $("#destinataire").val('');
+        $("#type").val('');
+        $("#object").val('');
+        $("#dossierAssocier").val('');
+        $("#dateArriver").val('');
+      });
       function getok(){
         var file = document.getElementById('customFile');
         var lab = document.getElementById('filelab');
-
         var fullPath = file.value;
         if (fullPath) {
             var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
@@ -83,7 +123,17 @@
         hidden2.value = document.getElementById('Rtext').value;
         document.getElementById('dismiss_modal').click();
       }
+      function isChecked(x){
+          $("#sendorinbox").attr('checked', $(x).children().hasClass('off'));
+          if($(x).children().hasClass('off')){
+            $('#destinataire').val('رئيس مصلحة كتابة الضبط بالمحكمة الادارية بأكادير');
+            $('#expediteur').val('');
 
+          }else{
+            $('#expediteur').val('رئيس مصلحة كتابة الضبط بالمحكمة الادارية بأكادير');
+            $('#destinataire').val('');
+          }
+      }
     </script>
     <div class="container">
       <h3 class="text-right title"><i class="fa fa-caret-left" aria-hidden="true"></i> <i class="fa fa-book" aria-hidden="true"></i><u> تدبير سجل مكتب الضبط الالكتروني </u></h3>
@@ -100,22 +150,22 @@
               <div class="text-right">
                 <form action="order.php" method="get">
                   <div class="form-group row">
-                    <div class="col-2">
-                      <input type="checkbox" name="sendorinbox" class="toogle-switch" checked id="sendorinbox" data-width="100" data-toggle="toggle" data-on="وارد" data-off="صادر" data-onstyle="success" data-offstyle="warning">
+                    <div id="forcheck" class="col-2" onclick="isChecked(this);">
+                      <input type="checkbox" name="sendorinbox" class="toogle-switch" id="sendorinbox" data-width="100" data-toggle="toggle" data-on="وارد" data-off="صادر" data-onstyle="success" data-offstyle="warning">
                     </div>
                     <div class="col-5">
-                      <input class="form-control" type="text" name="expediteur" placeholder="اسم المرسل" id="expediteur">
+                      <input class="form-control" list="lisDataAtraf" type="text" name="expediteur" placeholder="اسم المرسل" id="expediteur" value="رئيس مصلحة كتابة الضبط بالمحكمة الادارية بأكادير">
                     </div>
                     <div class="col-5">
-                      <input class="form-control" type="text" name="destinataire" placeholder="اسم المرسل اليه" id="destinataire">
+                      <input class="form-control" list="lisDataAtraf" type="text" name="destinataire" placeholder="اسم المرسل اليه" id="destinataire">
                     </div>
                   </div>
                   <div class="form-group row">
                     <div class="col-3">
-                      <input class="form-control" type="text" name="type" placeholder="نوعها" id="type">
+                      <input class="form-control" list="lisDataNaw3" type="text" name="type" placeholder="نوعها" id="type">
                     </div>
                     <div class="col-3">
-                      <input class="form-control" type="text" name="object" placeholder="موضوعها" id="object">
+                      <input class="form-control" list="lisDataMawdo3" type="text" name="object" placeholder="موضوعها" id="object">
                     </div>
                     <div class="col-3">
                       <input class="form-control" type="text" name="dossierAssocier" placeholder="مرتبطة بملف" id="dossierAssocier">
@@ -135,14 +185,13 @@
                       <input type="hidden" id="remaindDate" name="remaindDate" value="">
                       <input type="hidden" id="remaindText" name="remaindText" value="">
                       <button class="btn btn-success bnt-control"><i class="fa fa-check" aria-hidden="true"> إضافة</i></button>
-                      <button type="button" type="button" class="btn btn-danger bnt-control" data-toggle="collapse" data-target="#collapseOne"><i class="fa fa-undo" aria-hidden="true"> الغاء</i></button>
+                      <button type="button" class="btn btn-danger bnt-control" data-toggle="collapse" data-target="#collapseOne" id="annulation"><i class="fa fa-undo" aria-hidden="true"> الغاء</i></button>
                   </div>
                 </from>
               </div>
             </div>
           </div>
         </div>
-
         <div class="card">
           <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
             <div class="card-body">
@@ -200,7 +249,6 @@
 
 
     <?php
-
       /*if ($user->hasPermissions("admin")) {
         echo "<p>You are an Administrator</p>";
       }
@@ -213,6 +261,12 @@
     ?>
 
   </body>
+  <datalist id="lisDataAtraf">
+  </datalist>
+  <datalist id="lisDataNaw3">
+  </datalist>
+  <datalist id="lisDataMawdo3">
+  </datalist>
 </html>
 
 <div class="modal fade" id="ModalSetRemaind" tabindex="-1" role="dialog" >
