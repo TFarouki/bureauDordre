@@ -1,7 +1,7 @@
 <?php
 require_once 'core/init.php'; ?>
 <!DOCTYPE html>
-<html lang="en">
+<html dir="rtl" lang="ar">
   <head>
     <?php include 'includes/include_head.php';?>
     <title></title>
