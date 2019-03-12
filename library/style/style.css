@@ -5,14 +5,14 @@
 body
 {
 
-  /*background-image:url("../../media/bg.jpg");
-  background-repeat:no-repeat;
-  background-position:center;
-  background-size:cover;
-  background-attachment: fixed;*/
-  background-color: #e9ebee;
+  background-image:url("../../media/header-bg.jpg");
+  background-repeat:repeat;
+  /*background-color: #e9ebee;*/
 }
 
+.container{
+  background-color: rgba(250,250,250,0.75);
+}
 /* login form style */
 .form-heading {
   color:#fff;
