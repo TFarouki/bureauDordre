@@ -4,16 +4,6 @@
   <head>
     <?php include 'includes/include_head.php';?>
     <title></title>
-  </head>
-  <body>
-    <?php
-      if (Session::exists("success")) {
-        echo Session::flash("success");
-      }
-      $user = new User();
-      if($user->isLoggedIn()){
-    ?>
-    <?php include 'includes/nav.php';?>
     <style media="screen">
         .card-header,.btn-block{
          margin:0;
@@ -134,7 +124,117 @@
             $('#destinataire').val('');
           }
       }
+      $(document).on('change','#customFile',function(){
+
+        var file = document.getElementById('customFile');
+        var hidden = $('#fileTmpName').val();
+        var lab = document.getElementById('filelab');
+        var fullPath = file.value;
+        if (fullPath) {
+          $('#progersUpload').show();
+          $('#fileUpload').hide();
+            var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+            var filename = fullPath.substring(startIndex);
+            if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+                filename = filename.substring(1);
+            }
+            //lab.innerHTML = filename;
+            $('#fileUploadName').html(filename);
+            sizefile = $('#customFile')[0].files[0].size;
+            sizefile = sizefile / (1024*1024);
+            $('#size').html(sizefile.toFixed(2) + " Mo");
+
+            var property = file.files[0];
+            var form_data = new FormData();
+            form_data.append('hidden',hidden);
+            var file_name = property.name;
+            var ext = file_name.split('.').pop().toLowerCase();
+            var allowExt = ['pdf','doc','docx','bmp','gif','jpeg','jpg','png','tif','tiff','xls','xlsx','mdb'];
+            if($.inArray(ext,allowExt) == -1){
+              alert('المرجوا التأكد من صيغة الملف..!');
+              $.ajax({
+                url:"upfile.php",
+                method:"POST",
+                data : form_data,
+                contentType : false,
+                processData : false,
+              });
+              $('#fileTmpName').val("");
+              $('#fileUpload').show();
+              $('#progersUpload').hide();
+              $('#filelab').removeClass("bg-success text-white");
+              $('#displayFileName').html(" نسخة الماسح الضوئي");
+            }else{
+              form_data.append('file',property);
+              $.ajax({
+                xhr: function(){
+                    var xhr = new window.XMLHttpRequest();
+                    xhr.upload.addEventListener("progress", function(evt) {
+                        if (evt.lengthComputable) {
+                            var percentComplete = (evt.loaded / evt.total) * 100;
+                            percentComplete = percentComplete.toFixed(2)+'%';
+                            $('#progressbar').width(percentComplete);
+                            $('#percentage').html(percentComplete);
+                            $('#size').width(evt.total);
+                        }
+                   }, false);
+                   return xhr;
+                },
+                url:"upfile.php",
+                method:"POST",
+                data : form_data,
+                contentType : false,
+                processData : false,
+                beforeSend:function(){
+                  $('#progressbar').width('0%')
+                },
+                success:function(data){
+                  $('#fileUpload').show();
+                  $('#progersUpload').hide();
+                  $('#filelab').addClass("bg-success text-white");
+                  $('#displayFileName').html(" " + file_name);
+                  $('#fileTmpName').val(data);
+                }
+              });
+            }
+        }
+      });
+      $(document).on('click', '#submit', function(e){
+        var form_data = new FormData();
+        form_data.append('form1',$('#sendorinbox').is(':checked'));
+        form_data.append('form2',$('#expediteur').val());
+        form_data.append('form3',$('#destinataire').val());
+        form_data.append('form4',$('#type').val());
+        form_data.append('form5',$('#object').val());
+        form_data.append('form6',$('#dossierAssocier').val());
+        form_data.append('form7',$('#dateArriver').val());
+        form_data.append('form8',$('#fileTmpName').val());
+        form_data.append('form9',$('#remaindDate').val());
+        form_data.append('form10',$('#remaindText').val());
+        $.ajax({
+          url : "setRow.php",
+          method : "POST",
+          data : form_data,
+          contentType : false,
+          processData : false,
+          success:function(data){
+            alert(data);
+          }
+        });
+      });
     </script>
+  </head>
+  <body>
+    <?php
+      if (Session::exists("success")) {
+        echo Session::flash("success");
+      }
+      $user = new User();
+      if($user->isLoggedIn()){
+    ?>
+    <?php include 'includes/nav.php';?>
+
+
     <div class="container">
       <h3 class="text-right title"><i class="fa fa-caret-left" aria-hidden="true"></i> <i class="fa fa-book" aria-hidden="true"></i><u> تدبير سجل مكتب الضبط الالكتروني </u></h3>
       <div class="text-center controles">
@@ -148,7 +248,7 @@
           <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
             <div class="card-body">
               <div class="text-right">
-                <form action="order.php" method="get">
+                <form action="" method="get">
                   <div class="form-group row">
                     <div id="forcheck" class="col-2" onclick="isChecked(this);">
                       <input type="checkbox" name="sendorinbox" class="toogle-switch" id="sendorinbox" data-width="100" data-toggle="toggle" data-on="وارد" data-off="صادر" data-onstyle="success" data-offstyle="warning">
@@ -168,7 +268,7 @@
                       <input class="form-control" list="lisDataMawdo3" type="text" name="object" placeholder="موضوعها" id="object">
                     </div>
                     <div class="col-3">
-                      <input class="form-control" type="text" name="dossierAssocier" placeholder="مرتبطة بملف" id="dossierAssocier">
+                      <input class="form-control" type="text" name="dossierAssocier" placeholder="مرتبطة بملف" id="dossierAssocier" autocomplete="on">
                     </div>
                     <div class="col-3">
                       <input placeholder="تاريخ الوصول" class="form-control" type="text" name="dateArriver" onfocus="(this.type='date')" onblur="(this.type='text')"  id="dateArriver">
@@ -176,15 +276,35 @@
                   </div>
                   <div class="form-group row">
                       <div class=" bnt-control">
-                        <div class="custom-file mb-3">
-                          <input type="file" onchange="getok();" class="custom-file-input" id="customFile" name="filename">
-                          <label class="custom-file-label text-left" for="customFile" id="filelab"><i class="fa fa-clone" aria-hidden="true"> نسخة الماسح الضوئي</i></label>
-                        </div>
+                          <div id="upload&Progressbar">
+                            <div class="form-group" id="fileUpload">
+                                  <div class="custom-file mb-3">
+                                    <input type="file" class="custom-file-input" id="customFile" name="filename">
+                                    <label class="custom-file-label text-center" for="customFile" id="filelab"><i style="font-size:12px;" class="fa fa-clone" aria-hidden="true" id="displayFileName"> نسخة الماسح الضوئي</i></label>
+                                    <input type="hidden" value="" id="fileTmpName">
+                                  </div>
+                            </div>
+                            <div class="form-group" style="display:none;" id="progersUpload">
+
+                                  <div class="small-text">
+                                    <span style="float:right;font:12px;font-weight: bold;" id="fileUploadName"></span><br/>
+                                    <div class="row text-right">
+                                      <div class="col-3"><span id="percentage"></span></div>
+                                      <div class="col-5"></div>
+                                      <div class="col-4"><span id="size"></span></div>
+                                    </div>
+                                    <div class="progress " style="height:2px">
+                                      <div class="progress-bar" id="progressbar" style="width:0%;height:2px"></div>
+                                    </div>
+                                  </div>
+                              </div>
+
+                          </div>
                       </div>
-                      <button type="button" class="btn btn-info bnt-control" data-toggle="modal" data-target="#ModalSetRemaind" /><i class="fa fa-bell-o" aria-hidden="true"> ضبط تذكير</i></button
+                      <button type="button" class="btn btn-info bnt-control" data-toggle="modal" data-target="#ModalSetRemaind" /><i class="fa fa-bell-o" aria-hidden="true"> ضبط تذكير</i></button>
                       <input type="hidden" id="remaindDate" name="remaindDate" value="">
                       <input type="hidden" id="remaindText" name="remaindText" value="">
-                      <button class="btn btn-success bnt-control"><i class="fa fa-check" aria-hidden="true"> إضافة</i></button>
+                      <button type="button" class="btn btn-success bnt-control" id="submit"><i class="fa fa-check" aria-hidden="true"> إضافة</i></button>
                       <button type="button" class="btn btn-danger bnt-control" data-toggle="collapse" data-target="#collapseOne" id="annulation"><i class="fa fa-undo" aria-hidden="true"> الغاء</i></button>
                   </div>
                 </from>
@@ -244,9 +364,41 @@
         </table>
       </div>
     </div>
-
-
-
+    <div id="outbody">
+      <datalist id="lisDataAtraf">
+      </datalist>
+      <datalist id="lisDataNaw3">
+      </datalist>
+      <datalist id="lisDataMawdo3">
+      </datalist>
+      <div class="modal fade" id="ModalSetRemaind" tabindex="-1" role="dialog" >
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header row">
+              <div class="text-right col-6">
+                <h5 class="modal-title">ضبط تذكير</h5>
+              </div>
+              <div class="col-5"></div>
+              <div class="col-1">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            </div>
+            <div class="modal-body">
+              <form>
+                <input placeholder="تاريخ التذكير" class="form-control" type="text" onfocus="(this.type='date')" onblur="(this.type='text')"  id="Rdate">
+                <textarea class="form-control" placeholder="ملاحظة"  id="Rtext"></textarea>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" style="margin-left:5px;" onclick="setremaind();">حفظ</button>
+              <button type="button" class="btn btn-secondary" id="dismiss_modal" data-dismiss="modal">الغاء</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <?php
       /*if ($user->hasPermissions("admin")) {
@@ -260,39 +412,7 @@
     }
     ?>
 
-  </body>
-  <datalist id="lisDataAtraf">
-  </datalist>
-  <datalist id="lisDataNaw3">
-  </datalist>
-  <datalist id="lisDataMawdo3">
-  </datalist>
-</html>
 
-<div class="modal fade" id="ModalSetRemaind" tabindex="-1" role="dialog" >
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header row">
-        <div class="text-right col-6">
-          <h5 class="modal-title">ضبط تذكير</h5>
-        </div>
-        <div class="col-5"></div>
-        <div class="col-1">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-      </div>
-      <div class="modal-body">
-        <form>
-          <input placeholder="تاريخ التذكير" class="form-control" type="text" onfocus="(this.type='date')" onblur="(this.type='text')"  id="Rdate">
-          <textarea class="form-control" placeholder="ملاحظة"  id="Rtext"></textarea>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" style="margin-left:5px;" onclick="setremaind();">حفظ</button>
-        <button type="button" class="btn btn-secondary" id="dismiss_modal" data-dismiss="modal">الغاء</button>
-      </div>
-    </div>
-  </div>
-</div>
+  </body>
+
+</html>

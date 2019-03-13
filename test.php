@@ -12,10 +12,6 @@
       }
     </style>
     <script type="text/javascript">
-      $(document).ready(function(){
-        $('#progersUpload').hide();
-      });
-
       $(document).on('change','#customFile',function(){
 
         var file = document.getElementById('customFile');
@@ -43,7 +39,7 @@
             var ext = file_name.split('.').pop().toLowerCase();
             var allowExt = ['pdf','doc','docx','bmp','gif','jpeg','jpg','png','tif','tiff','xls','xlsx','mdb'];
             if($.inArray(ext,allowExt) == -1){
-              alert('invalide file type');
+              alert('المرجوا التأكد من صيغة الملف..!');
               $.ajax({
                 url:"upfile.php",
                 method:"POST",
@@ -86,7 +82,6 @@
                   $('#filelab').addClass("bg-success text-white");
                   $('#displayFileName').html(" " + file_name);
                   $('#fileTmpName').val(data);
-                  alert(data);
                 }
               });
             }
@@ -106,27 +101,30 @@
         include 'includes/nav.php';
     ?>
     <div class="container">
-      <div class="form-group row" id="fileUpload">
-            <div class="col-3 custom-file mb-3">
-              <input type="file" class="custom-file-input" id="customFile" name="filename">
-              <label class="custom-file-label text-center" for="customFile" id="filelab"><i style="font-size:12px;" class="fa fa-clone" aria-hidden="true" id="displayFileName"> نسخة الماسح الضوئي</i></label>
-              <input type="hidden" value="" id="fileTmpName">
-            </div>
-      </div>
-      <div class="form-group row" id="progersUpload">
-
-            <div class="col-3 small-text">
-              <span style="float:right;font:12px;font-weight: bold;" id="fileUploadName"></span><br/>
-              <div class="row text-right">
-                <div class="col-3"><span id="percentage"></span></div>
-                <div class="col-5"></div>
-                <div class="col-4"><span id="size"></span></div>
+      <div id="upload&Progressbar">
+        <div class="form-group row" id="fileUpload">
+              <div class="col-3 custom-file mb-3">
+                <input type="file" class="custom-file-input" id="customFile" name="filename">
+                <label class="custom-file-label text-center" for="customFile" id="filelab"><i style="font-size:12px;" class="fa fa-clone" aria-hidden="true" id="displayFileName"> نسخة الماسح الضوئي</i></label>
+                <input type="hidden" value="" id="fileTmpName">
               </div>
-              <div class="progress " style="height:2px">
-                <div class="progress-bar" id="progressbar" style="width:0%;height:2px"></div>
-              </div>
-            </div>
         </div>
+        <div class="form-group row" style="display:none;" id="progersUpload">
+
+              <div class="col-3 small-text">
+                <span style="float:right;font:12px;font-weight: bold;" id="fileUploadName"></span><br/>
+                <div class="row text-right">
+                  <div class="col-3"><span id="percentage"></span></div>
+                  <div class="col-5"></div>
+                  <div class="col-4"><span id="size"></span></div>
+                </div>
+                <div class="progress " style="height:2px">
+                  <div class="progress-bar" id="progressbar" style="width:0%;height:2px"></div>
+                </div>
+              </div>
+          </div>
+
+      </div>
 
     </div>
 
