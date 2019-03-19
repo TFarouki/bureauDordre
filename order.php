@@ -3,7 +3,6 @@
   <html lang="en">
     <head>
       <?php include 'includes/include_head.php';?>
-      <title></title>
       <style media="screen">
           .small-text{
             font-size: 10px;
@@ -50,25 +49,19 @@
         }
       </style>
       <script type="text/javascript">
-        /*$(document).ready( function () {
-          $('#myTable').DataTable({
-            iDisplayLength: -1,
-            "ajax" : {
-                "url" : "load.php",
-                "dataSrc" : ""
-            },
-            "columns" : [
-                {"data" : "num_ordre"},
-                {"data" : "direction"},
-                {"data" : "dateArriver"},
-                {"data" : "expediteur"},
-                {"data" : "destinataire"},
-                {"data" : "type"},
-                {"data" : "objet"},
-                {"data" : "dossierAssocier"},
-            ]
+        function isset(obj){
+          return (typeof obj !== "undefined" && obj)?true:false;
+        }
+        function addAlert(type,strongMsg,msg){
+          htm = `<div class="alert alert-`+type+` alert-dismissible fade in text-center" id="myNewAlert">
+                  <button type="button" class="close" data-dismiss="alert">&times;</button>
+                  <strong>`+strongMsg+`!</strong> `+msg+`.
+                </div>`;
+          $("nav").after(htm);
+          $("#myNewAlert").fadeTo(8000, 1000).slideUp(500, function(){
+            $("#myNewAlert").slideUp(500);
           });
-        });*/
+        }
         $(document).ready(function(){
           $("#myInput").on("keyup", function() {
             var value = $(this).val().toLowerCase();
@@ -82,7 +75,7 @@
         }
         function reload(from,lenght){
           if(from == 0 && lenght == 0){
-            from = $('#dataTable tr').length+1;
+            from = $('#dataTable tr').length;
             lenght = Math.round($('#dataTable tr').length/2);
           }
           var json = JSON.stringify({'from':from,'lenght':lenght});
@@ -97,6 +90,7 @@
                 row = `
                       <tr>
                         <td><a href='#'><i class='fa fa-pencil' aria-hidden='true'></i></a></td>
+                        <td><a href='#'><i class="fa fa-clone" aria-hidden="true"></i></a></td>
                         <td>`+ignoreNull(json[i].num_ordre.substring(0,json[i].num_ordre.length-4))+`</td>
                         <td>`+ignoreNull(json[i].direction)+`</td>
                         <td>`+ignoreNull(json[i].dateArriver)+`</td>
@@ -157,7 +151,7 @@
                   $("#lisDataMawdo3").html(htm);
                 }
               });
-              reload(1,10);
+              reload(0,10);
         });
         $(document).on('click', '#annulation', function(e){
           $("#expediteur").val('');
@@ -166,6 +160,7 @@
           $("#object").val('');
           $("#dossierAssocier").val('');
           $("#dateArriver").val('');
+          addAlert("info","مرحبا","انت تتواجد الان في صفحة تدبير مكتب الضبط");
         });
         function getok(){
           var file = document.getElementById('customFile');
@@ -274,25 +269,52 @@
           }
         });
         $(document).on('click', '#submit', function(e){
-            var form_data = new FormData();
-            form_data.append('form1',$('#sendorinbox').is(':checked'));
-            form_data.append('form2',$('#expediteur').val());
-            form_data.append('form3',$('#destinataire').val());
-            form_data.append('form4',$('#type').val());
-            form_data.append('form5',$('#object').val());
-            form_data.append('form6',$('#dossierAssocier').val());
-            form_data.append('form7',$('#dateArriver').val());
-            form_data.append('form8',$('#fileTmpName').val());
-            form_data.append('form9',$('#remaindDate').val());
-            form_data.append('form10',$('#remaindText').val());
+            var form_data={
+                            "sendorinbox" : $('#sendorinbox').is(':checked'),
+                            "expediteur" : $('#expediteur').val(),
+                            "destinataire" : $('#destinataire').val(),
+                            "type" : $('#type').val(),
+                            "object" : $('#object').val(),
+                            "dossierAssocier" : $('#dossierAssocier').val(),
+                            "dateArriver" : $('#dateArriver').val(),
+                            "fileTmpName" : $('#fileTmpName').val(),
+                            "remaindDate" : $('#remaindDate').val(),
+                            "remaindText" : $('#remaindText').val()
+                          };
+            json = JSON.stringify(form_data);
             $.ajax({
               url : "setRow.php",
               method : "POST",
-              data : form_data,
-              contentType : false,
-              processData : false,
+              data : {json : json},
               success:function(data){
-                alert(data);
+                json=JSON.parse(data);
+                if(isset(json.json)){
+                  row = `
+                    <tr class="table-success">
+                      <td><a href='#'><i class='fa fa-pencil' aria-hidden='true'></i></a></td>
+                      <td><a href='#'><i class="fa fa-clone" aria-hidden="true"></i></a></td>
+                      <td>`+ignoreNull(json.json.num_ordre.substring(0,json.json.num_ordre.length-4))+`</td>
+                      <td>`+ignoreNull(json.json.direction)+`</td>
+                      <td>`+ignoreNull(json.json.dateArriver)+`</td>
+                      <td>`+ignoreNull(json.json.expediteur)+`</td>
+                      <td>`+ignoreNull(json.json.destinataire)+`</td>
+                      <td>`+ignoreNull(json.json.type)+`</td>
+                      <td>`+ignoreNull(json.json.objet)+`</td>
+                      <td>`+ignoreNull(json.json.dossierAssocier)+`</td>
+                      <td><a href='#'><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a></td>
+                      <td><a href='#'><i class="fa fa-file-word-o" aria-hidden="true"></i></a></td>
+                      <td><a href='#'><i class="fa fa-bell" aria-hidden="true"></i></a></td>
+                      <td><a href='#'><i class="fa fa-user-plus" aria-hidden="true"></i></a></td>
+                    </tr>
+                  `;
+                  $('#dataTable tr:first').before(row);
+                }else if(isset(json.validation)){
+                  addAlert("warning","تنبيه",json.validation);
+                }else if (isset(json.insert)) {
+                  addAlert("danger","تحدير",json.insert);
+                }else if (isset(json.error)) {
+                  addAlert("danger","تحدير",json.error);
+                }
               }
             });
           });
@@ -305,8 +327,7 @@
         }
         $user = new User();
         if($user->isLoggedIn()){
-      ?>
-      <?php include 'includes/nav.php';?>
+          include 'includes/nav.php';?>
 
 
       <div class="container">
@@ -408,11 +429,12 @@
             <thead class="thead-dark">
               <tr>
                 <th class="align-middle text-center" style="width: 2%;"></th>
+                <th class="align-middle text-center" style="width: 2%;"></th>
                 <th class="align-middle" style="width: 4%;">الرقم الترتيبي</th>
                 <th class="align-middle" style="width: 4%;">صادر / وارد</th>
                 <th class="align-middle" style="width: 10%;">تاريخ الورود / الاصدار</th>
-                <th class="align-middle" style="width: 22%;">المرسل</th>
-                <th class="align-middle" style="width: 22%;">المرسل اليه</th>
+                <th class="align-middle" style="width: 21%;">المرسل</th>
+                <th class="align-middle" style="width: 21%;">المرسل اليه</th>
                 <th class="align-middle" style="width: 6%;">نوعها</th>
                 <th class="align-middle" style="width: 12%;">موضوعها</th>
                 <th class="align-middle" style="width: 10%;">الملف المرتبط</th>
@@ -427,7 +449,7 @@
             </tbody>
             <tfooter>
               <tr class="">
-                <td colspan="13" class="text-center bt-marge" ><button type="button" onclick="reload(0,0);" class="btn btn-block collapsed btn-default">
+                <td colspan="14" class="text-center bt-marge" ><button type="button" onclick="reload(0,0);" class="btn btn-block collapsed btn-default">
                   <strong><i class="fa fa-caret-down" aria-hidden="true"></i> تحميل المزيد <i class="fa fa-caret-down" aria-hidden="true"></i></strong>
                 </button></td>
               </tr>
