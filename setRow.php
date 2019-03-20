@@ -52,7 +52,9 @@
         if(!$db->insert("register_bureaudordre",$values)){
           $return->insert = "لقد حدث خطأ عند محاولة اضافة التسجيل  !";
         }else{
-          $return->json = $values;
+          $c = $newID - $json->lastId;
+          $db->query("SELECT * FROM register_bureaudordre ORDER bY num_ordre DESC LIMIT 0,{$c}");
+          $return->json = $db->results();
         }
       }else{
         $return->validation = $validation->error(0);

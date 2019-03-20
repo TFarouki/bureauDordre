@@ -279,7 +279,8 @@
                             "dateArriver" : $('#dateArriver').val(),
                             "fileTmpName" : $('#fileTmpName').val(),
                             "remaindDate" : $('#remaindDate').val(),
-                            "remaindText" : $('#remaindText').val()
+                            "remaindText" : $('#remaindText').val(),
+                            "lastId" : $("#dataTable tr:first td:nth-child(3)").html()
                           };
             json = JSON.stringify(form_data);
             $.ajax({
@@ -289,25 +290,29 @@
               success:function(data){
                 json=JSON.parse(data);
                 if(isset(json.json)){
-                  row = `
-                    <tr class="table-success">
-                      <td><a href='#'><i class='fa fa-pencil' aria-hidden='true'></i></a></td>
-                      <td><a href='#'><i class="fa fa-clone" aria-hidden="true"></i></a></td>
-                      <td>`+ignoreNull(json.json.num_ordre.substring(0,json.json.num_ordre.length-4))+`</td>
-                      <td>`+ignoreNull(json.json.direction)+`</td>
-                      <td>`+ignoreNull(json.json.dateArriver)+`</td>
-                      <td>`+ignoreNull(json.json.expediteur)+`</td>
-                      <td>`+ignoreNull(json.json.destinataire)+`</td>
-                      <td>`+ignoreNull(json.json.type)+`</td>
-                      <td>`+ignoreNull(json.json.objet)+`</td>
-                      <td>`+ignoreNull(json.json.dossierAssocier)+`</td>
-                      <td><a href='#'><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a></td>
-                      <td><a href='#'><i class="fa fa-file-word-o" aria-hidden="true"></i></a></td>
-                      <td><a href='#'><i class="fa fa-bell" aria-hidden="true"></i></a></td>
-                      <td><a href='#'><i class="fa fa-user-plus" aria-hidden="true"></i></a></td>
-                    </tr>
-                  `;
+                    row = "";
+                  for (var i = 0; i < json.json.length; i++) {
+                    row += `
+                      <tr>
+                        <td><a href='#'><i class='fa fa-pencil' aria-hidden='true'></i></a></td>
+                        <td><a href='#'><i class="fa fa-clone" aria-hidden="true"></i></a></td>
+                        <td>`+ignoreNull(json.json[i].num_ordre.substring(0,json.json[i].num_ordre.length-4))+`</td>
+                        <td>`+ignoreNull(json.json[i].direction)+`</td>
+                        <td>`+ignoreNull(json.json[i].dateArriver)+`</td>
+                        <td>`+ignoreNull(json.json[i].expediteur)+`</td>
+                        <td>`+ignoreNull(json.json[i].destinataire)+`</td>
+                        <td>`+ignoreNull(json.json[i].type)+`</td>
+                        <td>`+ignoreNull(json.json[i].objet)+`</td>
+                        <td>`+ignoreNull(json.json[i].dossierAssocier)+`</td>
+                        <td><a href='#'><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a></td>
+                        <td><a href='#'><i class="fa fa-file-word-o" aria-hidden="true"></i></a></td>
+                        <td><a href='#'><i class="fa fa-bell" aria-hidden="true"></i></a></td>
+                        <td><a href='#'><i class="fa fa-user-plus" aria-hidden="true"></i></a></td>
+                      </tr>
+                    `;
+                  }
                   $('#dataTable tr:first').before(row);
+                  $('#dataTable tr:first').addClass("table-success");
                 }else if(isset(json.validation)){
                   addAlert("warning","تنبيه",json.validation);
                 }else if (isset(json.insert)) {
