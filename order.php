@@ -91,7 +91,7 @@
                       <tr>
                         <td><a href='#'><i class='fa fa-pencil' aria-hidden='true'></i></a></td>
                         <td><a href='#'><i class="fa fa-clone" aria-hidden="true"></i></a></td>
-                        <td>`+parseInt(ignoreNull(json[i].num_ordre.substring(5)))+`</td>
+                        <td>`+parseInt(ignoreNull(json[i].num_ordre.substring(json[i].num_ordre.length-10)))+`</td>
                         <td>`+ignoreNull(json[i].direction)+`</td>
                         <td>`+ignoreNull(json[i].dateArriver)+`</td>
                         <td>`+ignoreNull(json[i].expediteur)+`</td>
@@ -295,7 +295,7 @@
                       <tr>
                         <td><a href='#'><i class='fa fa-pencil' aria-hidden='true'></i></a></td>
                         <td><a href='#'><i class="fa fa-clone" aria-hidden="true"></i></a></td>
-                        <td>`+ignoreNull(json.json[i].num_ordre.substring(0,json.json[i].num_ordre.length-4))+`</td>
+                        <td>`+parseInt(ignoreNull(json.json[i].num_ordre.substring(json.json[i].num_ordre.length-10)))+`</td>
                         <td>`+ignoreNull(json.json[i].direction)+`</td>
                         <td>`+ignoreNull(json.json[i].dateArriver)+`</td>
                         <td>`+ignoreNull(json.json[i].expediteur)+`</td>

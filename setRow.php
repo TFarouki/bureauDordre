@@ -36,13 +36,8 @@
       if($validation->passed()){
         $db = Db::getInstance();
         $db->query("SELECT * FROM register_bureaudordre where group_reg = '$memeberOfLabel' AND dateEnrg > '".(date("Y")-1)."/12/31'");
-        $newID= $memeberOfId . "" . date("Y");
-        $zerol = 15 - (strlen((string)$newID)+strlen((string)($db->count() + 1)));
-        $zeros = "";
-        for ($i=0; $i < $zerol; $i++) {
-          $zeros .= "0";
-        }
-        $newID .= $zeros . ($db->count() + 1);
+        $newID= $memeberOfId . "" . date("Y") . "" . "0000000000";
+        $newID += $db->count() + 1;
         $values = Array(
                         "num_ordre" => $newID,
                         "dateEnrg" => date("Y-m-d H:i:s"),
@@ -61,7 +56,9 @@
         if(!$db->insert("register_bureaudordre",$values)){
           $return->insert = "لقد حدث خطأ عند محاولة اضافة التسجيل  !";
         }else{
-          $c = $newID - $json->lastId;
+          $lastId = $memeberOfId ."".date("Y").""."0000000000";
+          $lastId += $json->lastId;
+          $c = $newID - $lastId;
           $db->query("SELECT * FROM register_bureaudordre where group_reg = '$memeberOfLabel' AND dateEnrg > '".(date("Y")-1)."/12/31' ORDER bY num_ordre DESC LIMIT 0,{$c}");
           $return->json = $db->results();
         }
