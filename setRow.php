@@ -9,6 +9,8 @@
   }
   $user = new User();
   if($user->isLoggedIn()){
+    $memeberOfLabel = $user->memeberOf("مكتب الضبط")["label"];
+    $memeberOfId = $user->memeberOf("مكتب الضبط")["id"];
     if(isset($_POST["json"])){
       $json = json_decode($_POST["json"]);
       $ajson = (array) $json;
@@ -33,10 +35,16 @@
       ));
       if($validation->passed()){
         $db = Db::getInstance();
-        $db->query("SELECT * FROM register_bureaudordre");
-        $newID= $db->count() + 1;
+        $db->query("SELECT * FROM register_bureaudordre where group_reg = '$memeberOfLabel' AND dateEnrg > '".(date("Y")-1)."/12/31'");
+        $newID= $memeberOfId . "" . date("Y");
+        $zerol = 15 - (strlen((string)$newID)+strlen((string)($db->count() + 1)));
+        $zeros = "";
+        for ($i=0; $i < $zerol; $i++) {
+          $zeros .= "0";
+        }
+        $newID .= $zeros . ($db->count() + 1);
         $values = Array(
-                        "num_ordre" => $newID.date("Y"),
+                        "num_ordre" => $newID,
                         "dateEnrg" => date("Y-m-d H:i:s"),
                         "direction" => ($json->sendorinbox)?"وارد":"صادر",
                         "dateArriver" => $json->dateArriver,
@@ -47,13 +55,14 @@
                         "dossierAssocier" => ($json->dossierAssocier!="")?$json->dossierAssocier:null,
                         "dateRemaind" => ($json->remaindDate!="")?$json->remaindDate:null,
                         "textRemaind" => ($json->remaindText!="")?$json->remaindText:null,
-                        "redacteur" => escape($user->data()->name)
+                        "redacteur" => escape($user->data()->name),
+                        "group_reg" => $memeberOfLabel
                       );
         if(!$db->insert("register_bureaudordre",$values)){
           $return->insert = "لقد حدث خطأ عند محاولة اضافة التسجيل  !";
         }else{
           $c = $newID - $json->lastId;
-          $db->query("SELECT * FROM register_bureaudordre ORDER bY num_ordre DESC LIMIT 0,{$c}");
+          $db->query("SELECT * FROM register_bureaudordre where group_reg = '$memeberOfLabel' AND dateEnrg > '".(date("Y")-1)."/12/31' ORDER bY num_ordre DESC LIMIT 0,{$c}");
           $return->json = $db->results();
         }
       }else{

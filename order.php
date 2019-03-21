@@ -91,7 +91,7 @@
                       <tr>
                         <td><a href='#'><i class='fa fa-pencil' aria-hidden='true'></i></a></td>
                         <td><a href='#'><i class="fa fa-clone" aria-hidden="true"></i></a></td>
-                        <td>`+ignoreNull(json[i].num_ordre.substring(0,json[i].num_ordre.length-4))+`</td>
+                        <td>`+parseInt(ignoreNull(json[i].num_ordre.substring(5)))+`</td>
                         <td>`+ignoreNull(json[i].direction)+`</td>
                         <td>`+ignoreNull(json[i].dateArriver)+`</td>
                         <td>`+ignoreNull(json[i].expediteur)+`</td>
@@ -160,7 +160,6 @@
           $("#object").val('');
           $("#dossierAssocier").val('');
           $("#dateArriver").val('');
-          addAlert("info","مرحبا","انت تتواجد الان في صفحة تدبير مكتب الضبط");
         });
         function getok(){
           var file = document.getElementById('customFile');
@@ -336,7 +335,7 @@
 
 
       <div class="container">
-        <h3 class="text-right title"><i class="fa fa-caret-left" aria-hidden="true"></i> <i class="fa fa-book" aria-hidden="true"></i><u> تدبير سجل مكتب الضبط الالكتروني </u></h3>
+        <h3 class="text-right title"><i class="fa fa-caret-left" aria-hidden="true"></i> <i class="fa fa-book" aria-hidden="true"></i><u> تدبير سجل مكتب الضبط الالكتروني </u> "<?php echo $user->memeberOf("مكتب الضبط")["label"];?>"</h3>
         <div class="text-center controles">
           <button class="btn btn-success" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"><strong><i class="fa fa-pencil-square-o" aria-hidden="true"></i> اضافة تسجيل جديد</strong></button>
           <button class="btn btn-warning" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo"><strong><i class="fa fa-search" aria-hidden="true"></i> بحث</strong></button>

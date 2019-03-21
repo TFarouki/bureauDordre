@@ -100,6 +100,14 @@
       return false;
     }
 
+    public function memeberOf($key){
+      $memeber = json_decode($this->_db->first()->memeber_of,true);
+      if(isset($memeber[$key])){
+        return $memeber[$key];
+      }
+      return false;
+    }
+
     public function isLoggedIn(){
       return $this->_IsLoggedIn;
     }
