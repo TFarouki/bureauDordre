@@ -4,6 +4,7 @@
   }*/
   require_once 'core/init.php';
   $return = new stdClass();
+  $idFile = "";
   if (Session::exists("success")) {
     echo Session::flash("success");
   }
@@ -35,6 +36,27 @@
       ));
       if($validation->passed()){
         $db = Db::getInstance();
+
+        if(isset($json->fileTmpName)){
+          $file = json_decode($json->fileTmpName);
+          $src = "./FileUpload/tmp/".$file->name;
+          $location = "./FileUpload/uploadFile/".date("Y")."/".date("m")."/".date("d")."/";
+          if(!is_dir($location)){
+            mkdir($location, 0777, true);
+          }
+          if (rename($src, $location.$file->name)){
+
+            if(!$db->insert("upfile_register",array("name"=>$file->name,"type"=>$file->type,"size"=>$file->size,"path"=>$location,"statuts"=>""))){
+              $return->uploadReg = "لم يتم تسجيل معلومات الملف بالسجل..!";
+            }
+          }else{
+            $return->move = "لقد وقع خطأ اثناء تحميل الملف ..!";
+          }
+        }
+        $db->query("SELECT idFile FROM upfile_register ORDER BY idFile DESC LIMIT 1");
+        if($db->count()){
+          $idFile = $db->first()->idFile;
+        }
         $db->query("SELECT * FROM register_bureaudordre where group_reg = '$memeberOfLabel' AND dateEnrg > '".(date("Y")-1)."/12/31'");
         $newID= $memeberOfId . "" . date("Y") . "" . "0000000000";
         $newID += $db->count() + 1;
@@ -50,17 +72,18 @@
                         "dossierAssocier" => ($json->dossierAssocier!="")?$json->dossierAssocier:null,
                         "dateRemaind" => ($json->remaindDate!="")?$json->remaindDate:null,
                         "textRemaind" => ($json->remaindText!="")?$json->remaindText:null,
+                        "fileID" => ($idFile!="")?$idFile:null,
                         "redacteur" => escape($user->data()->name),
                         "group_reg" => $memeberOfLabel
                       );
-        if(!$db->insert("register_bureaudordre",$values)){
-          $return->insert = "لقد حدث خطأ عند محاولة اضافة التسجيل  !";
-        }else{
+        if($db->insert("register_bureaudordre",$values)){
           $lastId = $memeberOfId ."".date("Y").""."0000000000";
           $lastId += $json->lastId;
           $c = $newID - $lastId;
           $db->query("SELECT * FROM register_bureaudordre where group_reg = '$memeberOfLabel' AND dateEnrg > '".(date("Y")-1)."/12/31' ORDER bY num_ordre DESC LIMIT 0,{$c}");
           $return->json = $db->results();
+        }else{
+          $return->insert = "لقد حدث خطأ عند محاولة اضافة التسجيل  !";
         }
       }else{
         $return->validation = $validation->error(0);

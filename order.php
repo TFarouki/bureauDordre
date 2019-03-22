@@ -88,7 +88,7 @@
               //var htm = $("#dataTable").html();;
               for (var i = 0; i < json.length; i++) {
                 row = `
-                      <tr>
+                      <tr value="`+json[i].num_ordre+`">
                         <td><a href='#'><i class='fa fa-pencil' aria-hidden='true'></i></a></td>
                         <td><a href='#'><i class="fa fa-clone" aria-hidden="true"></i></a></td>
                         <td>`+parseInt(ignoreNull(json[i].num_ordre.substring(json[i].num_ordre.length-10)))+`</td>
@@ -292,7 +292,7 @@
                     row = "";
                   for (var i = 0; i < json.json.length; i++) {
                     row += `
-                      <tr>
+                      <tr value="`+json.json[i].num_ordre+`">
                         <td><a href='#'><i class='fa fa-pencil' aria-hidden='true'></i></a></td>
                         <td><a href='#'><i class="fa fa-clone" aria-hidden="true"></i></a></td>
                         <td>`+parseInt(ignoreNull(json.json[i].num_ordre.substring(json.json[i].num_ordre.length-10)))+`</td>
@@ -319,7 +319,15 @@
                 }else if (isset(json.error)) {
                   addAlert("danger","تحدير",json.error);
                 }
-              }
+                $('#fileTmpName').val("");
+                $('#filelab').removeClass("bg-success");
+                $('#customFile').html('<i style="font-size:12px;" class="fa fa-clone" aria-hidden="true" id="displayFileName"> نسخة الماسح الضوئي</i>');
+                $('#filelab').removeClass("text-white");
+                $('#displayFileName').html(" نسخة الماسح الضوئي");
+
+                }
+
+
             });
           });
       </script>
