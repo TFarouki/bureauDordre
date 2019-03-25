@@ -49,6 +49,19 @@
         }
       </style>
       <script type="text/javascript">
+        $(document).on("focus","#dateArriver",function(){
+          var d = new Date();
+          var month = d.getMonth()+1;
+          var day = d.getDate();
+          var output =(day<10 ? '0' : '') + day + '/' +
+              (month<10 ? '0' : '') + month + '/' + d.getFullYear() ;
+          this.value = output;
+          this.type="date";
+
+        });
+        $(document).on("blur","#dateArriver",function(){
+          this.type="text";
+        });
         function isset(obj){
           return (typeof obj !== "undefined" && obj)?true:false;
         }
@@ -63,6 +76,7 @@
           });
         }
         $(document).ready(function(){
+
           $("#myInput").on("keyup", function() {
             var value = $(this).val().toLowerCase();
             $("#dataTable tr").filter(function() {
@@ -87,10 +101,22 @@
               var json = JSON.parse(data);
               //var htm = $("#dataTable").html();;
               for (var i = 0; i < json.length; i++) {
+                td='';
+                td2='';
+                if(json[i].fileID!= null){
+                  td=`<td name="file"><a href='#' style='color:#E94B3C;'><i class="fa fa-file-pdf-o" aria-hidden="true" data-toggle="tooltip" title="الاطلاع على النسخة الضوئية!"></i></a></td>`;
+                }else{
+                  td='<td></td>';
+                }
+                if(json[i].dateRemaind != null){
+                  td2=`<td name='remaind'><a href='#' style='color:#88B04B;'><i class="fa fa-bell" aria-hidden="true" data-toggle="tooltip" title="ضبط تنبيه!"></i></a></td>`;
+                }else{
+                  td2=`<td name='remaind'><a href='#' style='color:#88B04B;'><i class="fa fa-bell-o" aria-hidden="true" data-toggle="tooltip" title="ضبط تنبيه!"></i></a></td>`;
+                }
                 row = `
                       <tr value="`+json[i].num_ordre+`">
-                        <td><a href='#'><i class='fa fa-pencil' aria-hidden='true'></i></a></td>
-                        <td><a href='#'><i class="fa fa-clone" aria-hidden="true"></i></a></td>
+                        <td><a href='#' style='color:#EFC050;'><i class='fa fa-pencil' aria-hidden='true' data-toggle="tooltip" title="تغيير!"></i></a></td>
+                        <td><a href='#' style='color:#006E6D;'><i class="fa fa-files-o" aria-hidden="true" data-toggle="tooltip" title="نسخ!"></i></a></td>
                         <td>`+parseInt(ignoreNull(json[i].num_ordre.substring(json[i].num_ordre.length-10)))+`</td>
                         <td>`+ignoreNull(json[i].direction)+`</td>
                         <td>`+ignoreNull(json[i].dateArriver)+`</td>
@@ -98,11 +124,11 @@
                         <td>`+ignoreNull(json[i].destinataire)+`</td>
                         <td>`+ignoreNull(json[i].type)+`</td>
                         <td>`+ignoreNull(json[i].objet)+`</td>
-                        <td>`+ignoreNull(json[i].dossierAssocier)+`</td>
-                        <td><a href='#'><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a></td>
-                        <td><a href='#'><i class="fa fa-file-word-o" aria-hidden="true"></i></a></td>
-                        <td><a href='#'><i class="fa fa-bell" aria-hidden="true"></i></a></td>
-                        <td><a href='#'><i class="fa fa-user-plus" aria-hidden="true"></i></a></td>
+                        <td>`+ignoreNull(json[i].dossierAssocier)+`</td>`+
+                        td+`
+                        <td><a href='#'><i class="fa fa-file-word-o" aria-hidden="true" data-toggle="tooltip" title="تحميل الارسالية!"></i></a></td>`+
+                        td2+`
+                        <td><a href='#' style='color:#6B5B95;'><i class="fa fa-user-plus" aria-hidden="true" data-toggle="tooltip" title="احالة على!"></i></a></td>
                       </tr>
                 `;
                 if($('#dataTable').lenght){
@@ -268,6 +294,7 @@
           }
         });
         $(document).on('click', '#submit', function(e){
+          if(confirm("سيتم اضافة تسجيل جديد :")){
             var form_data={
                             "sendorinbox" : $('#sendorinbox').is(':checked'),
                             "expediteur" : $('#expediteur').val(),
@@ -291,10 +318,20 @@
                 if(isset(json.json)){
                     row = "";
                   for (var i = 0; i < json.json.length; i++) {
+                    if(json.json[i].fileID!= null){
+                      td=`<td name="file"><a href='#' style='color:#E94B3C;'><i class="fa fa-file-pdf-o" aria-hidden="true" data-toggle="tooltip" title="الاطلاع على النسخة الضوئية!"></i></a></td>`;
+                    }else{
+                      td='<td></td>';
+                    }
+                    if(json.json[i].dateRemaind != null){
+                      td2=`<td name='remaind'><a href='#' style='color:#88B04B;'><i class="fa fa-bell" aria-hidden="true" data-toggle="tooltip" title="ضبط تنبيه!"></i></a></td>`;
+                    }else{
+                      td2=`<td name='remaind'><a href='#' style='color:#88B04B;'><i class="fa fa-bell-o" aria-hidden="true" data-toggle="tooltip" title="ضبط تنبيه!"></i></a></td>`;
+                    }
                     row += `
                       <tr value="`+json.json[i].num_ordre+`">
-                        <td><a href='#'><i class='fa fa-pencil' aria-hidden='true'></i></a></td>
-                        <td><a href='#'><i class="fa fa-clone" aria-hidden="true"></i></a></td>
+                        <td><a href='#' style='color:#EFC050;'><i class='fa fa-pencil' aria-hidden='true' data-toggle="tooltip" title="تغيير!"></i></a></td>
+                        <td><a href='#' style='color:#006E6D;'><i class="fa fa-files-o" aria-hidden="true" data-toggle="tooltip" title="نسخ!"></i></a></td>
                         <td>`+parseInt(ignoreNull(json.json[i].num_ordre.substring(json.json[i].num_ordre.length-10)))+`</td>
                         <td>`+ignoreNull(json.json[i].direction)+`</td>
                         <td>`+ignoreNull(json.json[i].dateArriver)+`</td>
@@ -302,15 +339,15 @@
                         <td>`+ignoreNull(json.json[i].destinataire)+`</td>
                         <td>`+ignoreNull(json.json[i].type)+`</td>
                         <td>`+ignoreNull(json.json[i].objet)+`</td>
-                        <td>`+ignoreNull(json.json[i].dossierAssocier)+`</td>
-                        <td><a href='#'><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a></td>
-                        <td><a href='#'><i class="fa fa-file-word-o" aria-hidden="true"></i></a></td>
-                        <td><a href='#'><i class="fa fa-bell" aria-hidden="true"></i></a></td>
-                        <td><a href='#'><i class="fa fa-user-plus" aria-hidden="true"></i></a></td>
+                        <td>`+ignoreNull(json.json[i].dossierAssocier)+`</td>`+
+                        td+
+                        `<td><a href='#'><i class="fa fa-file-word-o" aria-hidden="true" data-toggle="tooltip" title="تحميل الارسالية!"></i></a></td>`+
+                        td2+
+                        `<td><a href='#' style='color:#6B5B95;'><i class="fa fa-user-plus" aria-hidden="true" data-toggle="tooltip" title="احالة على!"></i></a></td>
                       </tr>
                     `;
                   }
-                  $('#dataTable tr:first').before(row);
+                  ($('#dataTable tr').length>0)?$('#dataTable tr:first').before(row):$('#dataTable').html(row);
                   $('#dataTable tr:first').addClass("table-success");
                 }else if(isset(json.validation)){
                   addAlert("warning","تنبيه",json.validation);
@@ -321,15 +358,79 @@
                 }
                 $('#fileTmpName').val("");
                 $('#filelab').removeClass("bg-success");
-                $('#customFile').html('<i style="font-size:12px;" class="fa fa-clone" aria-hidden="true" id="displayFileName"> نسخة الماسح الضوئي</i>');
                 $('#filelab').removeClass("text-white");
+                $('#remaindDate').val("");
+                $('#remaindText').val("");
+                $('#customFile').val("");
                 $('#displayFileName').html(" نسخة الماسح الضوئي");
-
-                }
+              }
 
 
             });
+          }
+        });
+        $(document).on('click','td[name="file"]',function(e){
+          e.preventDefault();
+          if($("#pdfModal").css('display')== 'none'){
+            var id=$(this).closest('tr').children('td:nth-child(3)').html();
+            $.ajax({
+              url : "getDoc.php",
+              method : "POST",
+              data : {json : id},
+              success:function(data){
+                src = JSON.parse(data);
+                $("#embedPdf").attr("src", src);
+              }
+            });
+          }else{
+            $("#embedPdf").removeAttr("src");
+
+          }
+          $("#pdfModal").modal("toggle");
+
+        });
+        $(document).on('click','td[name="remaind"]',function(e){
+          e.preventDefault();
+          var id=$(this).closest('tr').children('td:nth-child(3)').html();
+          $("#idForRemaindEdit").val(id);
+          if(!$(this).children().children().hasClass("fa-bell-o")){
+            json = JSON.stringify({"op":"get","id":id})
+            $.ajax({
+              url : "remaind.php",
+              method : "POST",
+              data : {json : json},
+              success:function(data){
+                rmd=JSON.parse(data);
+                $("#Rdate2").val(rmd.dateRemaind);
+                $("#Rtext2").val(rmd.textRemaind);
+              }
+            });
+          }
+          $("#ModalSetRemaind2").modal("toggle");
+        });
+        $(document).on('click',"#editRemaind",function(){
+          var id=$("#idForRemaindEdit").val();
+          json = JSON.stringify({"op":"set","id":id,"dRemaind":$('#Rdate2').val(),'tRemaind':$('#Rtext2').val()})
+          $.ajax({
+            url : "remaind.php",
+            method : "POST",
+            data : {json : json},
+            success:function(data){
+              if(data!="not ok"){
+                $("#Rdate2").val("");
+                $("#Rtext2").val("");
+                $("#idForRemaindEdit").val("");
+                addAlert('success','لقد ثم التغيير بنجاح','');
+                var tr = $("td").filter(function() {
+                          return $(this).text() == id;
+                        }).closest("tr");
+                alert(tr.eq(4).html());
+              }else{
+                addAlert('danger','تحدير','لم تنجح عملية التحيين');
+              }
+            }
           });
+        });
       </script>
     </head>
     <body>
@@ -378,7 +479,7 @@
                         <input class="form-control" type="text" name="dossierAssocier" placeholder="مرتبطة بملف" id="dossierAssocier" autocomplete="on">
                       </div>
                       <div class="col-3">
-                        <input placeholder="تاريخ الوصول" class="form-control" type="text" name="dateArriver" onfocus="(this.type='date')" onblur="(this.type='text')"  id="dateArriver">
+                        <input placeholder="تاريخ الوصول" class="form-control" type="text" name="dateArriver" id="dateArriver">
                       </div>
                     </div>
                     <div class="form-group row">
@@ -476,6 +577,9 @@
         </datalist>
         <datalist id="lisDataMawdo3">
         </datalist>
+        <div class="modal" id="pdfModal">
+          <embed id="embedPdf" width="100%" height="100%" alt="pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html">
+        </div>
         <div class="modal fade" id="ModalSetRemaind" tabindex="-1" role="dialog" >
           <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -503,7 +607,35 @@
             </div>
           </div>
         </div>
+        <div class="modal fade" id="ModalSetRemaind2" tabindex="-1" role="dialog" >
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header row">
+                <div class="text-right col-6">
+                  <h5 class="modal-title">ضبط تذكير</h5>
+                </div>
+                <div class="col-5"></div>
+                <div class="col-1">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+              </div>
+              <div class="modal-body">
+                <form>
+                  <input placeholder="تاريخ التذكير" class="form-control" type="text" onfocus="(this.type='date')" onblur="(this.type='text')"  id="Rdate2">
+                  <textarea class="form-control" placeholder="ملاحظة"  id="Rtext2"></textarea>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" style="margin-left:5px;" id="editRemaind">حفظ</button>
+                <button type="button" class="btn btn-secondary" id="dismiss_modal" data-dismiss="modal">الغاء</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+      <input type="hidden" id="idForRemaindEdit" name="" value="">
 
       <?php
         /*if ($user->hasPermissions("admin")) {
