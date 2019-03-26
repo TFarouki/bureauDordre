@@ -21,14 +21,19 @@
         $db = Db::getInstance();
         $fullId = $memeberOfId . date("Y") . "0000000000";
         $fullId += $json->id;
-        if($db->update('register_bureaudordre',$fullId,array('dateRemaind'=>$json->dRemaind,'textRemaind'=>$json->tRemaind))){
+        if(!isset($json->dRemaind) || empty($json->dRemaind)){
+          $json->dRemaind = NULL;
+          $json->tRemaind = NULL;
+        }
+        if($db->update('register_bureaudordre',array('num_ordre'=>$fullId),array('dateRemaind'=>$json->dRemaind,'textRemaind'=>$json->tRemaind))){
           if($json->dRemaind != "" || $json->dRemaind != null){
             echo "fa-bell";
           }else{
-            echo "fa-bell-O";
+            echo "fa-bell-o";
           }
         }else{
-          echo "not ok";
+          echo "not ok <br>".$fullId."<br>";
+          print_r($db->getSql());
         }
       }
     }

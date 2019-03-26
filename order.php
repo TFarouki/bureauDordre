@@ -116,7 +116,7 @@
                 row = `
                       <tr value="`+json[i].num_ordre+`">
                         <td><a href='#' style='color:#EFC050;'><i class='fa fa-pencil' aria-hidden='true' data-toggle="tooltip" title="تغيير!"></i></a></td>
-                        <td><a href='#' style='color:#006E6D;'><i class="fa fa-files-o" aria-hidden="true" data-toggle="tooltip" title="نسخ!"></i></a></td>
+                        <td name="editRow"><a href='#' style='color:#006E6D;'><i class="fa fa-files-o" aria-hidden="true" data-toggle="tooltip" title="نسخ!"></i></a></td>
                         <td>`+parseInt(ignoreNull(json[i].num_ordre.substring(json[i].num_ordre.length-10)))+`</td>
                         <td>`+ignoreNull(json[i].direction)+`</td>
                         <td>`+ignoreNull(json[i].dateArriver)+`</td>
@@ -331,7 +331,7 @@
                     row += `
                       <tr value="`+json.json[i].num_ordre+`">
                         <td><a href='#' style='color:#EFC050;'><i class='fa fa-pencil' aria-hidden='true' data-toggle="tooltip" title="تغيير!"></i></a></td>
-                        <td><a href='#' style='color:#006E6D;'><i class="fa fa-files-o" aria-hidden="true" data-toggle="tooltip" title="نسخ!"></i></a></td>
+                        <td name="editRow"><a href='#' style='color:#006E6D;'><i class="fa fa-files-o" aria-hidden="true" data-toggle="tooltip" title="نسخ!"></i></a></td>
                         <td>`+parseInt(ignoreNull(json.json[i].num_ordre.substring(json.json[i].num_ordre.length-10)))+`</td>
                         <td>`+ignoreNull(json.json[i].direction)+`</td>
                         <td>`+ignoreNull(json.json[i].dateArriver)+`</td>
@@ -393,6 +393,8 @@
           e.preventDefault();
           var id=$(this).closest('tr').children('td:nth-child(3)').html();
           $("#idForRemaindEdit").val(id);
+          $("#Rdate2").val('');
+          $("#Rtext2").val('');
           if(!$(this).children().children().hasClass("fa-bell-o")){
             json = JSON.stringify({"op":"get","id":id})
             $.ajax({
@@ -410,7 +412,7 @@
         });
         $(document).on('click',"#editRemaind",function(){
           var id=$("#idForRemaindEdit").val();
-          json = JSON.stringify({"op":"set","id":id,"dRemaind":$('#Rdate2').val(),'tRemaind':$('#Rtext2').val()})
+          json = JSON.stringify({"op":"set","id":id,"dRemaind":$('#Rdate2').val(),'tRemaind':$('#Rtext2').val()});
           $.ajax({
             url : "remaind.php",
             method : "POST",
@@ -421,13 +423,32 @@
                 $("#Rtext2").val("");
                 $("#idForRemaindEdit").val("");
                 addAlert('success','لقد ثم التغيير بنجاح','');
-                var tr = $("td").filter(function() {
-                          return $(this).text() == id;
-                        }).closest("tr");
-                alert(tr.eq(4).html());
+                var td = $("td").filter(function(){return $(this).text() == id;}).closest("tr").children().filter(function(){return $(this).attr("name")=="remaind";}).children().children();
+                td.removeAttr("class");
+                td.addClass("fa "+data);
               }else{
                 addAlert('danger','تحدير','لم تنجح عملية التحيين');
               }
+            }
+          });
+          $("#ModalSetRemaind2").modal("toggle");;
+        });
+        $(document).on('click','td[name="editRow"]',function(e){
+          e.preventDefault();
+          var id=$(this).closest('tr').children('td:nth-child(3)').html();
+          $("#idForEditRow").val(id);
+          $("#nbRow").val(id);
+          $("#ModalSetRemaind3").modal("toggle");
+        });
+        $(document).on('click',"#goEditRow",function(){
+          var id=$("#idForEditRow").val();
+          json = JSON.stringify({"id":id,"nbCopy":$("#nbCopy").val()});
+          $.ajax({
+            url : "mult.php",
+            method : "POST",
+            data : {json : json},
+            success:function(data){
+
             }
           });
         });
@@ -634,8 +655,42 @@
             </div>
           </div>
         </div>
+        <div class="modal fade" id="ModalSetRemaind3" tabindex="-1" role="dialog" >
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header row">
+                <div class="text-right col-6">
+                  <h5 class="modal-title">ضبط تذكير</h5>
+                </div>
+                <div class="col-5"></div>
+                <div class="col-1">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+              </div>
+              <div class="modal-body">
+                <form>
+                  <div class="input-group row" style="margin-bottom:10px;">
+                    <label for="nbRow" class="col-4" >الرقم الترتيبي</label>
+                    <input type="text" name="nbRow" id="nbRow" value="" class="col-4" disabled>
+                  </div>
+                  <div class="input-group row">
+                    <label for="nbRow" class="col-4">عدد النسخ</label>
+                    <input type="number" name="nbRow" id="nbCopy" class="col-4">
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" style="margin-left:5px;" id="goEditRow">حفظ</button>
+                <button type="button" class="btn btn-secondary" id="dismiss_modal" data-dismiss="modal">الغاء</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <input type="hidden" id="idForRemaindEdit" name="" value="">
+      <input type="hidden" id="idForEditRow" name="" value="">
 
       <?php
         /*if ($user->hasPermissions("admin")) {

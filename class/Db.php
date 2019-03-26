@@ -66,6 +66,7 @@
     public function update($table , $id, $fields){
       $set = "";
       $x=1;
+      $idName = array_keys($id)[0];
       foreach ($fields as $name => $value) {
         $set .= "$name = ?";
         if ($x<count($fields)) {
@@ -74,7 +75,7 @@
         $x++;
       }
 
-      $sql="UPDATE {$table} SET {$set} WHERE id = {$id}";
+      $sql="UPDATE {$table} SET {$set} WHERE {$idName} = {$id[$idName]}";
       if(!$this->query($sql,$fields)->error()){
         return true;
       }
@@ -125,6 +126,10 @@
 
     public function first(){
       return $this->results()[0];
+    }
+
+    public function getSql(){
+      return $this->_query;
     }
   }
 ?>
