@@ -115,8 +115,8 @@
                 }
                 row = `
                       <tr value="`+json[i].num_ordre+`">
-                        <td><a href='#' style='color:#EFC050;'><i class='fa fa-pencil' aria-hidden='true' data-toggle="tooltip" title="تغيير!"></i></a></td>
-                        <td name="editRow"><a href='#' style='color:#006E6D;'><i class="fa fa-files-o" aria-hidden="true" data-toggle="tooltip" title="نسخ!"></i></a></td>
+                        <td name="editRow"><a href='#' style='color:#EFC050;'><i class='fa fa-pencil' aria-hidden='true' data-toggle="tooltip" title="تغيير!"></i></a></td>
+                        <td name="multRow"><a href='#' style='color:#006E6D;'><i class="fa fa-files-o" aria-hidden="true" data-toggle="tooltip" title="نسخ!"></i></a></td>
                         <td>`+parseInt(ignoreNull(json[i].num_ordre.substring(json[i].num_ordre.length-10)))+`</td>
                         <td>`+ignoreNull(json[i].direction)+`</td>
                         <td>`+ignoreNull(json[i].dateArriver)+`</td>
@@ -330,8 +330,8 @@
                     }
                     row += `
                       <tr value="`+json.json[i].num_ordre+`">
-                        <td><a href='#' style='color:#EFC050;'><i class='fa fa-pencil' aria-hidden='true' data-toggle="tooltip" title="تغيير!"></i></a></td>
-                        <td name="editRow"><a href='#' style='color:#006E6D;'><i class="fa fa-files-o" aria-hidden="true" data-toggle="tooltip" title="نسخ!"></i></a></td>
+                        <td name="editRow"><a href='#' style='color:#EFC050;'><i class='fa fa-pencil' aria-hidden='true' data-toggle="tooltip" title="تغيير!"></i></a></td>
+                        <td name="multRow"><a href='#' style='color:#006E6D;'><i class="fa fa-files-o" aria-hidden="true" data-toggle="tooltip" title="نسخ!"></i></a></td>
                         <td>`+parseInt(ignoreNull(json.json[i].num_ordre.substring(json.json[i].num_ordre.length-10)))+`</td>
                         <td>`+ignoreNull(json.json[i].direction)+`</td>
                         <td>`+ignoreNull(json.json[i].dateArriver)+`</td>
@@ -433,24 +433,71 @@
           });
           $("#ModalSetRemaind2").modal("toggle");;
         });
-        $(document).on('click','td[name="editRow"]',function(e){
+        $(document).on('click','td[name="multRow"]',function(e){
           e.preventDefault();
           var id=$(this).closest('tr').children('td:nth-child(3)').html();
-          $("#idForEditRow").val(id);
+          $("#idForMultRow").val(id);
           $("#nbRow").val(id);
           $("#ModalSetRemaind3").modal("toggle");
         });
-        $(document).on('click',"#goEditRow",function(){
-          var id=$("#idForEditRow").val();
-          json = JSON.stringify({"id":id,"nbCopy":$("#nbCopy").val()});
+        $(document).on('click',"#goMultRow",function(){
+          var id=$("#idForMultRow").val();
+          var copy = $("#nbCopy").val()
+          json = JSON.stringify({"id":id,"nbCopy":$("#nbCopy").val(),"fristRow":$('#dataTable tr:first td:eq(2)').html()});
           $.ajax({
             url : "mult.php",
             method : "POST",
             data : {json : json},
             success:function(data){
+              json=JSON.parse(data);
+              if(isset(json)){
+                  row = "";
+                for (var i = 0; i < json.length; i++) {
+                  if(json[i].fileID!= null){
+                    td=`<td name="file"><a href='#' style='color:#E94B3C;'><i class="fa fa-file-pdf-o" aria-hidden="true" data-toggle="tooltip" title="الاطلاع على النسخة الضوئية!"></i></a></td>`;
+                  }else{
+                    td='<td></td>';
+                  }
+                  if(json[i].dateRemaind != null){
+                    td2=`<td name='remaind'><a href='#' style='color:#88B04B;'><i class="fa fa-bell" aria-hidden="true" data-toggle="tooltip" title="ضبط تنبيه!"></i></a></td>`;
+                  }else{
+                    td2=`<td name='remaind'><a href='#' style='color:#88B04B;'><i class="fa fa-bell-o" aria-hidden="true" data-toggle="tooltip" title="ضبط تنبيه!"></i></a></td>`;
+                  }
+                  if(i+1 <= copy){
+                    row += `<tr value="`+json[i].num_ordre+`" class="table-info">`;
+                  }else {
+                    row += `<tr value="`+json[i].num_ordre+`">`;
+                  }
+                  row += `
 
+                      <td name="editRow"><a href='#' style='color:#EFC050;'><i class='fa fa-pencil' aria-hidden='true' data-toggle="tooltip" title="تغيير!"></i></a></td>
+                      <td name="multRow"><a href='#' style='color:#006E6D;'><i class="fa fa-files-o" aria-hidden="true" data-toggle="tooltip" title="نسخ!"></i></a></td>
+                      <td>`+parseInt(ignoreNull(json[i].num_ordre.substring(json[i].num_ordre.length-10)))+`</td>
+                      <td>`+ignoreNull(json[i].direction)+`</td>
+                      <td>`+ignoreNull(json[i].dateArriver)+`</td>
+                      <td>`+ignoreNull(json[i].expediteur)+`</td>
+                      <td>`+ignoreNull(json[i].destinataire)+`</td>
+                      <td>`+ignoreNull(json[i].type)+`</td>
+                      <td>`+ignoreNull(json[i].objet)+`</td>
+                      <td>`+ignoreNull(json[i].dossierAssocier)+`</td>`+
+                      td+
+                      `<td><a href='#'><i class="fa fa-file-word-o" aria-hidden="true" data-toggle="tooltip" title="تحميل الارسالية!"></i></a></td>`+
+                      td2+
+                      `<td><a href='#' style='color:#6B5B95;'><i class="fa fa-user-plus" aria-hidden="true" data-toggle="tooltip" title="احالة على!"></i></a></td>
+                    </tr>
+                  `;
+                }
+                ($('#dataTable tr').length>0)?$('#dataTable tr:first').before(row):$('#dataTable').html(row);
+              }
             }
           });
+          $("#ModalSetRemaind3").modal("toggle");
+        });
+        $(document).on('click','td[name="editRow"]',function(e){
+          e.preventDefault();
+          var id=$(this).closest('tr').children('td:nth-child(3)').html();
+          $("#idForEditRow").val(id);
+          $("#ModalSetRemaind4").modal("toggle");
         });
       </script>
     </head>
@@ -682,6 +729,39 @@
                 </form>
               </div>
               <div class="modal-footer">
+                <button type="button" class="btn btn-primary" style="margin-left:5px;" id="goMultRow">حفظ</button>
+                <button type="button" class="btn btn-secondary" id="dismiss_modal" data-dismiss="modal">الغاء</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal fade" id="ModalSetRemaind4" tabindex="-1" role="dialog" >
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header row">
+                <div class="text-right col-6">
+                  <h5 class="modal-title">تغيير التسجيل</h5>
+                </div>
+                <div class="col-5"></div>
+                <div class="col-1">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+              </div>
+              <div class="modal-body ">
+                <form>
+                  <div class="input-group row" style="margin-bottom:10px;">
+                    <label for="nbRow" class="col-4" >الرقم الترتيبي</label>
+                    <input type="text" name="nbRow" id="nbRow" value="" class="col-4" disabled>
+                  </div>
+                  <div class="input-group row">
+                    <label for="nbRow" class="col-4">عدد النسخ</label>
+                    <input type="number" name="nbRow" id="nbCopy" class="col-4">
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
                 <button type="button" class="btn btn-primary" style="margin-left:5px;" id="goEditRow">حفظ</button>
                 <button type="button" class="btn btn-secondary" id="dismiss_modal" data-dismiss="modal">الغاء</button>
               </div>
@@ -690,6 +770,7 @@
         </div>
       </div>
       <input type="hidden" id="idForRemaindEdit" name="" value="">
+      <input type="hidden" id="idForMultRow" name="" value="">
       <input type="hidden" id="idForEditRow" name="" value="">
 
       <?php
