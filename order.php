@@ -57,7 +57,6 @@
               (month<10 ? '0' : '') + month + '/' + d.getFullYear() ;
           this.value = output;
           this.type="date";
-
         });
         $(document).on("blur","#dateArriver",function(){
           this.type="text";
@@ -76,7 +75,6 @@
           });
         }
         $(document).ready(function(){
-
           $("#myInput").on("keyup", function() {
             var value = $(this).val().toLowerCase();
             $("#dataTable tr").filter(function() {
@@ -106,7 +104,7 @@
                 if(json[i].fileID!= null){
                   td=`<td name="file"><a href='#' style='color:#E94B3C;'><i class="fa fa-file-pdf-o" aria-hidden="true" data-toggle="tooltip" title="الاطلاع على النسخة الضوئية!"></i></a></td>`;
                 }else{
-                  td='<td></td>';
+                  td=`<td name="addFile"><a href='#' style='color:#777;'><i class="fa fa-file-pdf-o" aria-hidden="true" data-toggle="tooltip" title="اضافة النسخة الضوئية!"></i></a></td>`
                 }
                 if(json[i].dateRemaind != null){
                   td2=`<td name='remaind'><a href='#' style='color:#88B04B;'><i class="fa fa-bell" aria-hidden="true" data-toggle="tooltip" title="ضبط تنبيه!"></i></a></td>`;
@@ -114,7 +112,7 @@
                   td2=`<td name='remaind'><a href='#' style='color:#88B04B;'><i class="fa fa-bell-o" aria-hidden="true" data-toggle="tooltip" title="ضبط تنبيه!"></i></a></td>`;
                 }
                 row = `
-                      <tr value="`+json[i].num_ordre+`">
+                      <tr id="`+json[i].num_ordre+`">
                         <td name="editRow"><a href='#' style='color:#EFC050;'><i class='fa fa-pencil' aria-hidden='true' data-toggle="tooltip" title="تغيير!"></i></a></td>
                         <td name="multRow"><a href='#' style='color:#006E6D;'><i class="fa fa-files-o" aria-hidden="true" data-toggle="tooltip" title="نسخ!"></i></a></td>
                         <td>`+parseInt(ignoreNull(json[i].num_ordre.substring(json[i].num_ordre.length-10)))+`</td>
@@ -208,7 +206,7 @@
           document.getElementById('dismiss_modal').click();
         }
         function isChecked(x){
-            $("#sendorinbox").attr('checked', $(x).children().hasClass('off'));
+            $("#sendorinbox2").attr('checked', $(x).children().hasClass('off'));
             if($(x).children().hasClass('off')){
               $('#destinataire').val('رئيس مصلحة كتابة الضبط بالمحكمة الادارية بأكادير');
               $('#expediteur').val('');
@@ -218,6 +216,7 @@
               $('#destinataire').val('');
             }
         }
+
         $(document).on('change','#customFile',function(){
 
           var file = document.getElementById('customFile');
@@ -321,7 +320,7 @@
                     if(json.json[i].fileID!= null){
                       td=`<td name="file"><a href='#' style='color:#E94B3C;'><i class="fa fa-file-pdf-o" aria-hidden="true" data-toggle="tooltip" title="الاطلاع على النسخة الضوئية!"></i></a></td>`;
                     }else{
-                      td='<td></td>';
+                      td=`<td name="addFile"><a href='#' style='color:#777;'><i class="fa fa-file-pdf-o" aria-hidden="true" data-toggle="tooltip" title="اضافة النسخة الضوئية"!"></i></a></td>`;
                     }
                     if(json.json[i].dateRemaind != null){
                       td2=`<td name='remaind'><a href='#' style='color:#88B04B;'><i class="fa fa-bell" aria-hidden="true" data-toggle="tooltip" title="ضبط تنبيه!"></i></a></td>`;
@@ -329,7 +328,7 @@
                       td2=`<td name='remaind'><a href='#' style='color:#88B04B;'><i class="fa fa-bell-o" aria-hidden="true" data-toggle="tooltip" title="ضبط تنبيه!"></i></a></td>`;
                     }
                     row += `
-                      <tr value="`+json.json[i].num_ordre+`">
+                      <tr id="`+json.json[i].num_ordre+`">
                         <td name="editRow"><a href='#' style='color:#EFC050;'><i class='fa fa-pencil' aria-hidden='true' data-toggle="tooltip" title="تغيير!"></i></a></td>
                         <td name="multRow"><a href='#' style='color:#006E6D;'><i class="fa fa-files-o" aria-hidden="true" data-toggle="tooltip" title="نسخ!"></i></a></td>
                         <td>`+parseInt(ignoreNull(json.json[i].num_ordre.substring(json.json[i].num_ordre.length-10)))+`</td>
@@ -464,9 +463,9 @@
                     td2=`<td name='remaind'><a href='#' style='color:#88B04B;'><i class="fa fa-bell-o" aria-hidden="true" data-toggle="tooltip" title="ضبط تنبيه!"></i></a></td>`;
                   }
                   if(i+1 <= copy){
-                    row += `<tr value="`+json[i].num_ordre+`" class="table-info">`;
+                    row += `<tr id="`+json[i].num_ordre+`" class="table-info">`;
                   }else {
-                    row += `<tr value="`+json[i].num_ordre+`">`;
+                    row += `<tr id="`+json[i].num_ordre+`">`;
                   }
                   row += `
 
@@ -495,9 +494,57 @@
         });
         $(document).on('click','td[name="editRow"]',function(e){
           e.preventDefault();
-          var id=$(this).closest('tr').children('td:nth-child(3)').html();
-          $("#idForEditRow").val(id);
-          $("#ModalSetRemaind4").modal("toggle");
+          //var id=$(this).closest('tr').children('td:nth-child(3)').html();
+          var id=$(this).closest('tr').attr('id');
+          $("#idForEditRow2").val(id);
+          $("#expediteur2").val("");
+          $("#destinataire2").val("");
+          $("#type2").val("");
+          $("#object2").val("");
+          $("#dossierAssocier2").val("");
+          $("#dateArriver2").val("");
+          json = JSON.stringify({"id":id});
+          $.ajax({
+            url : "getRow.php",
+            method : "POST",
+            data : {json : json},
+            success:function(data){
+              json=JSON.parse(data);
+              if(json.direction == "وارد"){
+                $("#sendorinbox2").bootstrapToggle('on');
+              }else{
+                $("#sendorinbox2").bootstrapToggle('off');
+              }
+              $("#expediteur2").val(json.expediteur);
+              $("#destinataire2").val(json.destinataire);
+              $("#type2").val(json.type);
+              $("#objct2").val(json.objet);
+              $("#dossierAssocier2").val(json.dossierAssocier);
+              $("#dateArriver2").val(json.dateArriver);
+            }
+          });
+          $("#ModalEditRow").modal("toggle");
+        });
+        $(document).on('click',"#goEditRow3",function(){
+          var id=$("#idForEditRow2").val();
+          json = JSON.stringify({"id":id,"direction":($('#sendorinbox2').is(':checked'))?"وارد":"صادر","expediteur":$("#expediteur2").val(),"destinataire":$('#destinataire2').val(),"type":$("#type2").val(),"object":$("#object2").val(),"dossierAssocier":$("#dossierAssocier2").val(),"dateArriver":$("#dateArriver2").val()});
+          $.ajax({
+            url : "editRow.php",
+            method : "POST",
+            data : {json : json},
+            success:function(data){
+              if(data == "ok"){
+                $('#myTable tr[id='+id+'] td:eq(3)').html(($('#sendorinbox2').is(':checked'))?"وارد":"صادر");
+                $('#myTable tr[id='+id+'] td:eq(5)').html($("#expediteur2").val());
+                $('#myTable tr[id='+id+'] td:eq(6)').html($("#destinataire2").val());
+                $('#myTable tr[id='+id+'] td:eq(7)').html($("#type2").val());
+                $('#myTable tr[id='+id+'] td:eq(8)').html($("#objct2").val());
+                $('#myTable tr[id='+id+'] td:eq(9)').html($("#dossierAssocier2").val());
+                $('#myTable tr[id='+id+'] td:eq(4)').html($("#dateArriver2").val());
+              }
+            }
+          });
+          $("#ModalEditRow").modal("toggle");
         });
       </script>
     </head>
@@ -735,8 +782,8 @@
             </div>
           </div>
         </div>
-        <div class="modal fade" id="ModalSetRemaind4" tabindex="-1" role="dialog" >
-          <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal fade" id="ModalEditRow" tabindex="-1" role="dialog" >
+          <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
             <div class="modal-content">
               <div class="modal-header row">
                 <div class="text-right col-6">
@@ -751,19 +798,36 @@
               </div>
               <div class="modal-body ">
                 <form>
-                  <div class="input-group row" style="margin-bottom:10px;">
-                    <label for="nbRow" class="col-4" >الرقم الترتيبي</label>
-                    <input type="text" name="nbRow" id="nbRow" value="" class="col-4" disabled>
+                  <div class="form-group row">
+                    <div id="forcheck2" class="col-2">
+                      <input type="checkbox" name="sendorinbox2" class="toogle-switch" id="sendorinbox2" data-width="100" data-toggle="toggle" data-on="وارد" data-off="صادر" data-onstyle="success" data-offstyle="warning">
+                    </div>
+                    <div class="col-5">
+                      <input class="form-control" list="lisDataAtraf" type="text" name="expediteur" placeholder="اسم المرسل" id="expediteur2" value="رئيس مصلحة كتابة الضبط بالمحكمة الادارية بأكادير">
+                    </div>
+                    <div class="col-5">
+                      <input class="form-control" list="lisDataAtraf" type="text" name="destinataire" placeholder="اسم المرسل اليه" id="destinataire2">
+                    </div>
                   </div>
-                  <div class="input-group row">
-                    <label for="nbRow" class="col-4">عدد النسخ</label>
-                    <input type="number" name="nbRow" id="nbCopy" class="col-4">
+                  <div class="form-group row">
+                    <div class="col-3">
+                      <input class="form-control" list="lisDataNaw3" type="text" name="type" placeholder="نوعها" id="type2">
+                    </div>
+                    <div class="col-3">
+                      <input class="form-control" list="lisDataMawdo3" type="text" name="object" placeholder="موضوعها" id="objct2">
+                    </div>
+                    <div class="col-3">
+                      <input class="form-control" type="text" name="dossierAssocier" placeholder="مرتبطة بملف" id="dossierAssocier2" autocomplete="on">
+                    </div>
+                    <div class="col-3">
+                      <input placeholder="تاريخ الوصول" class="form-control" type="text" name="dateArriver" id="dateArriver2">
+                    </div>
                   </div>
                 </form>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-primary" style="margin-left:5px;" id="goEditRow">حفظ</button>
-                <button type="button" class="btn btn-secondary" id="dismiss_modal" data-dismiss="modal">الغاء</button>
+                <button type="button" class="btn btn-primary" style="margin-left:5px;" id="goEditRow3">تغيير</button>
+                <button type="button" class="btn btn-secondary" id="dismiss_modal2" data-dismiss="modal">الغاء</button>
               </div>
             </div>
           </div>
@@ -772,6 +836,7 @@
       <input type="hidden" id="idForRemaindEdit" name="" value="">
       <input type="hidden" id="idForMultRow" name="" value="">
       <input type="hidden" id="idForEditRow" name="" value="">
+      <input type="hidden" id="idForEditRow2" name="" value="">
 
       <?php
         /*if ($user->hasPermissions("admin")) {
