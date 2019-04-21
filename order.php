@@ -4,6 +4,9 @@
     <head>
       <?php include 'includes/include_head.php';?>
       <style media="screen">
+          .container{
+            margin-top: 50px;
+          }
           .small-text{
             font-size: 10px;
           }
@@ -42,11 +45,17 @@
             margin: 10px;
           }
           .bnt-control{
-          margin: 0 auto;
-          width: 24%;
-          padding: 0;
-          height: 40px;
-        }
+            margin: 0 auto;
+            width: 24%;
+            padding: 0;
+            height: 40px;
+          }
+          .caret-off::after {
+             visibility:hidden;
+		      }
+          .dropdown-item:hover{
+            background-color: rgba(255,255,255,0.5);
+          }
       </style>
       <script type="text/javascript">
         $(document).on("focus","#dateArriver",function(){
@@ -61,11 +70,14 @@
         $(document).on("blur","#dateArriver",function(){
           this.type="text";
         });
+        $(document).on("focus","#dateArriver2",function(){
+          this.type="date";
+        });
         function isset(obj){
           return (typeof obj !== "undefined" && obj)?true:false;
         }
         function addAlert(type,strongMsg,msg){
-          htm = `<div class="alert alert-`+type+` alert-dismissible fade in text-center" id="myNewAlert">
+          htm = `<div style="margin-top:50px;" class="alert alert-`+type+` alert-dismissible fade in text-center fixed-top" id="myNewAlert">
                   <button type="button" class="close" data-dismiss="alert">&times;</button>
                   <strong>`+strongMsg+`!</strong> `+msg+`.
                 </div>`;
@@ -96,15 +108,21 @@
             method:"POST",
             data:{json:json},
             success:function(data){
+              var dUp1=`<div class="dropup">`;
+              var dUp2=`<div class="dropdown-menu bg-primary"  style="margin-left:-90px;">`;
+              var dUp3=`  <a class="dropdown-item " href="#" style="color:#fff"><i class="fa fa-folder-open-o" aria-hidden="true"></i>الاطلاع على الملف</a>`;
+              var dUp4=`  <a class="dropdown-item " href="#"  style="color:#fff"><i class="fa fa-plus" aria-hidden="true"></i>اضافة او تغيير ملف</a>
+                        </div>
+                      </div>`;
               var json = JSON.parse(data);
               //var htm = $("#dataTable").html();;
               for (var i = 0; i < json.length; i++) {
                 td='';
                 td2='';
                 if(json[i].fileID!= null){
-                  td=`<td name="file"><a href='#' style='color:#E94B3C;'><i class="fa fa-file-pdf-o" aria-hidden="true" data-toggle="tooltip" title="الاطلاع على النسخة الضوئية!"></i></a></td>`;
+                  td=`<td name="file">`+dUp1+`<a class="dropdown-toggle caret-off" data-toggle="dropdown" href='#' style='color:#E94B3C;'><i class="fa fa-file-pdf-o" aria-hidden="true" data-toggle="tooltip" title="الاطلاع على النسخة الضوئية!"></i></a>`+dUp2+dUp3+dUp4+`</td>`;
                 }else{
-                  td=`<td name="addFile"><a href='#' style='color:#777;'><i class="fa fa-file-pdf-o" aria-hidden="true" data-toggle="tooltip" title="اضافة النسخة الضوئية!"></i></a></td>`
+                  td=`<td name="addFile">`+dUp1+`<a class="dropdown-toggle caret-off" data-toggle="dropdown" href='#' style='color:#777;'><i class="fa fa-file-pdf-o" aria-hidden="true" data-toggle="tooltip" title="اضافة النسخة الضوئية!"></i></a>`+dUp2+dUp4+`</td>`
                 }
                 if(json[i].dateRemaind != null){
                   td2=`<td name='remaind'><a href='#' style='color:#88B04B;'><i class="fa fa-bell" aria-hidden="true" data-toggle="tooltip" title="ضبط تنبيه!"></i></a></td>`;
@@ -313,14 +331,20 @@
               method : "POST",
               data : {json : json},
               success:function(data){
+                var dUp1=`<div class="dropup">`;
+                var dUp2=`<div class="dropdown-menu bg-primary">`;
+                var dUp3=`  <a class="dropdown-item " href="#" style="color:#fff"><i class="fa fa-folder-open-o" aria-hidden="true"></i>الاطلاع على الملف</a>`;
+                var dUp4=`  <a class="dropdown-item " href="#"  style="color:#fff"><i class="fa fa-plus" aria-hidden="true"></i>اضافة او تغيير ملف</a>
+                          </div>
+                        </div>`;
                 json=JSON.parse(data);
                 if(isset(json.json)){
                     row = "";
                   for (var i = 0; i < json.json.length; i++) {
                     if(json.json[i].fileID!= null){
-                      td=`<td name="file"><a href='#' style='color:#E94B3C;'><i class="fa fa-file-pdf-o" aria-hidden="true" data-toggle="tooltip" title="الاطلاع على النسخة الضوئية!"></i></a></td>`;
+                      td=`<td name="file">`+dUp1+`<a class="dropdown-toggle caret-off" data-toggle="dropdown" href='#' style='color:#E94B3C;'><i class="fa fa-file-pdf-o" aria-hidden="true" data-toggle="tooltip" title="الاطلاع على النسخة الضوئية!"></i></a>`+dUp2+dUp3+dUp4+`</td>`;
                     }else{
-                      td=`<td name="addFile"><a href='#' style='color:#777;'><i class="fa fa-file-pdf-o" aria-hidden="true" data-toggle="tooltip" title="اضافة النسخة الضوئية"!"></i></a></td>`;
+                      td=`<td name="addFile">`+dUp1+`<a class="dropdown-toggle caret-off" data-toggle="dropdown" href='#' style='color:#777;'><i class="fa fa-file-pdf-o" aria-hidden="true" data-toggle="tooltip" title="اضافة النسخة الضوئية!"></i></a>`+dUp2+dUp4+`</td>`
                     }
                     if(json.json[i].dateRemaind != null){
                       td2=`<td name='remaind'><a href='#' style='color:#88B04B;'><i class="fa fa-bell" aria-hidden="true" data-toggle="tooltip" title="ضبط تنبيه!"></i></a></td>`;
@@ -368,25 +392,35 @@
             });
           }
         });
-        $(document).on('click','td[name="file"]',function(e){
+        $(document).on('click','td[name="file"] div div a:first-child',function(e){
           e.preventDefault();
           if($("#pdfModal").css('display')== 'none'){
+            $("#embedPdf").attr("src",'');
             var id=$(this).closest('tr').children('td:nth-child(3)').html();
             $.ajax({
               url : "getDoc.php",
               method : "POST",
               data : {json : id},
               success:function(data){
-                src = JSON.parse(data);
-                $("#embedPdf").attr("src", src);
+                response = JSON.parse(data);
+                if(isset(response.path)){
+                  $("#embedPdf").attr("src", response.path);
+                  $("#pdfModal").modal("toggle");
+                }else{
+                  addAlert('danger','تنبيه',response.error)
+                }
               }
             });
           }else{
             $("#embedPdf").removeAttr("src");
-
           }
-          $("#pdfModal").modal("toggle");
 
+
+        });
+        $(document).on('click','td[name="file"] div div a:nth-child(2)',function(e){
+          e.preventDefault();
+          $("#idForSetNewScan").val($(this).closest('tr').attr('id'));
+          $("#ModalSetNewScan").modal("toggle");
         });
         $(document).on('click','td[name="remaind"]',function(e){
           e.preventDefault();
@@ -448,14 +482,20 @@
             method : "POST",
             data : {json : json},
             success:function(data){
+              var dUp1=`<div class="dropup">`;
+              var dUp2=`<div class="dropdown-menu bg-primary">`;
+              var dUp3=`  <a class="dropdown-item " href="#" style="color:#fff"><i class="fa fa-folder-open-o" aria-hidden="true"></i>الاطلاع على الملف</a>`;
+              var dUp4=`  <a class="dropdown-item " href="#"  style="color:#fff"><i class="fa fa-plus" aria-hidden="true"></i>اضافة او تغيير ملف</a>
+                        </div>
+                      </div>`;
               json=JSON.parse(data);
               if(isset(json)){
                   row = "";
                 for (var i = 0; i < json.length; i++) {
                   if(json[i].fileID!= null){
-                    td=`<td name="file"><a href='#' style='color:#E94B3C;'><i class="fa fa-file-pdf-o" aria-hidden="true" data-toggle="tooltip" title="الاطلاع على النسخة الضوئية!"></i></a></td>`;
+                    td=`<td name="file">`+dUp1+`<a class="dropdown-toggle caret-off" data-toggle="dropdown" href='#' style='color:#E94B3C;'><i class="fa fa-file-pdf-o" aria-hidden="true" data-toggle="tooltip" title="الاطلاع على النسخة الضوئية!"></i></a>`+dUp2+dUp3+dUp4+`</td>`;
                   }else{
-                    td='<td></td>';
+                    td=`<td name="addFile">`+dUp1+`<a class="dropdown-toggle caret-off" data-toggle="dropdown" href='#' style='color:#777;'><i class="fa fa-file-pdf-o" aria-hidden="true" data-toggle="tooltip" title="اضافة النسخة الضوئية!"></i></a>`+dUp2+dUp4+`</td>`
                   }
                   if(json[i].dateRemaind != null){
                     td2=`<td name='remaind'><a href='#' style='color:#88B04B;'><i class="fa fa-bell" aria-hidden="true" data-toggle="tooltip" title="ضبط تنبيه!"></i></a></td>`;
@@ -694,6 +734,7 @@
         </datalist>
         <div class="modal" id="pdfModal">
           <embed id="embedPdf" width="100%" height="100%" alt="pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html">
+
         </div>
         <div class="modal fade" id="ModalSetRemaind" tabindex="-1" role="dialog" >
           <div class="modal-dialog modal-dialog-centered" role="document">
@@ -832,6 +873,33 @@
             </div>
           </div>
         </div>
+        <div class="modal fade" id="ModalSetNewScan" tabindex="-1" role="dialog" >
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header row">
+                <div class="text-right col-6">
+                  <h5 class="modal-title">تغيير النسخة الضوئية</h5>
+                </div>
+                <div class="col-5"></div>
+                <div class="col-1">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+              </div>
+              <div class="modal-body">
+                <form>
+                  <input type="hidden" id="idForSetNewScan" name="" value="">
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" style="margin-left:5px;" onclick="setremaind();">حفظ</button>
+                <button type="button" class="btn btn-secondary" id="dismiss_modal" data-dismiss="modal">الغاء</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
       <input type="hidden" id="idForRemaindEdit" name="" value="">
       <input type="hidden" id="idForMultRow" name="" value="">

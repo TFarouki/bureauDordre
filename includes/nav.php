@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-md navbar-dark bg-dark" style="padding:0;">
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" style="padding:0;">
     <a class="navbar-brand" href="#">
       <img src="./media/bd2.png" width="40" height="40" class="d-inline-block align-center" alt="">
         برنامج المحكمة الادارية
