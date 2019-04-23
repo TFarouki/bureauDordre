@@ -236,7 +236,6 @@
         }
 
         $(document).on('change','#customFile',function(){
-
           var file = document.getElementById('customFile');
           var hidden = $('#fileTmpName').val();
           var lab = document.getElementById('filelab');
@@ -244,70 +243,132 @@
           if (fullPath) {
             $('#progersUpload').show();
             $('#fileUpload').hide();
-              var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
-              var filename = fullPath.substring(startIndex);
-              if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
-                  filename = filename.substring(1);
-              }
-              //lab.innerHTML = filename;
-              $('#fileUploadName').html(filename);
-              sizefile = $('#customFile')[0].files[0].size;
-              sizefile = sizefile / (1024*1024);
-              $('#size').html(sizefile.toFixed(2) + " Mo");
+            var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+            var filename = fullPath.substring(startIndex);
+            if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+                filename = filename.substring(1);
+            }
+            //lab.innerHTML = filename;
+            $('#fileUploadName').html(filename);
+            sizefile = $('#customFile')[0].files[0].size;
+            sizefile = sizefile / (1024*1024);
+            $('#size').html(sizefile.toFixed(2) + " Mo");
 
-              var property = file.files[0];
-              var form_data = new FormData();
-              form_data.append('hidden',hidden);
-              var file_name = property.name;
-              var ext = file_name.split('.').pop().toLowerCase();
-              var allowExt = ['pdf','doc','docx','bmp','gif','jpeg','jpg','png','tif','tiff','xls','xlsx','mdb'];
-              if($.inArray(ext,allowExt) == -1){
-                alert('المرجوا التأكد من صيغة الملف..!');
-                $.ajax({
-                  url:"upfile.php",
-                  method:"POST",
-                  data : form_data,
-                  contentType : false,
-                  processData : false,
-                });
-                $('#fileTmpName').val("");
-                $('#fileUpload').show();
-                $('#progersUpload').hide();
-                $('#filelab').removeClass("bg-success text-white");
-                $('#displayFileName').html(" نسخة الماسح الضوئي");
-              }else{
-                form_data.append('file',property);
-                $.ajax({
-                  xhr: function(){
-                      var xhr = new window.XMLHttpRequest();
-                      xhr.upload.addEventListener("progress", function(evt) {
-                          if (evt.lengthComputable) {
-                              var percentComplete = (evt.loaded / evt.total) * 100;
-                              percentComplete = percentComplete.toFixed(2)+'%';
-                              $('#progressbar').width(percentComplete);
-                              $('#percentage').html(percentComplete);
-                              $('#size').width(evt.total);
-                          }
-                     }, false);
-                     return xhr;
-                  },
-                  url:"upfile.php",
-                  method:"POST",
-                  data : form_data,
-                  contentType : false,
-                  processData : false,
-                  beforeSend:function(){
-                    $('#progressbar').width('0%')
-                  },
-                  success:function(data){
-                    $('#fileUpload').show();
-                    $('#progersUpload').hide();
-                    $('#filelab').addClass("bg-success text-white");
-                    $('#displayFileName').html(" " + file_name);
-                    $('#fileTmpName').val(data);
-                  }
-                });
-              }
+            var property = file.files[0];
+            var form_data = new FormData();
+            form_data.append('hidden',hidden);
+            var file_name = property.name;
+            var ext = file_name.split('.').pop().toLowerCase();
+            var allowExt = ['pdf','doc','docx','bmp','gif','jpeg','jpg','png','tif','tiff','xls','xlsx','mdb'];
+            if($.inArray(ext,allowExt) == -1){
+              alert('المرجوا التأكد من صيغة الملف..!');
+              $('#fileTmpName').val("");
+              $('#fileUpload').show();
+              $('#progersUpload').hide();
+              $('#filelab').removeClass("bg-success text-white");
+              $('#displayFileName').html(" نسخة الماسح الضوئي");
+            }else{
+              form_data.append('file',property);
+              $.ajax({
+                xhr: function(){
+                    var xhr = new window.XMLHttpRequest();
+                    xhr.upload.addEventListener("progress", function(evt) {
+                        if (evt.lengthComputable) {
+                            var percentComplete = (evt.loaded / evt.total) * 100;
+                            percentComplete = percentComplete.toFixed(2)+'%';
+                            $('#progressbar').width(percentComplete);
+                            $('#percentage').html(percentComplete);
+                            $('#size').width(evt.total);
+                        }
+                   }, false);
+                   return xhr;
+                },
+                url:"upfile.php",
+                method:"POST",
+                data : form_data,
+                contentType : false,
+                processData : false,
+                beforeSend:function(){
+                  $('#progressbar').width('0%')
+                },
+                success:function(data){
+                  $('#fileUpload').show();
+                  $('#progersUpload').hide();
+                  $('#filelab').addClass("bg-success text-white");
+                  $('#displayFileName').html(" " + file_name);
+                  $('#fileTmpName').val(data);
+                }
+              });
+            }
+          }
+        });
+        $(document).on('change','#customFile1',function(){
+          var file = document.getElementById('customFile1');
+          var hidden = $('#fileTmpName1').val();
+          var lab = document.getElementById('filelab1');
+          var fullPath = file.value;
+          if(fullPath){
+            $('#progersUpload1').show();
+            $('#fileUpload1').hide();
+            var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+            var filename = fullPath.substring(startIndex);
+            if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+                filename = filename.substring(1);
+            }
+            $('#fileUploadName1').html(filename);
+            sizefile = $('#customFile1')[0].files[0].size;
+            sizefile = sizefile / (1024*1024);
+            $('#size1').html(sizefile.toFixed(2) + " Mo");
+
+            var property = file.files[0];
+            var form_data = new FormData();
+            form_data.append('hidden',hidden);
+            var file_name = property.name;
+            var ext = file_name.split('.').pop().toLowerCase();
+            var allowExt = ['pdf','doc','docx','bmp','gif','jpeg','jpg','png','tif','tiff','xls','xlsx','mdb'];
+            if($.inArray(ext,allowExt) == -1){
+              alert('المرجوا التأكد من صيغة الملف..!');
+              $('#fileTmpName1').val("");
+              $('#fileUpload1').show();
+              $('#progersUpload1').hide();
+              $('#filelab1').removeClass("bg-success text-white");
+              $('#displayFileName1').html(" نسخة الماسح الضوئي");
+            }else{
+              form_data.append('file',property);
+              $.ajax({
+                xhr: function(){
+                    var xhr = new window.XMLHttpRequest();
+                    xhr.upload.addEventListener("progress", function(evt) {
+                        if (evt.lengthComputable) {
+                            var percentComplete = (evt.loaded / evt.total) * 100;
+                            percentComplete = percentComplete.toFixed(2)+'%';
+                            $('#progressbar1').width(percentComplete);
+                            $('#percentage1').html(percentComplete);
+                            $('#size1').width(evt.total);
+                        }
+                   }, false);
+                   return xhr;
+                },
+                url:"upfile.php",
+                method:"POST",
+                data : form_data,
+                contentType : false,
+                processData : false,
+                beforeSend:function(){
+                  $('#progressbar1').width('0%')
+                },
+                success:function(data){
+                  $('#fileUpload1').show();
+                  $('#progersUpload1').hide();
+                  $('#filelab1').addClass("bg-success text-white");
+                  $('#displayFileName1').html(" " + file_name);
+                  $('#fileTmpName1').val(data);
+                  $('#fileUploadName1').html("");
+                  $('#size1').html("0.0 Mo");
+
+                }
+              });
+            }
           }
         });
         $(document).on('click', '#submit', function(e){
@@ -421,6 +482,7 @@
           e.preventDefault();
           $("#idForSetNewScan").val($(this).closest('tr').attr('id'));
           $("#ModalSetNewScan").modal("toggle");
+
         });
         $(document).on('click','td[name="remaind"]',function(e){
           e.preventDefault();
@@ -585,6 +647,26 @@
             }
           });
           $("#ModalEditRow").modal("toggle");
+        });
+        $(document).on('click',"#upfile2",function(){
+          file = JSON.parse($("#fileTmpName1").val());
+          id= $("#idForSetNewScan").val();
+          json=JSON.stringify({"id":id,"file":file});
+          $.ajax({
+            url : "changeFile.php",
+            method : "POST",
+            data : {json : json},
+            success:function(data){
+
+              $("#idForSetNewScan").val('');
+              $('#fileTmpName1').val("");
+              $('#fileUpload1').show();
+              $('#progersUpload1').hide();
+              $('#filelab1').removeClass("bg-success text-white");
+              $('#displayFileName1').html(" نسخة الماسح الضوئي");
+            }
+          });
+          $("#ModalSetNewScan").modal("toggle");
         });
       </script>
     </head>
@@ -890,10 +972,39 @@
               <div class="modal-body">
                 <form>
                   <input type="hidden" id="idForSetNewScan" name="" value="">
+                  <div class="row">
+                    <div class="col-2">
+                    </div>
+                    <div class="col-8">
+                      <div id="upload&Progressbar1">
+                        <div class="form-group" id="fileUpload1">
+                              <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="customFile1" name="filename">
+                                <label class="custom-file-label text-center" for="customFile" id="filelab1"><i style="font-size:12px;" class="fa fa-clone" aria-hidden="true" id="displayFileName1"> نسخة الماسح الضوئي</i></label>
+                                <input type="hidden" value="" id="fileTmpName1">
+                              </div>
+                        </div>
+                        <div class="form-group" style="display:none;" id="progersUpload1">
+
+                              <div class="small-text">
+                                <span style="float:right;font:12px;font-weight: bold;" id="fileUploadName1"></span><br/>
+                                <div class="row text-right">
+                                  <div class="col-3"><span id="percentage1"></span></div>
+                                  <div class="col-5"></div>
+                                  <div class="col-4"><span id="size1"></span></div>
+                                </div>
+                                <div class="progress " style="height:2px">
+                                  <div class="progress-bar" id="progressbar1" style="width:0%;height:2px"></div>
+                                </div>
+                              </div>
+                          </div>
+                      </div>
+                    </div>
+                  </div>
                 </form>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-primary" style="margin-left:5px;" onclick="setremaind();">حفظ</button>
+                <button type="button" class="btn btn-primary" style="margin-left:5px;" id="upfile2">تغيير</button>
                 <button type="button" class="btn btn-secondary" id="dismiss_modal" data-dismiss="modal">الغاء</button>
               </div>
             </div>

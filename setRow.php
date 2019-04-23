@@ -38,7 +38,7 @@
           if(!is_dir($location)){
             mkdir($location, 0777, true);
           }
-          if (rename($src, $location.$file->name)){
+          if(rename($src, $location.$file->name)){
             $tokken = Hash::salt(50);
             if(!$db->insert("upfile_register",array("name"=>$file->name,"type"=>$file->type,"size"=>$file->size,"path"=>$location,"statuts"=>"","tokken"=>$tokken))){
               $return->uploadReg = "لم يتم تسجيل معلومات الملف بالسجل..!";
