@@ -38,4 +38,11 @@
   }else{
     Redirect::to('login.php');
   }
+
+
+//if -> with file -> get fileID delete file and row with same Id
+// hey count+1 as newID
+//copy new file
+  //insert fileReg
+  //update orderReg-> idFile
 ?>

@@ -458,6 +458,7 @@
           if($("#pdfModal").css('display')== 'none'){
             $("#embedPdf").attr("src",'');
             var id=$(this).closest('tr').children('td:nth-child(3)').html();
+
             $.ajax({
               url : "getDoc.php",
               method : "POST",
@@ -478,9 +479,11 @@
 
 
         });
-        $(document).on('click','td[name="file"] div div a:nth-child(2)',function(e){
+        $(document).on('click','td[name="file"] div div a:nth-child(2),td[name="addFile"] div div a:first-child',function(e){
           e.preventDefault();
           $("#idForSetNewScan").val($(this).closest('tr').attr('id'));
+          var newFile = $(this).parents().parents().children().attr("style") == "color:#777;";
+          alert(newFile);
           $("#ModalSetNewScan").modal("toggle");
 
         });
@@ -651,7 +654,8 @@
         $(document).on('click',"#upfile2",function(){
           file = JSON.parse($("#fileTmpName1").val());
           id= $("#idForSetNewScan").val();
-          json=JSON.stringify({"id":id,"file":file});
+          newFile ="";
+          json=JSON.stringify({"id":id,"file":file,"newFile":newFile});
           $.ajax({
             url : "changeFile.php",
             method : "POST",
