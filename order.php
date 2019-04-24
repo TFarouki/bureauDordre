@@ -109,9 +109,10 @@
             data:{json:json},
             success:function(data){
               var dUp1=`<div class="dropup">`;
-              var dUp2=`<div class="dropdown-menu bg-primary"  style="margin-left:-90px;">`;
-              var dUp3=`  <a class="dropdown-item " href="#" style="color:#fff"><i class="fa fa-folder-open-o" aria-hidden="true"></i>الاطلاع على الملف</a>`;
-              var dUp4=`  <a class="dropdown-item " href="#"  style="color:#fff"><i class="fa fa-plus" aria-hidden="true"></i>اضافة او تغيير ملف</a>
+              var dUp2=`<div class="dropdown-menu bg-primary   text-right"  style="margin-left:-90px;">`;
+                var dUp3=`  <a class="dropdown-item " href="#" style="color:#fff"><i class="fa fa-folder-open-o" aria-hidden="true"></i> الاطلاع على الملف</a>
+                          <a class="dropdown-item " href="#" style="color:#fff"><i class="fa fa-trash-o" aria-hidden="true"></i> حذف الملف</a>`;
+              var dUp4=`  <a class="dropdown-item " href="#"  style="color:#fff"><i class="fa fa-plus" aria-hidden="true"></i> اضافة او تغيير ملف</a>
                         </div>
                       </div>`;
               var json = JSON.parse(data);
@@ -393,9 +394,10 @@
               data : {json : json},
               success:function(data){
                 var dUp1=`<div class="dropup">`;
-                var dUp2=`<div class="dropdown-menu bg-primary">`;
-                var dUp3=`  <a class="dropdown-item " href="#" style="color:#fff"><i class="fa fa-folder-open-o" aria-hidden="true"></i>الاطلاع على الملف</a>`;
-                var dUp4=`  <a class="dropdown-item " href="#"  style="color:#fff"><i class="fa fa-plus" aria-hidden="true"></i>اضافة او تغيير ملف</a>
+                var dUp2=`<div class="dropdown-menu bg-primary text-right">`;
+                var dUp3=`  <a class="dropdown-item " href="#" style="color:#fff"><i class="fa fa-folder-open-o" aria-hidden="true"></i> الاطلاع على الملف</a>
+                            <a class="dropdown-item " href="#" style="color:#fff"><i class="fa fa-trash-o" aria-hidden="true"></i> حذف الملف</a>`;
+                var dUp4=`  <a class="dropdown-item " href="#"  style="color:#fff"><i class="fa fa-plus" aria-hidden="true"></i> اضافة او تغيير ملف</a>
                           </div>
                         </div>`;
                 json=JSON.parse(data);
@@ -479,13 +481,21 @@
 
 
         });
-        $(document).on('click','td[name="file"] div div a:nth-child(2),td[name="addFile"] div div a:first-child',function(e){
+        $(document).on('click','td[name="file"] div div a:nth-child(3),td[name="addFile"] div div a:first-child',function(e){
           e.preventDefault();
           $("#idForSetNewScan").val($(this).closest('tr').attr('id'));
           var newFile = $(this).parents().parents().children().attr("style") == "color:#777;";
-          alert(newFile);
           $("#ModalSetNewScan").modal("toggle");
 
+        });
+        $(document).on('click','td[name="file"] div div a:nth-child(2)',function(e){
+          e.preventDefault();
+          if(confirm("سيتم حذف الملف  :")){
+            $("#idForDelete").val($(this).closest('tr').attr('id'));
+            //delete file;
+            // TODO: delet file and change icon's color as inactif
+            $(this).parents().parents().children().attr("style","color:#f00;");
+          }
         });
         $(document).on('click','td[name="remaind"]',function(e){
           e.preventDefault();
@@ -548,9 +558,10 @@
             data : {json : json},
             success:function(data){
               var dUp1=`<div class="dropup">`;
-              var dUp2=`<div class="dropdown-menu bg-primary">`;
-              var dUp3=`  <a class="dropdown-item " href="#" style="color:#fff"><i class="fa fa-folder-open-o" aria-hidden="true"></i>الاطلاع على الملف</a>`;
-              var dUp4=`  <a class="dropdown-item " href="#"  style="color:#fff"><i class="fa fa-plus" aria-hidden="true"></i>اضافة او تغيير ملف</a>
+              var dUp2=`<div class="dropdown-menu bg-primary   text-right">`;
+              var dUp3=`  <a class="dropdown-item " href="#" style="color:#fff"><i class="fa fa-folder-open-o" aria-hidden="true"></i> الاطلاع على الملف</a>
+                          <a class="dropdown-item " href="#" style="color:#fff"><i class="fa fa-trash-o" aria-hidden="true"></i> حذف الملف</a>`;
+              var dUp4=`  <a class="dropdown-item " href="#"  style="color:#fff"><i class="fa fa-plus" aria-hidden="true"></i> اضافة او تغيير ملف</a>
                         </div>
                       </div>`;
               json=JSON.parse(data);
@@ -661,7 +672,11 @@
             method : "POST",
             data : {json : json},
             success:function(data){
-
+              json = JSON.parse(data);
+              if(isset(json.statut) && json.statut){
+                //// TODO: change pdf icon's color as actif
+                //change pdf icon's calor
+              }
               $("#idForSetNewScan").val('');
               $('#fileTmpName1').val("");
               $('#fileUpload1').show();
@@ -1020,6 +1035,7 @@
       <input type="hidden" id="idForMultRow" name="" value="">
       <input type="hidden" id="idForEditRow" name="" value="">
       <input type="hidden" id="idForEditRow2" name="" value="">
+      <input type="hidden" id="idForDelete" name="" value="">
 
       <?php
         /*if ($user->hasPermissions("admin")) {
