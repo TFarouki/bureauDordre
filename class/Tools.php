@@ -18,12 +18,7 @@
       return rmdir($dir);
     }
     public static function unzipe($sourceFile,$DestinationFolder){
-      if(!is_dir($DestinationFolder)){
-        mkdir($DestinationFolder);
-      }else{
-        self::deleteDirectory($DestinationFolder);
-        mkdir($DestinationFolder);
-      }
+      self::fmkdir($DestinationFolder);
       $zip = new ZipArchive;
       if ($zip->open($sourceFile) === TRUE) {
           $zip->extractTo($DestinationFolder);
@@ -72,5 +67,14 @@
         unlink($file);
       }
     }
+    public static function fmkdir($nameFolder){
+      if(!is_dir($nameFolder)){
+        mkdir($nameFolder);
+      }else{
+        self::deleteDirectory($nameFolder);
+        mkdir($nameFolder);
+      }
+    }
   }
+
 ?>

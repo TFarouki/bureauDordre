@@ -720,7 +720,16 @@
             method : "POST",
             data : {json : json},
             success:function(data){
-              window.location = 'download.php';
+              //window.location = 'download.php';
+              if(isset(data)){
+                json = JSON.parse(data);
+                var link = document.createElement('a');
+                link.href = json.file;
+                link.download = json.filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+              }
             }
           });
         });

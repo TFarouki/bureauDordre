@@ -6,17 +6,27 @@
   $db = Db::getInstance();
   if($user->isLoggedIn()){
     if(isset($_POST['json'])){
+      $memeberOfId = $user->memeberOf("مكتب الضبط")["id"];
       $id = json_decode($_POST['json'])->id;
       $db->get('register_bureaudordre',array("num_ordre","=",$id));
       if($db->count()>0){
         $num_order = substr($id,1,4).'/'.substr($id,10,5);
-        $ar=array("date"=>date('Y-m-d'),"num_order"=>$num_order,"expediteur"=>"رئيس المحكمة الادارية بأكادير","destinataire"=>"رئيس المحكمة الابتدائية بتارودانت","order"=>"01","text"=>"شهادة التسليم تتعلق  بلوائح الخبرات الغير منجزة برسم سنتي 2017 و 2018","nb_copy"=>"02","remarque"=>"  نرجعها  لكم بعد القيام بالمطلوب، تبعا لإرسالكم عدد 424/2019 بتاريخ 01/04/2019، ");
+        $text = "شهادة التسليم تتعلق  بلوائح الخبرات الغير منجزة برسم سنتي 2017 و 2018";
+        $remarque = "  نرجعها  لكم بعد القيام بالمطلوب، تبعا لإرسالكم عدد 424/2019 بتاريخ 01/04/2019، ";
+        $nb_copy = "02";
+        $order = "01";
+        $ar=array("date"=>date('Y-m-d'),"num_order"=>$num_order,"expediteur"=>$db->first()->expediteur,"destinataire"=>$db->first()->destinataire,"order"=>$order,"text"=>$text,"nb_copy"=>$nb_copy,"remarque"=>$remarque);
         $ww = new WordWriter();
-        $src = "./template/‫ارسالية.docx";
-        $ww->update($src,$ar,"1.docx");
-        //Tools::downloadFile("./template/1.docx");
+        $filename = "‫ارسالية.docx";
+        $filename2 = "‫ارسالية2.docx";
+        $src = "./template/".$filename;
+        $ww->update($src,$ar,$filename2);
+        $file = "./template/".$filename2;
+        $return->filename = $filename2;
+        $return->file = $file;
       }
     }
+    echo json_encode($return);
   }else{
     Redirect::to('login.php');
   }
