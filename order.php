@@ -77,6 +77,7 @@
           return (typeof obj !== "undefined" && obj)?true:false;
         }
         function addAlert(type,strongMsg,msg){
+          $("#myNewAlert").remove();
           htm = `<div style="margin-top:50px;" class="alert alert-`+type+` alert-dismissible fade in text-center fixed-top" id="myNewAlert">
                   <button type="button" class="close" data-dismiss="alert">&times;</button>
                   <strong>`+strongMsg+`!</strong> `+msg+`.
@@ -491,10 +492,27 @@
         $(document).on('click','td[name="file"] div div a:nth-child(2)',function(e){
           e.preventDefault();
           if(confirm("سيتم حذف الملف  :")){
-            $("#idForDelete").val($(this).closest('tr').attr('id'));
+            var id=$(this).closest('tr').attr('id');
             //delete file;
             // TODO: delet file and change icon's color as inactif
-            $(this).parents().parents().children().attr("style","color:#f00;");
+            $.ajax({
+              url : "deleteFile.php",
+              method : "POST",
+              data : {json : id},
+              success:function(data){
+                json = JSON.parse(data);
+                if(isset(json.statut) && json.statut){
+
+                  $("#"+id+" td:nth-child(11)").attr("name","addFile");
+                  var dUp = `<a class="dropdown-item " href="#" style="color:#fff"><i class="fa fa-plus" aria-hidden="true"></i> اضافة او تغيير ملف</a>`;
+                  $("#"+id+" td:nth-child(11) div div").html(dUp);
+                  $("#"+id+" td:nth-child(11) div:first-child a[class='dropdown-toggle caret-off']").attr("style","color:#777;");
+                  addAlert('warning','','لقد ثم حذف الملف بنجاح ..!');
+                }
+              }
+            });
+
+
           }
         });
         $(document).on('click','td[name="remaind"]',function(e){
@@ -675,7 +693,14 @@
               json = JSON.parse(data);
               if(isset(json.statut) && json.statut){
                 //// TODO: change pdf icon's color as actif
-                //change pdf icon's calor
+                $("#"+id+" td:nth-child(11)").attr("name","file");
+                var dUp=` <a class="dropdown-item " href="#" style="color:#fff"><i class="fa fa-folder-open-o" aria-hidden="true"></i> الاطلاع على الملف</a>
+                          <a class="dropdown-item " href="#" style="color:#fff"><i class="fa fa-trash-o" aria-hidden="true"></i> حذف الملف</a>
+                          <a class="dropdown-item " href="#" style="color:#fff"><i class="fa fa-plus" aria-hidden="true"></i> اضافة او تغيير ملف</a>`;
+                $("#"+id+" td:nth-child(11) div div").html(dUp);
+                $("#"+id+" td:nth-child(11) div:first-child a[class='dropdown-toggle caret-off']").attr("style","color:#E94B3C;");
+                addAlert('success','','لقد ثم اضافة الملف بنجاح');
+
               }
               $("#idForSetNewScan").val('');
               $('#fileTmpName1').val("");
@@ -686,6 +711,18 @@
             }
           });
           $("#ModalSetNewScan").modal("toggle");
+        });
+        $(document).on('click','td:nth-child(12)',function(e){
+          var id = $(this).closest('tr').attr('id');
+          json=JSON.stringify({"id":id});
+          $.ajax({
+            url : "download.php",
+            method : "POST",
+            data : {json : json},
+            success:function(data){
+              window.location = 'download.php';
+            }
+          });
         });
       </script>
     </head>
