@@ -121,6 +121,7 @@
               for (var i = 0; i < json.length; i++) {
                 td='';
                 td2='';
+
                 if(json[i].fileID!= null){
                   td=`<td name="file">`+dUp1+`<a class="dropdown-toggle caret-off" data-toggle="dropdown" href='#' style='color:#E94B3C;'><i class="fa fa-file-pdf-o" aria-hidden="true" data-toggle="tooltip" title="الاطلاع على النسخة الضوئية!"></i></a>`+dUp2+dUp3+dUp4+`</td>`;
                 }else{
@@ -130,6 +131,12 @@
                   td2=`<td name='remaind'><a href='#' style='color:#88B04B;'><i class="fa fa-bell" aria-hidden="true" data-toggle="tooltip" title="ضبط تنبيه!"></i></a></td>`;
                 }else{
                   td2=`<td name='remaind'><a href='#' style='color:#88B04B;'><i class="fa fa-bell-o" aria-hidden="true" data-toggle="tooltip" title="ضبط تنبيه!"></i></a></td>`;
+                }
+                td3 = '';
+                if(json[i].direction == 'صادر'){
+                  td3=`<td><a href='#'><i class="fa fa-file-word-o" aria-hidden="true" data-toggle="tooltip" title="تحميل الارسالية!"></i></a></td>`;
+                }else{
+                  td3='<td></td>';
                 }
                 row = `
                       <tr id="`+json[i].num_ordre+`">
@@ -143,8 +150,8 @@
                         <td>`+ignoreNull(json[i].type)+`</td>
                         <td>`+ignoreNull(json[i].objet)+`</td>
                         <td>`+ignoreNull(json[i].dossierAssocier)+`</td>`+
-                        td+`
-                        <td><a href='#'><i class="fa fa-file-word-o" aria-hidden="true" data-toggle="tooltip" title="تحميل الارسالية!"></i></a></td>`+
+                        td+
+                        td3+
                         td2+`
                         <td><a href='#' style='color:#6B5B95;'><i class="fa fa-user-plus" aria-hidden="true" data-toggle="tooltip" title="احالة على!"></i></a></td>
                       </tr>
@@ -415,6 +422,12 @@
                     }else{
                       td2=`<td name='remaind'><a href='#' style='color:#88B04B;'><i class="fa fa-bell-o" aria-hidden="true" data-toggle="tooltip" title="ضبط تنبيه!"></i></a></td>`;
                     }
+                    td3 = '';
+                    if(json.json[i].direction == 'صادر'){
+                      td3=`<td><a href='#'><i class="fa fa-file-word-o" aria-hidden="true" data-toggle="tooltip" title="تحميل الارسالية!"></i></a></td>`;
+                    }else{
+                      td3='<td></td>';
+                    }
                     row += `
                       <tr id="`+json.json[i].num_ordre+`">
                         <td name="editRow"><a href='#' style='color:#EFC050;'><i class='fa fa-pencil' aria-hidden='true' data-toggle="tooltip" title="تغيير!"></i></a></td>
@@ -428,7 +441,7 @@
                         <td>`+ignoreNull(json.json[i].objet)+`</td>
                         <td>`+ignoreNull(json.json[i].dossierAssocier)+`</td>`+
                         td+
-                        `<td><a href='#'><i class="fa fa-file-word-o" aria-hidden="true" data-toggle="tooltip" title="تحميل الارسالية!"></i></a></td>`+
+                        td3+
                         td2+
                         `<td><a href='#' style='color:#6B5B95;'><i class="fa fa-user-plus" aria-hidden="true" data-toggle="tooltip" title="احالة على!"></i></a></td>
                       </tr>
@@ -596,6 +609,12 @@
                   }else{
                     td2=`<td name='remaind'><a href='#' style='color:#88B04B;'><i class="fa fa-bell-o" aria-hidden="true" data-toggle="tooltip" title="ضبط تنبيه!"></i></a></td>`;
                   }
+                  td3='';
+                  if(json[i].direction == 'صادر'){
+                    td3=`<td><a href='#'><i class="fa fa-file-word-o" aria-hidden="true" data-toggle="tooltip" title="تحميل الارسالية!"></i></a></td>`;
+                  }else{
+                    td3='<td></td>';
+                  }
                   if(i+1 <= copy){
                     row += `<tr id="`+json[i].num_ordre+`" class="table-info">`;
                   }else {
@@ -614,7 +633,7 @@
                       <td>`+ignoreNull(json[i].objet)+`</td>
                       <td>`+ignoreNull(json[i].dossierAssocier)+`</td>`+
                       td+
-                      `<td><a href='#'><i class="fa fa-file-word-o" aria-hidden="true" data-toggle="tooltip" title="تحميل الارسالية!"></i></a></td>`+
+                      td3+
                       td2+
                       `<td><a href='#' style='color:#6B5B95;'><i class="fa fa-user-plus" aria-hidden="true" data-toggle="tooltip" title="احالة على!"></i></a></td>
                     </tr>
@@ -675,6 +694,11 @@
                 $('#myTable tr[id='+id+'] td:eq(8)').html($("#objct2").val());
                 $('#myTable tr[id='+id+'] td:eq(9)').html($("#dossierAssocier2").val());
                 $('#myTable tr[id='+id+'] td:eq(4)').html($("#dateArriver2").val());
+                if($('#sendorinbox2').is(':checked')){
+                  $('#myTable tr[id='+id+'] td:eq(11)').html('');
+                }else{
+                  $('#myTable tr[id='+id+'] td:eq(11)').html(`<a href='#'><i class="fa fa-file-word-o" aria-hidden="true" data-toggle="tooltip" title="تحميل الارسالية!"></i></a>`);
+                }
               }
             }
           });
@@ -713,9 +737,10 @@
           $("#ModalSetNewScan").modal("toggle");
         });
         $(document).on('click','td:nth-child(12)',function(e){
-          var id = $(this).closest('tr').attr('id');
-          json=JSON.stringify({"id":id});
-          $.ajax({
+          if($(this).html() != ''){
+            var id = $(this).closest('tr').attr('id');
+            json=JSON.stringify({"id":id});
+            $.ajax({
             url : "download.php",
             method : "POST",
             data : {json : json},
@@ -732,6 +757,7 @@
               }
             }
           });
+          }
         });
       </script>
     </head>
@@ -749,8 +775,8 @@
         <h3 class="text-right title"><i class="fa fa-caret-left" aria-hidden="true"></i> <i class="fa fa-book" aria-hidden="true"></i><u> تدبير سجل مكتب الضبط الالكتروني </u> "<?php echo $user->memeberOf("مكتب الضبط")["label"];?>"</h3>
         <div class="text-center controles">
           <button class="btn btn-success" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"><strong><i class="fa fa-pencil-square-o" aria-hidden="true"></i> اضافة تسجيل جديد</strong></button>
-          <button class="btn btn-warning" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo"><strong><i class="fa fa-search" aria-hidden="true"></i> بحث</strong></button>
-          <button class="btn btn-info" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree"><strong><i class="fa fa-binoculars" aria-hidden="true"></i> بحث متعدد الوسائط</strong></button>
+          <button class="btn btn-warning" data-toggle="collapse" data-target="#collapseTwo2" aria-expanded="false" aria-controls="collapseTwo"><strong><i class="fa fa-search" aria-hidden="true"></i> بحث</strong></button>
+          <button class="btn btn-info" data-toggle="collapse" data-target="#collapseThree3" aria-expanded="false" aria-controls="collapseThree"><strong><i class="fa fa-binoculars" aria-hidden="true"></i> بحث متعدد الوسائط</strong></button>
           <button class="btn btn-outline-secondary"><strong><i class="fa fa-file-excel-o" aria-hidden="true"></i> تحميل السجل</strong></button>
         </div>
         <div id="accordion">

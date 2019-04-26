@@ -17,13 +17,14 @@
         $order = "01";
         $ar=array("date"=>date('Y-m-d'),"num_order"=>$num_order,"expediteur"=>$db->first()->expediteur,"destinataire"=>$db->first()->destinataire,"order"=>$order,"text"=>$text,"nb_copy"=>$nb_copy,"remarque"=>$remarque);
         $ww = new WordWriter();
-        $filename = "‫ارسالية.docx";
-        $filename2 = "‫ارسالية2.docx";
+        $filename = "نموذج_الارسالية.docx";
+        $filename2 = "‫ارسالية.docx";
         $src = "./template/".$filename;
         $ww->update($src,$ar,$filename2);
         $file = "./template/".$filename2;
         $return->filename = $filename2;
         $return->file = $file;
+        $return->id = $num_order;
       }
     }
     echo json_encode($return);
