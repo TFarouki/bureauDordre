@@ -737,10 +737,30 @@
           $("#ModalSetNewScan").modal("toggle");
         });
         $(document).on('click','td:nth-child(12)',function(e){
+          var json= JSON.stringify({"id":$(this).closest('tr').attr('id')});
+          $("#idForDownload").val($(this).closest('tr').attr('id'));
           if($(this).html() != ''){
-            var id = $(this).closest('tr').attr('id');
-            json=JSON.stringify({"id":id});
             $.ajax({
+              url : "getContenetForUser.php",
+              method : "POST",
+              data : {json : json},
+              success:function(data){
+                if(isset(data)){
+                  json=JSON.parse(data);
+                  $("#nb_order").val(json.nb_order);
+                  $("#text").val(json.text);
+                  $("#nb_copy").val(json.nb_copy);
+                  $("#remarque").val(json.remarque);
+                }
+              }
+            });
+            $("#ModalEditDoc").modal("toggle");
+            }
+        });
+        $(document).on('click','#downfile',function(e){
+          var id = $("#idForDownload").val();
+          json=JSON.stringify({"id":id,"nb_order":$("#nb_order").val(),"text":$("#text").val(),"nb_copy":$("#nb_copy").val(),"remarque":$("#remarque").val()});
+          $.ajax({
             url : "download.php",
             method : "POST",
             data : {json : json},
@@ -757,7 +777,7 @@
               }
             }
           });
-          }
+          $("#ModalEditDoc").modal("toggle");
         });
       </script>
     </head>
@@ -900,11 +920,11 @@
       </div>
       <div id="outbody">
         <datalist id="lisDataAtraf">
-        </datalist>
+          </datalist>
         <datalist id="lisDataNaw3">
-        </datalist>
+          </datalist>
         <datalist id="lisDataMawdo3">
-        </datalist>
+          </datalist>
         <div class="modal" id="pdfModal">
           <embed id="embedPdf" width="100%" height="100%" alt="pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html">
 
@@ -1101,13 +1121,51 @@
             </div>
           </div>
         </div>
+        <div class="modal fade" id="ModalEditDoc" tabindex="-1" role="dialog" >
+          <div class="modal-dialog  modal-xl modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header row">
+                <div class="text-right col-6">
+                  <h5 class="modal-title">تعبئة الارسالية</h5>
+                </div>
+                <div class="col-5"></div>
+                <div class="col-1">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+              </div>
+              <div class="modal-body">
+                <form>
+                  <div class="row">
+                    <div class="col-1">
 
+                    </div>
+                    <div class="col-9">
+                        <textarea id="nb_order" rows="18" style="width:10%;padding:0;margin:0;" placeholder="الرقم الترتيبي"></textarea>
+                        <textarea id="text" rows="18" style="width:46%;padding:0;margin:0;" placeholder="مضمون الارسالية"></textarea>
+                        <textarea id="nb_copy" rows="18" style="width:10%;padding:0;margin:0;" placeholder="عدد النسخ"></textarea>
+                        <textarea id="remarque" rows="18" style="width:30%;padding:0;margin:0;" placeholder="ملاحظات"></textarea>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" style="margin-left:5px;" id="downfile">تحميل</button>
+                <button type="button" class="btn btn-secondary" id="dismiss_modal" data-dismiss="modal">الغاء</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <input type="hidden" id="idForRemaindEdit" name="" value="">
+        <input type="hidden" id="idForMultRow" name="" value="">
+        <input type="hidden" id="idForEditRow" name="" value="">
+        <input type="hidden" id="idForEditRow2" name="" value="">
+        <input type="hidden" id="idForDelete" name="" value="">
+        <input type="hidden" id="idForDownload" name="" value="">
       </div>
-      <input type="hidden" id="idForRemaindEdit" name="" value="">
-      <input type="hidden" id="idForMultRow" name="" value="">
-      <input type="hidden" id="idForEditRow" name="" value="">
-      <input type="hidden" id="idForEditRow2" name="" value="">
-      <input type="hidden" id="idForDelete" name="" value="">
+
 
       <?php
         /*if ($user->hasPermissions("admin")) {
