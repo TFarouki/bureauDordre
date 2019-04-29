@@ -747,10 +747,11 @@
               success:function(data){
                 if(isset(data)){
                   json=JSON.parse(data);
-                  $("#nb_order").val(json.nb_order);
-                  $("#text").val(json.text);
-                  $("#nb_copy").val(json.nb_copy);
-                  $("#remarque").val(json.remarque);
+                  $("#nb_order").val(json.nb_order.split('{br}').join('\n'));
+                  $("#text").val(json.text.split('{br}').join('\n'));
+                  $("#nb_copy").val(json.nb_copy.split('{br}').join('\n'));
+                  $("#remarque").val(json.remarque.split('{br}').join('\n'));
+                  $("#idOriginForDownload").val(json.id_order);
                 }
               }
             });
@@ -759,7 +760,14 @@
         });
         $(document).on('click','#downfile',function(e){
           var id = $("#idForDownload").val();
-          json=JSON.stringify({"id":id,"nb_order":$("#nb_order").val(),"text":$("#text").val(),"nb_copy":$("#nb_copy").val(),"remarque":$("#remarque").val()});
+          json=JSON.stringify({
+            "id":id,
+            "nb_order":$("#nb_order").val().split('\n').join('{br}'),
+            "text":$("#text").val().split('\n').join('{br}'),
+            "nb_copy":$("#nb_copy").val().split('\n').join('{br}'),
+            "remarque":$("#remarque").val().split('\n').join('{br}'),
+            "id_origin":$("#idOriginForDownload").val()
+          });
           $.ajax({
             url : "download.php",
             method : "POST",
@@ -1143,7 +1151,7 @@
                     </div>
                     <div class="col-9">
                         <textarea id="nb_order" rows="18" style="width:10%;padding:0;margin:0;" placeholder="الرقم الترتيبي"></textarea>
-                        <textarea id="text" rows="18" style="width:46%;padding:0;margin:0;" placeholder="مضمون الارسالية"></textarea>
+                        <textarea id="text" rows="18" style="width:39%;padding:0;margin:0;" placeholder="مضمون الارسالية"></textarea>
                         <textarea id="nb_copy" rows="18" style="width:10%;padding:0;margin:0;" placeholder="عدد النسخ"></textarea>
                         <textarea id="remarque" rows="18" style="width:30%;padding:0;margin:0;" placeholder="ملاحظات"></textarea>
                     </div>
@@ -1164,6 +1172,7 @@
         <input type="hidden" id="idForEditRow2" name="" value="">
         <input type="hidden" id="idForDelete" name="" value="">
         <input type="hidden" id="idForDownload" name="" value="">
+        <input type="hidden" id="idOriginForDownload" name="" value="">
       </div>
 
 
