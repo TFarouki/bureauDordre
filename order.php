@@ -56,6 +56,16 @@
           .dropdown-item:hover{
             background-color: rgba(255,255,255,0.5);
           }
+          .highlight{
+            border:2px solid rgba(126, 239, 104, 0.8);
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(126, 239, 104, 0.6);
+            outline: 0 none;
+          }
+          .redlight{
+            border:2px solid rgba(255, 0, 0, 0.8);
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(255, 0, 0, 0.6);
+            outline: 0 none;
+          }
       </style>
       <script type="text/javascript">
         $(document).on("focus","#dateArriver",function(){
@@ -276,6 +286,30 @@
             }
         }
 
+        $(document).on('blur','#dossierAssocier',function(){
+          $(this).removeClass('highlight');
+          $(this).removeClass('redlight');
+          json={'NumeroDossier':$(this).val(),'IdJuridiction':293};
+          $.ajax({
+            url : "inf.php",
+            method : "POST",
+            data : {json : json},
+            success:function(data){
+              if(isset(data)){
+                json = JSON.parse(data).d;
+                if(!(json.CarteDossier == '' || json.CarteDossier == 'undefined' || json.CarteDossier == 'null' || json.CarteDossier == null)){
+                  if(json.CarteDossier.NumeroCompletDossier!=''){
+                    $('#dossierAssocier').addClass('highlight');
+                    //alert(json.CarteDossier.NumeroCompletDossier);
+                  }
+                }else{
+                  $('#dossierAssocier').addClass('redlight');
+
+                }
+              }
+            }
+          });
+        });
         $(document).on('change','#customFile',function(){
           var file = document.getElementById('customFile');
           var hidden = $('#fileTmpName').val();
@@ -858,7 +892,6 @@
             method : "POST",
             data : {json : json},
             success:function(data){
-              //window.location = 'download.php';
               if(isset(data)){
                 json = JSON.parse(data);
                 var link = document.createElement('a');
@@ -872,6 +905,7 @@
           });
           $("#ModalEditDoc").modal("toggle");
         });
+
       </script>
     </head>
     <body>
