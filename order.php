@@ -202,6 +202,38 @@
                   $("#lisDataMawdo3").html(htm);
                 }
               });
+              $.ajax({
+                url:"tadkir.php",
+                method:"POST",
+                success:function(data){
+                  if(isset(data)){
+                    json = JSON.parse(data);
+                    $("#nb_tadkir").html(json.length);
+                    for (var i = 0; i < json.length; i++) {
+                      row = `
+                            <tr id="`+json[i].num_ordre+`">
+                              <td>`+parseInt(ignoreNull(json[i].num_ordre.substring(json[i].num_ordre.length-10)))+`</td>
+                              <td>`+ignoreNull(json[i].direction)+`</td>
+                              <td>`+ignoreNull(json[i].dateArriver)+`</td>
+                              <td>`+ignoreNull(json[i].expediteur)+`</td>
+                              <td>`+ignoreNull(json[i].destinataire)+`</td>
+                              <td>`+ignoreNull(json[i].type)+`</td>
+                              <td>`+ignoreNull(json[i].objet)+`</td>
+                              <td>`+ignoreNull(json[i].dossierAssocier)+`</td>
+                              <td>`+ignoreNull(json[i].dateRemaind)+`</td>
+                              <td>`+ignoreNull(json[i].textRemaind)+`</td>
+                            </tr>
+                      `;
+                      if($('#dataTable2').lenght){
+                        $('#dataTable2 tr:last').after(row).fadeIn("slow");
+                      }else {
+                        $('#dataTable2').append(row).fadeIn("slow");
+                      }
+
+                    }
+                  }
+                }
+              });
               reload(0,10);
         });
         $(document).on('click', '#annulation', function(e){
@@ -549,6 +581,25 @@
           }
           $("#ModalSetRemaind2").modal("toggle");
         });
+        $(document).on('click','#dataTable2 tr',function(e){
+          e.preventDefault();
+          var id=$(this).closest('tr').children('td:first-child').html();
+          $("#idForRemaindEdit").val(id);
+          $("#Rdate2").val('');
+          $("#Rtext2").val('');
+          json = JSON.stringify({"op":"get","id":id})
+          $.ajax({
+            url : "remaind.php",
+            method : "POST",
+            data : {json : json},
+            success:function(data){
+              rmd=JSON.parse(data);
+              $("#Rdate2").val(rmd.dateRemaind);
+              $("#Rtext2").val(rmd.textRemaind);
+            }
+          });
+          $("#ModalSetRemaind2").modal("toggle");
+        });
         $(document).on('click',"#editRemaind",function(){
           var id=$("#idForRemaindEdit").val();
           json = JSON.stringify({"op":"set","id":id,"dRemaind":$('#Rdate2').val(),'tRemaind':$('#Rtext2').val()});
@@ -570,7 +621,41 @@
               }
             }
           });
-          $("#ModalSetRemaind2").modal("toggle");;
+          $("#ModalSetRemaind2").modal("toggle");
+          $('#dataTable2').html("");
+          $.ajax({
+            url:"tadkir.php",
+            method:"POST",
+            success:function(data){
+              if(isset(data)){
+                json = JSON.parse(data);
+                $("#nb_tadkir").html(json.length);
+                for (var i = 0; i < json.length; i++) {
+                  row = `
+                        <tr id="`+json[i].num_ordre+`">
+                          <td>`+parseInt(ignoreNull(json[i].num_ordre.substring(json[i].num_ordre.length-10)))+`</td>
+                          <td>`+ignoreNull(json[i].direction)+`</td>
+                          <td>`+ignoreNull(json[i].dateArriver)+`</td>
+                          <td>`+ignoreNull(json[i].expediteur)+`</td>
+                          <td>`+ignoreNull(json[i].destinataire)+`</td>
+                          <td>`+ignoreNull(json[i].type)+`</td>
+                          <td>`+ignoreNull(json[i].objet)+`</td>
+                          <td>`+ignoreNull(json[i].dossierAssocier)+`</td>
+                          <td>`+ignoreNull(json[i].dateRemaind)+`</td>
+                          <td>`+ignoreNull(json[i].textRemaind)+`</td>
+                        </tr>
+                  `;
+                  if($('#dataTable2').lenght){
+                    $('#dataTable2 tr:last').after(row).fadeIn("slow");
+                  }else {
+                    $('#dataTable2').append(row).fadeIn("slow");
+                  }
+
+                }
+              }
+            }
+          });
+
         });
         $(document).on('click','td[name="multRow"]',function(e){
           e.preventDefault();
@@ -801,129 +886,168 @@
 
       <div class="container">
         <h3 class="text-right title"><i class="fa fa-caret-left" aria-hidden="true"></i> <i class="fa fa-book" aria-hidden="true"></i><u> تدبير سجل مكتب الضبط الالكتروني </u> "<?php echo $user->memeberOf("مكتب الضبط")["label"];?>"</h3>
-        <div class="text-center controles">
-          <button class="btn btn-success" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"><strong><i class="fa fa-pencil-square-o" aria-hidden="true"></i> اضافة تسجيل جديد</strong></button>
-          <button class="btn btn-warning" data-toggle="collapse" data-target="#collapseTwo2" aria-expanded="false" aria-controls="collapseTwo"><strong><i class="fa fa-search" aria-hidden="true"></i> بحث</strong></button>
-          <button class="btn btn-info" data-toggle="collapse" data-target="#collapseThree3" aria-expanded="false" aria-controls="collapseThree"><strong><i class="fa fa-binoculars" aria-hidden="true"></i> بحث متعدد الوسائط</strong></button>
-          <button class="btn btn-outline-secondary"><strong><i class="fa fa-file-excel-o" aria-hidden="true"></i> تحميل السجل</strong></button>
-        </div>
-        <div id="accordion">
-          <div class="card">
-            <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
-              <div class="card-body">
-                <div class="text-right">
-                  <form action="" method="get">
-                    <div class="form-group row">
-                      <div id="forcheck" class="col-2" onclick="isChecked(this);">
-                        <input type="checkbox" name="sendorinbox" class="toogle-switch" id="sendorinbox" data-width="100" data-toggle="toggle" data-on="وارد" data-off="صادر" data-onstyle="success" data-offstyle="warning">
-                      </div>
-                      <div class="col-5">
-                        <input class="form-control" list="lisDataAtraf" type="text" name="expediteur" placeholder="اسم المرسل" id="expediteur" value="رئيس مصلحة كتابة الضبط بالمحكمة الادارية بأكادير">
-                      </div>
-                      <div class="col-5">
-                        <input class="form-control" list="lisDataAtraf" type="text" name="destinataire" placeholder="اسم المرسل اليه" id="destinataire">
-                      </div>
-                    </div>
-                    <div class="form-group row">
-                      <div class="col-3">
-                        <input class="form-control" list="lisDataNaw3" type="text" name="type" placeholder="نوعها" id="type">
-                      </div>
-                      <div class="col-3">
-                        <input class="form-control" list="lisDataMawdo3" type="text" name="object" placeholder="موضوعها" id="object">
-                      </div>
-                      <div class="col-3">
-                        <input class="form-control" type="text" name="dossierAssocier" placeholder="مرتبطة بملف" id="dossierAssocier" autocomplete="on">
-                      </div>
-                      <div class="col-3">
-                        <input placeholder="تاريخ الوصول" class="form-control" type="text" name="dateArriver" id="dateArriver">
-                      </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class=" bnt-control">
-                            <div id="upload&Progressbar">
-                              <div class="form-group" id="fileUpload">
-                                    <div class="custom-file mb-3">
-                                      <input type="file" class="custom-file-input" id="customFile" name="filename">
-                                      <label class="custom-file-label text-center" for="customFile" id="filelab"><i style="font-size:12px;" class="fa fa-clone" aria-hidden="true" id="displayFileName"> نسخة الماسح الضوئي</i></label>
-                                      <input type="hidden" value="" id="fileTmpName">
-                                    </div>
-                              </div>
-                              <div class="form-group" style="display:none;" id="progersUpload">
-
-                                    <div class="small-text">
-                                      <span style="float:right;font:12px;font-weight: bold;" id="fileUploadName"></span><br/>
-                                      <div class="row text-right">
-                                        <div class="col-3"><span id="percentage"></span></div>
-                                        <div class="col-5"></div>
-                                        <div class="col-4"><span id="size"></span></div>
-                                      </div>
-                                      <div class="progress " style="height:2px">
-                                        <div class="progress-bar" id="progressbar" style="width:0%;height:2px"></div>
-                                      </div>
-                                    </div>
-                                </div>
-
-                            </div>
+        <ul class="nav nav-tabs">
+          <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#sijil">تحديث السجل</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#tadkir">التذاكير<span id='nb_tadkir' class="badge badge-danger"></span></a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div id="sijil" class="tab-pane active"><br>
+            <div class="text-center controles">
+              <button class="btn btn-success" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"><strong><i class="fa fa-pencil-square-o" aria-hidden="true"></i> اضافة تسجيل جديد</strong></button>
+              <button class="btn btn-warning" data-toggle="collapse" data-target="#collapseTwo2" aria-expanded="false" aria-controls="collapseTwo"><strong><i class="fa fa-search" aria-hidden="true"></i> بحث</strong></button>
+              <button class="btn btn-info" data-toggle="collapse" data-target="#collapseThree3" aria-expanded="false" aria-controls="collapseThree"><strong><i class="fa fa-binoculars" aria-hidden="true"></i> بحث متعدد الوسائط</strong></button>
+              <button class="btn btn-outline-secondary"><strong><i class="fa fa-file-excel-o" aria-hidden="true"></i> تحميل السجل</strong></button>
+            </div>
+            <div id="accordion">
+              <div class="card">
+                <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                  <div class="card-body">
+                    <div class="text-right">
+                      <form action="" method="get">
+                        <div class="form-group row">
+                          <div id="forcheck" class="col-2" onclick="isChecked(this);">
+                            <input type="checkbox" name="sendorinbox" class="toogle-switch" id="sendorinbox" data-width="100" data-toggle="toggle" data-on="وارد" data-off="صادر" data-onstyle="success" data-offstyle="warning">
+                          </div>
+                          <div class="col-5">
+                            <input class="form-control" list="lisDataAtraf" type="text" name="expediteur" placeholder="اسم المرسل" id="expediteur" value="رئيس مصلحة كتابة الضبط بالمحكمة الادارية بأكادير">
+                          </div>
+                          <div class="col-5">
+                            <input class="form-control" list="lisDataAtraf" type="text" name="destinataire" placeholder="اسم المرسل اليه" id="destinataire">
+                          </div>
                         </div>
-                        <button type="button" class="btn btn-info bnt-control" data-toggle="modal" data-target="#ModalSetRemaind" /><i class="fa fa-bell-o" aria-hidden="true"> ضبط تذكير</i></button>
-                        <input type="hidden" id="remaindDate" name="remaindDate" value="">
-                        <input type="hidden" id="remaindText" name="remaindText" value="">
-                        <button type="button" class="btn btn-success bnt-control" id="submit"><i class="fa fa-check" aria-hidden="true"> إضافة</i></button>
-                        <button type="button" class="btn btn-danger bnt-control" data-toggle="collapse" data-target="#collapseOne" id="annulation"><i class="fa fa-undo" aria-hidden="true"> الغاء</i></button>
+                        <div class="form-group row">
+                          <div class="col-3">
+                            <input class="form-control" list="lisDataNaw3" type="text" name="type" placeholder="نوعها" id="type">
+                          </div>
+                          <div class="col-3">
+                            <input class="form-control" list="lisDataMawdo3" type="text" name="object" placeholder="موضوعها" id="object">
+                          </div>
+                          <div class="col-3">
+                            <input class="form-control" type="text" name="dossierAssocier" placeholder="مرتبطة بملف" id="dossierAssocier" autocomplete="on">
+                          </div>
+                          <div class="col-3">
+                            <input placeholder="تاريخ الوصول" class="form-control" type="text" name="dateArriver" id="dateArriver">
+                          </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class=" bnt-control">
+                                <div id="upload&Progressbar">
+                                  <div class="form-group" id="fileUpload">
+                                        <div class="custom-file mb-3">
+                                          <input type="file" class="custom-file-input" id="customFile" name="filename">
+                                          <label class="custom-file-label text-center" for="customFile" id="filelab"><i style="font-size:12px;" class="fa fa-clone" aria-hidden="true" id="displayFileName"> نسخة الماسح الضوئي</i></label>
+                                          <input type="hidden" value="" id="fileTmpName">
+                                        </div>
+                                  </div>
+                                  <div class="form-group" style="display:none;" id="progersUpload">
+
+                                        <div class="small-text">
+                                          <span style="float:right;font:12px;font-weight: bold;" id="fileUploadName"></span><br/>
+                                          <div class="row text-right">
+                                            <div class="col-3"><span id="percentage"></span></div>
+                                            <div class="col-5"></div>
+                                            <div class="col-4"><span id="size"></span></div>
+                                          </div>
+                                          <div class="progress " style="height:2px">
+                                            <div class="progress-bar" id="progressbar" style="width:0%;height:2px"></div>
+                                          </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-info bnt-control" data-toggle="modal" data-target="#ModalSetRemaind" /><i class="fa fa-bell-o" aria-hidden="true"> ضبط تذكير</i></button>
+                            <input type="hidden" id="remaindDate" name="remaindDate" value="">
+                            <input type="hidden" id="remaindText" name="remaindText" value="">
+                            <button type="button" class="btn btn-success bnt-control" id="submit"><i class="fa fa-check" aria-hidden="true"> إضافة</i></button>
+                            <button type="button" class="btn btn-danger bnt-control" data-toggle="collapse" data-target="#collapseOne" id="annulation"><i class="fa fa-undo" aria-hidden="true"> الغاء</i></button>
+                        </div>
+                      </from>
                     </div>
-                  </from>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                  <div class="card-body">
+                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+                  <div class="card-body">
+                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="card">
-            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-              <div class="card-body">
-                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-              </div>
-            </div>
-          </div>
-          <div class="card">
-            <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
-              <div class="card-body">
-                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-              </div>
-            </div>
-          </div>
-        </div>
-        <hr />
-        <div class="" id="rslt">
-          <input id="myInput" type="text" placeholder="Search..">
-          <table class="table table-striped table-bordered table-hover text-right" id="myTable">
-            <thead class="thead-dark">
-              <tr>
-                <th class="align-middle text-center" style="width: 2%;"></th>
-                <th class="align-middle text-center" style="width: 2%;"></th>
-                <th class="align-middle" style="width: 4%;">الرقم الترتيبي</th>
-                <th class="align-middle" style="width: 4%;">صادر / وارد</th>
-                <th class="align-middle" style="width: 10%;">تاريخ الورود / الاصدار</th>
-                <th class="align-middle" style="width: 21%;">المرسل</th>
-                <th class="align-middle" style="width: 21%;">المرسل اليه</th>
-                <th class="align-middle" style="width: 6%;">نوعها</th>
-                <th class="align-middle" style="width: 12%;">موضوعها</th>
-                <th class="align-middle" style="width: 10%;">الملف المرتبط</th>
-                <th class="align-middle" style="width: 2%;"></th>
-                <th class="align-middle" style="width: 2%;"></th>
-                <th class="align-middle" style="width: 2%;"></th>
-                <th class="align-middle" style="width: 2%;"></th>
-              </tr>
-            </thead>
-            <tbody id='dataTable'>
+            <hr />
+            <div class="" id="rslt">
+              <input id="myInput" type="text" placeholder="Search..">
+              <table class="table table-striped table-bordered table-hover text-right" id="myTable">
+                <thead class="thead-dark">
+                  <tr>
+                    <th class="align-middle text-center" style="width: 2%;"></th>
+                    <th class="align-middle text-center" style="width: 2%;"></th>
+                    <th class="align-middle" style="width: 4%;">الرقم الترتيبي</th>
+                    <th class="align-middle" style="width: 4%;">صادر / وارد</th>
+                    <th class="align-middle" style="width: 10%;">تاريخ الورود / الاصدار</th>
+                    <th class="align-middle" style="width: 21%;">المرسل</th>
+                    <th class="align-middle" style="width: 21%;">المرسل اليه</th>
+                    <th class="align-middle" style="width: 6%;">نوعها</th>
+                    <th class="align-middle" style="width: 12%;">موضوعها</th>
+                    <th class="align-middle" style="width: 10%;">الملف المرتبط</th>
+                    <th class="align-middle" style="width: 2%;"></th>
+                    <th class="align-middle" style="width: 2%;"></th>
+                    <th class="align-middle" style="width: 2%;"></th>
+                    <th class="align-middle" style="width: 2%;"></th>
+                  </tr>
+                </thead>
+                <tbody id='dataTable'>
 
-            </tbody>
-            <tfooter>
-              <tr class="">
-                <td colspan="14" class="text-center bt-marge" ><button type="button" onclick="reload(0,0);" class="btn btn-block collapsed btn-default">
-                  <strong><i class="fa fa-caret-down" aria-hidden="true"></i> تحميل المزيد <i class="fa fa-caret-down" aria-hidden="true"></i></strong>
-                </button></td>
-              </tr>
-            </tfooter>
-          </table>
+                </tbody>
+                <tfooter>
+                  <tr class="">
+                    <td colspan="14" class="text-center bt-marge" ><button type="button" onclick="reload(0,0);" class="btn btn-block collapsed btn-default">
+                      <strong><i class="fa fa-caret-down" aria-hidden="true"></i> تحميل المزيد <i class="fa fa-caret-down" aria-hidden="true"></i></strong>
+                      </button>
+                    </td>
+                  </tr>
+                </tfooter>
+              </table>
+            </div>
+          </div>
+          <div id="tadkir" class="tab-pane fade"><br><br><br>
+            <div class="" id="rslt">
+              <table class="table table-striped table-bordered table-hover text-right" id="myTable2">
+                <thead class="thead-dark">
+                  <tr>
+                    <th class="align-middle" style="width: 4%;">الرقم الترتيبي</th>
+                    <th class="align-middle" style="width: 4%;">صادر / وارد</th>
+                    <th class="align-middle" style="width: 10%;">تاريخ الورود / الاصدار</th>
+                    <th class="align-middle" style="width: 17%;">المرسل</th>
+                    <th class="align-middle" style="width: 17%;">المرسل اليه</th>
+                    <th class="align-middle" style="width: 6%;">نوعها</th>
+                    <th class="align-middle" style="width: 12%;">موضوعها</th>
+                    <th class="align-middle" style="width: 10%;">الملف المرتبط</th>
+                    <th class="align-middle" style="width: 10%;">تاريخ التذكير</th>
+                    <th class="align-middle" style="width: 10%;">مضمون التذكير</th>
+                  </tr>
+                </thead>
+                <tbody id='dataTable2'>
+
+                </tbody>
+                <tfooter>
+                </tfooter>
+              </table>
+            </div>
+
+          </div>
         </div>
       </div>
       <div id="outbody">

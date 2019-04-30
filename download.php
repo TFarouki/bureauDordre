@@ -7,6 +7,7 @@
   if($user->isLoggedIn()){
     if(isset($_POST['json'])){
       $memeberOfId = $user->memeberOf("مكتب الضبط")["id"];
+      $template = $user->memeberOf("مكتب الضبط")["file"];
       $json = json_decode($_POST['json']);
       $id = $json->id;
       $db->get('register_bureaudordre',array("num_ordre","=",$id));
@@ -52,7 +53,7 @@
         $filename = "نموذج_الارسالية.docx";
         $filename2 = "‫ارسالية.docx";
         $src = "./template/".$filename;
-        $ww->update($src,$ar,$filename2);
+        $ww->update($template,$ar,$filename2);
         $file = "./template/".$filename2;
         $file2='./tmp/'.$user->data()->id.'/ارسالية_'.$unm_order2.'.docx';
         $folder = './tmp/'.$user->data()->id;
