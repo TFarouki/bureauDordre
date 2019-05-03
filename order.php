@@ -97,14 +97,6 @@
             $("#myNewAlert").slideUp(500);
           });
         }
-        $(document).ready(function(){
-          $("#myInput").on("keyup", function() {
-            var value = $(this).val().toLowerCase();
-            $("#dataTable tr").filter(function() {
-              $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-            });
-          });
-        });
         function ignoreNull(variable) {
           return (variable === null)?"":variable;
         }
@@ -176,6 +168,12 @@
           });
         }
         $(document).ready(function(){
+              $("#myInput").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#dataTable tr").filter(function() {
+                  $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+              });
               $.ajax({
                 url:"atraf.php",
                 method:"POST",
@@ -243,6 +241,19 @@
                     }
                   }
                 }
+              });
+               var d = new Date();
+              $.ajax({
+                 url:"getYears.php",
+                 method:"POST",
+                 success:function(data){
+                   if(isset(data)){
+                     json = JSON.parse(data);
+                     for (var i = 0; i < json.length; i++) {
+                       $('#optionRegYear').html($('#optionRegYear').html()+`<a class="dropdown-item" href="#">`+json[i].year+`</a>`);
+                     }
+                   }
+                 }
               });
               reload(0,10);
         });
@@ -905,7 +916,26 @@
           });
           $("#ModalEditDoc").modal("toggle");
         });
-
+        $(document).on('click','#optionRegYear a',function(e){
+          var year = $(this).html();
+          var json = JSON.stringify({'year':year});
+          $.ajax({
+            url:"getReg.php",
+            method:"POST",
+            data:{json : json},
+              success:function(data){
+                if(isset(data)){
+                  json = JSON.parse(data);
+                  var link = document.createElement('a');
+                  link.href = json.file;
+                  link.download = json.filename;
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                }
+            }
+          });
+        });
       </script>
     </head>
     <body>
@@ -934,7 +964,16 @@
               <button class="btn btn-success" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"><strong><i class="fa fa-pencil-square-o" aria-hidden="true"></i> اضافة تسجيل جديد</strong></button>
               <button class="btn btn-warning" data-toggle="collapse" data-target="#collapseTwo2" aria-expanded="false" aria-controls="collapseTwo"><strong><i class="fa fa-search" aria-hidden="true"></i> بحث</strong></button>
               <button class="btn btn-info" data-toggle="collapse" data-target="#collapseThree3" aria-expanded="false" aria-controls="collapseThree"><strong><i class="fa fa-binoculars" aria-hidden="true"></i> بحث متعدد الوسائط</strong></button>
-              <button class="btn btn-outline-secondary"><strong><i class="fa fa-file-excel-o" aria-hidden="true"></i> تحميل السجل</strong></button>
+              <div class="dropdown" style="display:inline;">
+                <button class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" id="selectRegYear">
+                  <strong>
+                    <i class="fa fa-file-excel-o" aria-hidden="true"></i> تحميل السجل
+                  </strong>
+                </button>
+                <div class="dropdown-menu" id="optionRegYear">
+
+                </div>
+              </div>
             </div>
             <div id="accordion">
               <div class="card">
