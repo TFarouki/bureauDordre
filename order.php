@@ -69,13 +69,7 @@
       </style>
       <script type="text/javascript">
         $(document).on("focus","#dateArriver",function(){
-          var d = new Date();
-          var month = d.getMonth()+1;
-          var day = d.getDate();
-          var output =(day<10 ? '0' : '') + day + '/' +
-              (month<10 ? '0' : '') + month + '/' + d.getFullYear() ;
-          this.value = output;
-          this.type="date";
+          $('#dateArriver').attr('type','date');
         });
         $(document).on("blur","#dateArriver",function(){
           this.type="text";
@@ -256,6 +250,30 @@
                  }
               });
               reload(0,10);
+              var dateStr = '<?php
+                date_default_timezone_set('Africa/Casablanca'); // CDT
+
+                  $info = getdate();
+                  $date = $info['mday'];
+                  $date = ($date<10)?'0'.$date:$date;
+                  $month = $info['mon'];
+                  $month = ($month<10)?'0'.$month:$month;
+                  $year = $info['year'];
+                  $hour = $info['hours'];
+                  $hour = ($hour<10)?'0'.$hour:$hour;
+                  $min = $info['minutes'];
+                  $min = ($min<10)?'0'.$min:$min;
+                  $sec = $info['seconds'];
+                  $sec = ($sec<10)?'0'.$sec:$sec;
+                  $current_date = $year.'-'.$month.'-'.$date.'T'.$hour.':'.$min.':'.$sec;
+                  echo $current_date;
+               ?>';
+              $('#idDateTime').val(dateStr);
+              $("#dateArriver").attr("type","date");
+              var d = new Date(dateStr);//"2019-05-05T10:52:09.823Z");
+              document.querySelector("#dateArriver").valueAsDate = d;
+              $("#dateArriver").attr("type","text");
+
         });
         $(document).on('click', '#annulation', function(e){
           $("#expediteur").val('');
@@ -290,10 +308,13 @@
             if($(x).children().hasClass('off')){
               $('#destinataire').val('رئيس مصلحة كتابة الضبط بالمحكمة الادارية بأكادير');
               $('#expediteur').val('');
+              $("#dateArriver").attr('placeholder','تاريخ اصدار الوثيقة');
 
             }else{
               $('#expediteur').val('رئيس مصلحة كتابة الضبط بالمحكمة الادارية بأكادير');
               $('#destinataire').val('');
+              $("#dateArriver").attr('placeholder','تاريخ الارسال');
+
             }
         }
 
@@ -962,8 +983,8 @@
           <div id="sijil" class="tab-pane active"><br>
             <div class="text-center controles">
               <button class="btn btn-success" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"><strong><i class="fa fa-pencil-square-o" aria-hidden="true"></i> اضافة تسجيل جديد</strong></button>
-              <button class="btn btn-warning" data-toggle="collapse" data-target="#collapseTwo2" aria-expanded="false" aria-controls="collapseTwo"><strong><i class="fa fa-search" aria-hidden="true"></i> بحث</strong></button>
-              <button class="btn btn-info" data-toggle="collapse" data-target="#collapseThree3" aria-expanded="false" aria-controls="collapseThree"><strong><i class="fa fa-binoculars" aria-hidden="true"></i> بحث متعدد الوسائط</strong></button>
+              <button style="display:none" class="btn btn-warning" data-toggle="collapse" data-target="#collapseTwo2" aria-expanded="false" aria-controls="collapseTwo"><strong><i class="fa fa-search" aria-hidden="true"></i> بحث</strong></button>
+              <button style="display:none" class="btn btn-info" data-toggle="collapse" data-target="#collapseThree3" aria-expanded="false" aria-controls="collapseThree"><strong><i class="fa fa-binoculars" aria-hidden="true"></i> بحث متعدد الوسائط</strong></button>
               <div class="dropdown" style="display:inline;">
                 <button class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" id="selectRegYear">
                   <strong>
@@ -1003,7 +1024,8 @@
                             <input class="form-control" type="text" name="dossierAssocier" placeholder="مرتبطة بملف" id="dossierAssocier" autocomplete="on">
                           </div>
                           <div class="col-3">
-                            <input placeholder="تاريخ الوصول" class="form-control" type="text" name="dateArriver" id="dateArriver">
+                            <input placeholder="تاريخ الارسال" class="form-control" type="text" name="dateArriver" id="dateArriver">
+
                           </div>
                         </div>
                         <div class="form-group row">
@@ -1061,7 +1083,7 @@
             </div>
             <hr />
             <div class="" id="rslt">
-              <input id="myInput" type="text" placeholder="Search..">
+              <input id="myInput" type="text" placeholder="البحث..">
               <table class="table table-striped table-bordered table-hover text-right" id="myTable">
                 <thead class="thead-dark">
                   <tr>
@@ -1370,6 +1392,7 @@
         <input type="hidden" id="idForDelete" name="" value="">
         <input type="hidden" id="idForDownload" name="" value="">
         <input type="hidden" id="idOriginForDownload" name="" value="">
+        <input type="hidden" id="idDateTime" name="" value="">
       </div>
 
 
