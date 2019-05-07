@@ -13,7 +13,9 @@
             </li>
             <li class="nav-item <?php echo (basename($_SERVER['PHP_SELF'])=='order.php')?'active" style="background-color:#ddd;':'';?>">
                 <a class="nav-link" href="<?php echo (basename($_SERVER['PHP_SELF'])=='order.php')?'#" style="color:#222;':'order.php';?>">مكتب الضبط</a>
-
+            </li>
+            <li class="nav-item <?php echo (basename($_SERVER['PHP_SELF'])=='docNum.php')?'active" style="background-color:#ddd;':'';?>">
+                <a class="nav-link" href="<?php echo (basename($_SERVER['PHP_SELF'])=='docNum.php')?'#" style="color:#222;':'docNum.php';?>">الملف الالكتروني</a>
             </li>
         </ul>
         <ul class="navbar-nav mr-auto">
