@@ -66,6 +66,17 @@
             box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(255, 0, 0, 0.6);
             outline: 0 none;
           }
+          .puping-label{
+            background-color: rgba(255,255,255,0.85);
+            margin-right: 8px;
+            padding:5px;
+            position: relative;
+            top:-55px;
+            right: 15px;
+          }
+          .input-col{
+            height: 38px;
+          }
       </style>
       <script type="text/javascript">
         $(document).on("focus","#dateArriver",function(){
@@ -273,7 +284,7 @@
               var d = new Date(dateStr);//"2019-05-05T10:52:09.823Z");
               document.querySelector("#dateArriver").valueAsDate = d;
               $("#dateArriver").attr("type","text");
-
+              $('.puping-label').hide();
         });
         $(document).on('click', '#annulation', function(e){
           $("#expediteur").val('');
@@ -957,6 +968,16 @@
             }
           });
         });
+        $(document).on('focus','.input-poping',function(e){
+          $(this).next().html($(this).attr('placeholder'));
+          $(this).next().show();
+          $(this).attr('placeholder','');
+        });
+        $(document).on('blur','.input-poping',function(e){
+          $(this).next().hide();
+          $(this).attr('placeholder',$(this).next().html());
+          $(this).next().html('');
+        });
       </script>
     </head>
     <body>
@@ -1006,26 +1027,31 @@
                           <div id="forcheck" class="col-2" onclick="isChecked(this);">
                             <input type="checkbox" name="sendorinbox" class="toogle-switch" id="sendorinbox" data-width="100" data-toggle="toggle" data-on="وارد" data-off="صادر" data-onstyle="success" data-offstyle="warning">
                           </div>
-                          <div class="col-5">
-                            <input class="form-control" list="lisDataAtraf" type="text" name="expediteur" placeholder="اسم المرسل" id="expediteur" value="رئيس مصلحة كتابة الضبط بالمحكمة الادارية بأكادير">
+                          <div class="col-5 input-col">
+                            <input class="form-control input-poping" list="lisDataAtraf" type="text" name="expediteur" placeholder="اسم المرسل" id="expediteur" value="رئيس مصلحة كتابة الضبط بالمحكمة الادارية بأكادير">
+                            <label for="" class="puping-label" ></label>
                           </div>
-                          <div class="col-5">
-                            <input class="form-control" list="lisDataAtraf" type="text" name="destinataire" placeholder="اسم المرسل اليه" id="destinataire">
+                          <div class="col-5 input-col">
+                            <input class="form-control input-poping" list="lisDataAtraf" type="text" name="destinataire" placeholder="اسم المرسل اليه" id="destinataire">
+                            <label for="" class="puping-label" ></label>
                           </div>
                         </div>
                         <div class="form-group row">
-                          <div class="col-3">
-                            <input class="form-control" list="lisDataNaw3" type="text" name="type" placeholder="نوعها" id="type">
+                          <div class="col-3 input-col">
+                            <input class="form-control input-poping" list="lisDataNaw3" type="text" name="type" placeholder="نوعها" id="type">
+                            <label for="" class="puping-label" ></label>
                           </div>
-                          <div class="col-3">
-                            <input class="form-control" list="lisDataMawdo3" type="text" name="object" placeholder="موضوعها" id="object">
+                          <div class="col-3 input-col">
+                            <input class="form-control input-poping" list="lisDataMawdo3" type="text" name="object" placeholder="موضوعها" id="object">
+                            <label for="" class="puping-label" ></label>
                           </div>
-                          <div class="col-3">
-                            <input class="form-control" type="text" name="dossierAssocier" placeholder="مرتبطة بملف" id="dossierAssocier" autocomplete="on">
+                          <div class="col-3 input-col">
+                            <input class="form-control input-poping" type="text" name="dossierAssocier" placeholder="مرتبطة بملف" id="dossierAssocier" autocomplete="on">
+                            <label for="" class="puping-label" ></label>
                           </div>
-                          <div class="col-3">
-                            <input placeholder="تاريخ الارسال" class="form-control" type="text" name="dateArriver" id="dateArriver">
-
+                          <div class="col-3 input-col">
+                            <input placeholder="تاريخ الارسال" class="form-control input-poping" type="text" name="dateArriver" id="dateArriver">
+                            <label for="" class="puping-label" ></label>
                           </div>
                         </div>
                         <div class="form-group row">
