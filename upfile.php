@@ -9,6 +9,9 @@
         unlink($location);
       }
     }
+    if(isset($_POST['nbPages']) && $_POST['nbPages']!=""){
+      $file->nbPages = (int) $_POST['nbPages'];
+    }
     if(isset($_FILES['file']['name'])){
       $type = $_FILES['file']['type'];
       $size = $_FILES['file']['size'];
@@ -16,6 +19,9 @@
     	$ext = end($test);
     	$name=Hash::salt(30).".".$ext;
       $location = "./FileUpload/tmp/".$user->data()->id."/";
+      if(!is_dir("./FileUpload/tmp/")){
+        mkdir("./FileUpload/tmp/");
+      }
       if(!is_dir($location)){
         mkdir($location);
       }
