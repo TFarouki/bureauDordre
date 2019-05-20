@@ -52,7 +52,7 @@
           $("#myNewAlert").slideUp(500);
         });
       }
-      function loadjugement(docNum){
+      function loadjugement(docNum,highlight=false){
         $('#tbRslt3').html('');
         json = JSON.stringify({'docNum':docNum});
         $.ajax({
@@ -82,7 +82,7 @@
                               <a class="dropdown-item opt2" href="#" style="color:#fff"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> تعديل النسخة</a>
                             </div>
                           </div>`;
-                row = '<tr class="td-border" id="'+value.id+'"><td class="text-center"><i class="fa fa-pencil" style="color:rgba(255,120,0,0.8);" aria-hidden="true"></i></td><td style="padding-right:20px;">'+
+                row = '<tr class="td-border" id="'+value.id+'"><td class="text-center"><i class="fa fa-pencil opt3" style="color:rgba(255,120,0,0.8);" aria-hidden="true"></i></td><td style="padding-right:20px;">'+
                           jugeType+'</td><td class="text-center">'+
                           value.numJugement +'</td><td class="text-center" >'+
                           value.jugeYear+'</td><td class="text-center" >'+
@@ -91,8 +91,11 @@
                 $('#tbRslt3').append(row);
               });
               $('#nb_juge').html(json.rows.length);
+              if(highlight){
+                $('#tbRslt3 tr:first').attr("style","background-color:rgba(0,200,160,0.7);color:#fff;");
+              }
             }else{
-              addAlert("warning","لقد حدث خطأ ! ","هدا الملف لا يتوفر على احكام ممسوحة الكترونيا ");
+              addAlert("warning","تنبيه !..  ","هدا الملف لا يتوفر على احكام ممسوحة الكترونيا ");
             }
           }
         });
@@ -392,7 +395,8 @@
                 json = JSON.parse(data);
                 if(json.stat){
                   //loadjugement($('#numDossierInfo').html());
-                  loadjugement($('#numeroDossier').val());
+                  loadjugement($('#numeroDossier').val(),true);
+                  //$('#tbRslt3 tr:first').addClass("bg-success");
                 }
               }
             });
@@ -417,22 +421,56 @@
       });
       $(document).on('click','.opt0 .opt2',function(){
         $('#idChangeCopy').val($(this).closest('tr').attr('id'));
+        $('#fileTmpName2').val("");
+        $('#filelab2').removeClass("bg-success");
+        $('#filelab2').removeClass("text-white");
         $('#displayFileName2').html(" نسخة الماسح الضوئي");
         $('#modalChangeCopy').modal('toggle');
       });
       $(document).on('click','#jugementSave2',function(){
         if(confirm("سيتم اضافة تسجيل جديد :")){
-          var form_data={"id":$("#idChangeCopy").val(),"type" : $('#jugeType').val(),"fileTmpName" : $('#fileTmpName').val(), "dossierAssocier": $('#numeroDossier').val() /*$('#numDossierInfo').html()*/ ,"yearJuge" : $('#yearJuge').val(),"numJuge" : $('#numJuge').val()};
+          var upfile = JSON.parse($('#fileTmpName2').val());
+          var form_data={"id":$("#idChangeCopy").val(),"type" : $('#jugeType').val(),"dossierAssocier": $('#numeroDossier').val() /*$('#numDossierInfo').html()*/,"upfile":upfile};
           json = JSON.stringify(form_data);
           $.ajax({
             url : "changeCopyJugement.php",
             method : "POST",
             data : {json : json},
             success:function(data){
-              
+              json = JSON.parse(data);
+              if(json.stat){
+                addAlert("success","لقد تم التعديل بنجاح","");
+              }else {
+                addAlert("danger","حدث خطأ اثناء التعديل","");
+              }
             }
           });
+          $('#modalChangeCopy').modal('toggle');
         }
+      });
+      $(document).on('click','.opt3',function(){
+        $('#idChangeJuge').val($(this).closest('tr').attr('id'));
+        tr=$(this).closest('tr');
+        type = tr.children('td:nth-child(2)').html();
+        $("#yearJuge2").val(tr.children('td:nth-child(4)').html());
+        $("#numJuge2").val(tr.children('td:nth-child(3)').html());
+        $("#nb_pages2").val(tr.children('td:nth-child(5)').html());
+        if(type == "حكم قطعي"){
+          type = 1;
+        }else if (type == "حكم أولي بالاختصاص") {
+          type = 2;
+        }else if (type == "حكم تمهيدي بإجراء بحث") {
+          type = 3;
+        }else if (type == "حكم تمهيدي بإجراء خبرة") {
+          type = 4;
+        }
+        $("#jugeType2").val(type);
+        $('#modalEditJugement').modal('toggle');
+
+      });
+      $(document).on('click','#jugementSave3',function(){
+        id=$('#idChangeJuge').val();
+        alert(id);
       });
     </script>
   </head>
@@ -621,8 +659,8 @@
                     </div>
                     <div class="col-6">
                       <div class="form-group">
-                        <label for="yearJuge" style="float:right;">رقم الحكم :</label>
-                        <input type="year" class="form-control" placeholder="رقم الحكم..." id="numJuge">
+                        <label for="numJuge" style="float:right;">رقم الحكم :</label>
+                        <input type="number" class="form-control" placeholder="رقم الحكم..." id="numJuge">
                       </div>
                     </div>
                   </div>
@@ -703,24 +741,24 @@
                   <div class="row">
                     <div class="col-6">
                       <div class="form-group">
-                        <label for="yearJuge" style="float:right;">سنة الحكم :</label>
-                        <input type="year" class="form-control" placeholder="سنة الحكم" id="yearJuge">
+                        <label for="yearJuge2" style="float:right;">سنة الحكم :</label>
+                        <input type="year" class="form-control" placeholder="سنة الحكم" id="yearJuge2">
                       </div>
                     </div>
                     <div class="col-6">
                       <div class="form-group">
-                        <label for="yearJuge" style="float:right;">رقم الحكم :</label>
-                        <input type="year" class="form-control" placeholder="رقم الحكم..." id="numJuge">
+                        <label for="numJuge2" style="float:right;">رقم الحكم :</label>
+                        <input type="number" class="form-control" placeholder="رقم الحكم..." id="numJuge2">
                       </div>
                     </div>
                   </div>
                   <div class="form-group">
-                    <label for="yearJuge" style="float:right;">عدد صفحات الحكم :</label>
-                    <input type="year" class="form-control" placeholder="عدد صفحات الحكم" id="nb_pages">
+                    <label for="nb_pages2" style="float:right;">عدد صفحات الحكم :</label>
+                    <input type="number" class="form-control" placeholder="عدد صفحات الحكم" id="nb_pages2">
                   </div>
                   <div class="form-group">
-                    <label for="jugeType" style="float:right;">نوع الحكم :</label>
-                    <select class="form-control" id="jugeType">
+                    <label for="jugeType2" style="float:right;">نوع الحكم :</label>
+                    <select class="form-control" id="jugeType2">
                       <option value='1'>حكم قطعي</option>
                       <option value='2'>حكم أولي بالاختصاص</option>
                       <option value='3'>حكم تمهيدي بإجراء بحث</option>
@@ -730,8 +768,8 @@
                 </form>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-primary" style="margin-left:5px;" id='jugementSave'>اضافة</button>
-                <button type="button" class="btn btn-secondary" id="dismiss_modal" data-dismiss="modal">الغاء</button>
+                <button type="button" class="btn btn-primary" style="margin-left:5px;" id='jugementSave3'>اضافة</button>
+                <button type="button" class="btn btn-secondary" id="dismiss_modal3" data-dismiss="modal">الغاء</button>
               </div>
             </div>
           </div>
@@ -795,6 +833,7 @@
         </div>
 
         <input type="hidden" id="idChangeCopy" name="" value="">
+        <input type="hidden" id="idChangeJuge" name="" value="">
       </div>
 
     <?php
