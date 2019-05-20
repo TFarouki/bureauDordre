@@ -29,6 +29,12 @@
         color:#3493c7;
         padding-right: 20px;
       }
+      .caret-off::after {
+         visibility:hidden;
+      }
+      .dropdown-item:hover{
+        background-color: rgba(255,255,255,0.5);
+      }
       .nav-tabs .nav-item{
         font-family:'DIN_Light'!important;
         font-weight: bold;
@@ -54,33 +60,46 @@
           method : "POST",
           data : {json : json},
           success:function(data){
-            $('#loader').modal("hide");
-            
+            //$('#loader').modal("hide");
             json = JSON.parse(data);
-            $.each(json.rows, function( index, value ){
-              if(value.type == 1){
-                jugeType = "حكم قطعي";
-              }else if (value.type == 2) {
-                jugeType = "حكم أولي بالاختصاص";
-              }else if (value.type == 3) {
-                jugeType = "حكم تمهيدي بإجراء بحث";
-              }else if (value.type == 4) {
-                jugeType = "حكم تمهيدي بإجراء خبرة";
-              }
-              row = '<tr class="td-border" id="'+value.id+'"><td class="text-center"><i class="fa fa-pencil" style="color:rgba(255,120,0,0.8);" aria-hidden="true"></i></td><td style="padding-right:20px;">'+
-                        jugeType+'</td><td class="text-center">'+
-                        value.numJugement +'</td><td class="text-center" >'+
-                        value.jugeYear+'</td><td class="text-center" >'+
-                        value.nb_pages+'</td><td class="text-center" id="'+value.fileId+'"><i class="fa fa-file-pdf-o" style="color:#E94B3C;" aria-hidden="true"></i></td></tr>';
-              $('#tbRslt3').append(row);
-            });
-            $('#nb_juge').html(json.rows.length);
+            if(json.count>0){
+              $.each(json.rows, function( index, value ){
+                if(value.type == 1){
+                  jugeType = "حكم قطعي";
+                }else if (value.type == 2) {
+                  jugeType = "حكم أولي بالاختصاص";
+                }else if (value.type == 3) {
+                  jugeType = "حكم تمهيدي بإجراء بحث";
+                }else if (value.type == 4) {
+                  jugeType = "حكم تمهيدي بإجراء خبرة";
+                }
+                dropup = `<div class="dropup">
+                            <a class="dropdown-toggle caret-off" data-toggle="dropdown" href="#" style="color:#E94B3C;">
+                              <i class="fa fa-file-pdf-o" style="color:#E94B3C;" aria-hidden="true"></i>
+                            </a>
+                            <div class="dropdown-menu bg-primary   text-right">
+                              <a class="dropdown-item opt1" href="#" style="color:#fff"><i class="fa fa-folder-open-o" aria-hidden="true"></i> الاطلاع على النسخة</a>
+                              <a class="dropdown-item opt2" href="#" style="color:#fff"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> تعديل النسخة</a>
+                            </div>
+                          </div>`;
+                row = '<tr class="td-border" id="'+value.id+'"><td class="text-center"><i class="fa fa-pencil" style="color:rgba(255,120,0,0.8);" aria-hidden="true"></i></td><td style="padding-right:20px;">'+
+                          jugeType+'</td><td class="text-center">'+
+                          value.numJugement +'</td><td class="text-center" >'+
+                          value.jugeYear+'</td><td class="text-center" >'+
+                          value.nb_pages+'</td><td class="text-center opt0" id="'+value.fileId+
+                          '">'+dropup+'</td></tr>';
+                $('#tbRslt3').append(row);
+              });
+              $('#nb_juge').html(json.rows.length);
+            }else{
+              addAlert("warning","لقد حدث خطأ ! ","هدا الملف لا يتوفر على احكام ممسوحة الكترونيا ");
+            }
           }
         });
       }
       $(document).on('click','#search',function(){
         if($('#numeroDossier').val()!=''){
-          $('#loader').modal("toggle");
+          //$('#loader').modal("toggle");
           $('#numDossier').html('');
           $('#date_reg').html('');
           $('#entity').html('');
@@ -89,7 +108,8 @@
           $('#etat').html('');
           $('#results').attr('style','');
           data = {NumeroDossier: $('#numeroDossier').val(), IdJuridiction: 293};
-          $.ajax({
+
+          /*$.ajax({
             url : "info2.php",
             method : "POST",
             data : {json : data},
@@ -147,6 +167,8 @@
               }
             }
           });
+          */
+          loadjugement($('#numeroDossier').val());
           $('#results').show();
         }
       });
@@ -155,9 +177,9 @@
            $('#search').click();
          }
        });
-
-
       $(document).on('click','#addJugement',function(){
+        $('#numJuge').val('');
+        $('#jugeType').val('1');
         var d=new Date();
         var y = d.getFullYear();
         $('#yearJuge').val(y);
@@ -251,6 +273,89 @@
           }
         }
       });
+      $(document).on('change','#customFile2',function(){
+        var file = document.getElementById('customFile2');
+
+        var hidden = $('#fileTmpName2').val();
+        var lab = document.getElementById('filelab2');
+        var fullPath = file.value;
+        if (fullPath) {
+          $('#progersUpload2').show();
+          $('#fileUpload2').hide();
+          var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+          var filename = fullPath.substring(startIndex);
+          if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+              filename = filename.substring(1);
+          }
+          //lab.innerHTML = filename;
+          $('#fileUploadName2').html(filename);
+          sizefile = $('#customFile2')[0].files[0].size;
+          sizefile = sizefile / (1024*1024);
+          $('#size2').html(sizefile.toFixed(2) + " Mo");
+
+          var property = file.files[0];
+          var form_data = new FormData();
+          form_data.append('hidden',hidden);
+          var file_name = property.name;
+          var ext = file_name.split('.').pop().toLowerCase();
+          var allowExt = ['pdf','doc','docx','bmp','gif','jpeg','jpg','png','tif','tiff','xls','xlsx','mdb'];
+
+          if($.inArray(ext,allowExt) == -1){
+            alert('المرجوا التأكد من صيغة الملف..!');
+            $('#fileTmpName2').val("");
+            $('#fileUpload2').show();
+            $('#progersUpload2').hide();
+            $('#filelab2').removeClass("bg-success text-white");
+            $('#displayFileName2').html(" نسخة الماسح الضوئي");
+          }else{
+            form_data.append('file',property);
+            var nbpages = '';
+            var pdfDoc = file.files[0];
+            if (!pdfDoc) {
+              return;
+            }
+            var fileReader = new FileReader();
+            fileReader.onload = function (e) {
+                pdf = new Uint8Array(e.target.result);
+                PDFJS.getDocument({data: pdf}).then(function(pdf) {
+                  nbpages = pdf.pdfInfo.numPages;
+                  form_data.append('nbPages',nbpages);
+                  $.ajax({
+                    xhr: function(){
+                        var xhr = new window.XMLHttpRequest();
+                        xhr.upload.addEventListener("progress", function(evt) {
+                            if (evt.lengthComputable) {
+                                var percentComplete = (evt.loaded / evt.total) * 100;
+                                percentComplete = percentComplete.toFixed(2)+'%';
+                                $('#Progressbar2').width(percentComplete);
+                                $('#percentage2').html(percentComplete);
+                                $('#size2').width(evt.total);
+                            }
+                       }, false);
+                       return xhr;
+                    },
+                    url:"upfile.php",
+                    method:"POST",
+                    data : form_data,
+                    contentType : false,
+                    processData : false,
+                    beforeSend:function(){
+                      $('#progressbar2').width('0%')
+                    },
+                    success:function(data){
+                      $('#fileUpload2').show();
+                      $('#progersUpload2').hide();
+                      $('#filelab2').addClass("bg-success text-white");
+                      $('#displayFileName2').html(" " + file_name);
+                      $('#fileTmpName2').val(data);
+                    }
+                  });
+                });
+            };
+            fileReader.readAsArrayBuffer(pdfDoc);
+          }
+        }
+      });
       $(document).on('click','#jugementSave',function(){
         $('#yearJuge').removeAttr('style');
         $('#filelab').removeAttr('style');
@@ -277,7 +382,7 @@
 
         if(t){
           if(confirm("سيتم اضافة تسجيل جديد :")){
-            var form_data={"type" : $('#jugeType').val(),"fileTmpName" : $('#fileTmpName').val(), "dossierAssocier": $('#numDossierInfo').html(),"yearJuge" : $('#yearJuge').val(),"numJuge" : $('#numJuge').val()};
+            var form_data={"type" : $('#jugeType').val(),"fileTmpName" : $('#fileTmpName').val(), "dossierAssocier": $('#numeroDossier').val() /*$('#numDossierInfo').html()*/ ,"yearJuge" : $('#yearJuge').val(),"numJuge" : $('#numJuge').val()};
             json = JSON.stringify(form_data);
             $.ajax({
               url : "setJugement.php",
@@ -286,12 +391,47 @@
               success:function(data){
                 json = JSON.parse(data);
                 if(json.stat){
-                  loadjugement($('#numDossierInfo').html());
+                  //loadjugement($('#numDossierInfo').html());
+                  loadjugement($('#numeroDossier').val());
                 }
               }
             });
             $('#modalAddJugement').modal('toggle');
           }
+        }
+      });
+      $(document).on('click','.opt0 .opt1',function(){
+        var id=$(this).closest('td').attr('id');
+        json = JSON.stringify({"id":id});
+        $.ajax({
+          url : "getDocJuge.php",
+          method : "POST",
+          data : {json : json},
+          success:function(data){
+            json = JSON.parse(data);
+            $('#embedPdf').removeAttr('src');
+            $('#embedPdf').attr('src',json.path);
+            $('#pdfModal').modal('toggle');
+          }
+        });
+      });
+      $(document).on('click','.opt0 .opt2',function(){
+        $('#idChangeCopy').val($(this).closest('tr').attr('id'));
+        $('#displayFileName2').html(" نسخة الماسح الضوئي");
+        $('#modalChangeCopy').modal('toggle');
+      });
+      $(document).on('click','#jugementSave2',function(){
+        if(confirm("سيتم اضافة تسجيل جديد :")){
+          var form_data={"id":$("#idChangeCopy").val(),"type" : $('#jugeType').val(),"fileTmpName" : $('#fileTmpName').val(), "dossierAssocier": $('#numeroDossier').val() /*$('#numDossierInfo').html()*/ ,"yearJuge" : $('#yearJuge').val(),"numJuge" : $('#numJuge').val()};
+          json = JSON.stringify(form_data);
+          $.ajax({
+            url : "changeCopyJugement.php",
+            method : "POST",
+            data : {json : json},
+            success:function(data){
+              
+            }
+          });
         }
       });
     </script>
@@ -497,7 +637,7 @@
                     </select>
                   </div>
                   <div class="form-group">
-                    <label for="customFile" style="float:right;">سنة الحكم :</label>
+                    <label for="customFile" style="float:right;">نسخة الحكم :</label>
                     <div class=" bnt-control">
                         <div id="upload&Progressbar">
                           <div class="form-group" id="fileUpload">
@@ -544,6 +684,117 @@
             </div>
           </div>
         </div>
+        <div class="modal fade" id="modalEditJugement" tabindex="-1" role="dialog" >
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header row">
+                <div class="text-right col-6">
+                  <h5 class="modal-title">تعديل معلومات نسخة الحكم</h5>
+                </div>
+                <div class="col-5"></div>
+                <div class="col-1">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+              </div>
+              <div class="modal-body">
+                <form style="width:80%;margin:0 auto;">
+                  <div class="row">
+                    <div class="col-6">
+                      <div class="form-group">
+                        <label for="yearJuge" style="float:right;">سنة الحكم :</label>
+                        <input type="year" class="form-control" placeholder="سنة الحكم" id="yearJuge">
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="form-group">
+                        <label for="yearJuge" style="float:right;">رقم الحكم :</label>
+                        <input type="year" class="form-control" placeholder="رقم الحكم..." id="numJuge">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="yearJuge" style="float:right;">عدد صفحات الحكم :</label>
+                    <input type="year" class="form-control" placeholder="عدد صفحات الحكم" id="nb_pages">
+                  </div>
+                  <div class="form-group">
+                    <label for="jugeType" style="float:right;">نوع الحكم :</label>
+                    <select class="form-control" id="jugeType">
+                      <option value='1'>حكم قطعي</option>
+                      <option value='2'>حكم أولي بالاختصاص</option>
+                      <option value='3'>حكم تمهيدي بإجراء بحث</option>
+                      <option value='4'>حكم تمهيدي بإجراء خبرة</option>
+                    </select>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" style="margin-left:5px;" id='jugementSave'>اضافة</button>
+                <button type="button" class="btn btn-secondary" id="dismiss_modal" data-dismiss="modal">الغاء</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal" id="pdfModal">
+          <embed id="embedPdf" width="100%" height="100%" alt="pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html">
+
+        </div>
+        <div class="modal fade" id="modalChangeCopy" tabindex="-1" role="dialog" >
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header row">
+                <div class="text-right col-6">
+                  <h5 class="modal-title">تغيير نسخة الحكم</h5>
+                </div>
+                <div class="col-5"></div>
+                <div class="col-1">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+              </div>
+              <div class="modal-body">
+                <form style="width:80%;margin:0 auto;">
+                  <div class="form-group">
+                    <label for="customFile" style="float:right;">نسخة الحكم :</label>
+                    <div class=" bnt-control">
+                        <div id="upload&Progressbar2">
+                          <div class="form-group" id="fileUpload2">
+                                <div class="custom-file mb-3">
+                                  <input type="file" class="custom-file-input" id="customFile2" name="filename">
+                                  <label class="custom-file-label text-center" for="customFile2" id="filelab2"><i style="font-size:12px;" class="fa fa-clone" aria-hidden="true" id="displayFileName2"> نسخة الماسح الضوئي</i></label>
+                                  <input type="hidden" value="" id="fileTmpName2">
+                                </div>
+                          </div>
+                          <div class="form-group" style="display:none;" id="progersUpload2">
+                                <div class="small-text">
+                                  <span style="float:right;font:12px;font-weight: bold;" id="fileUploadName2"></span><br/>
+                                  <div class="row text-right">
+                                    <div class="col-3"><span id="percentage2"></span></div>
+                                    <div class="col-5"></div>
+                                    <div class="col-4"><span id="size2"></span></div>
+                                  </div>
+                                  <div class="progress " style="height:2px">
+                                    <div class="progress-bar" id="progressbar2" style="width:0%;height:2px"></div>
+                                  </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" style="margin-left:5px;" id='jugementSave2'>اضافة</button>
+                <button type="button" class="btn btn-secondary" id="dismiss_modal2" data-dismiss="modal">الغاء</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <input type="hidden" id="idChangeCopy" name="" value="">
       </div>
 
     <?php

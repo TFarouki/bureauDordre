@@ -72,9 +72,8 @@
         mkdir($nameFolder);
       }else{
         self::deleteDirectory($nameFolder);
-        mkdir($nameFolder);
+        mkdir($nameFolder,0777,true);
       }
     }
   }
-
 ?>

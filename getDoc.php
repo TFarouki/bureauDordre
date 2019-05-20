@@ -17,9 +17,7 @@
         if($db->count()){
           $fullpath = $db->first()->path . $db->first()->name;
           $path = './tmp/'.$user->data()->id.'/'.$db->first()->name;
-          if(!is_dir('./tmp/'.$user->data()->id.'/')){
-            mkdir('./tmp/'.$user->data()->id.'/');
-          }
+          Tools::fmkdir('./tmp/'.$user->data()->id.'/');
           if(file_exists($fullpath)){
             if (copy($fullpath, $path)){
               $response->path = $path;
