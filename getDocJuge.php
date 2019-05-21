@@ -2,6 +2,7 @@
   require_once 'core/init.php';
   $user = new User();
   $return = new stdClass();
+  $return->stat = true;
   if($user->isLoggedIn()){
     if(isset($_POST['json'])){
       $json = json_decode($_POST['json']);
@@ -18,9 +19,11 @@
           }
         }else{
           $return->error = "لا يوجد ملف مقابل لهدا التسجيل";
+          $return->stat = false;
         }
       }else{
         $return->error = "لا يوجد ملف مقابل لهدا العنصر رغم وجود تسجيل له";
+        $return->stat = false;
         //echo "لا يوجد ملف مقابل لهدا العنصر رغم وجود تسجيل له";
       }
     }

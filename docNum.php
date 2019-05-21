@@ -413,9 +413,13 @@
           data : {json : json},
           success:function(data){
             json = JSON.parse(data);
-            $('#embedPdf').removeAttr('src');
-            $('#embedPdf').attr('src',json.path);
-            $('#pdfModal').modal('toggle');
+            if(json.stat){
+              $('#embedPdf').removeAttr('src');
+              $('#embedPdf').attr('src',json.path);
+              $('#pdfModal').modal('toggle');
+            }else{
+              addAlert("danger","تنبيه !","حدث خطأ اثناء عرض النسخة الالكترونية");
+            }
           }
         });
       });
@@ -445,6 +449,7 @@
               }
             }
           });
+          loadjugement($("#numeroDossier").val());
           $('#modalChangeCopy').modal('toggle');
         }
       });
@@ -470,7 +475,22 @@
       });
       $(document).on('click','#jugementSave3',function(){
         id=$('#idChangeJuge').val();
-        alert(id);
+        json = JSON.stringify({"id":id,"yearJuge":$("#yearJuge2").val(),"numJuge":$("#numJuge2").val(),"nb_pages":$("#nb_pages2").val(),"jugeType":$("#jugeType2").val()});
+        $.ajax({
+          url : "changeDataJugement.php",
+          method : "POST",
+          data : {json : json},
+          success:function(data){
+            json = JSON.parse(data);
+            if(json.stat){
+              loadjugement($("#numeroDossier").val());
+              addAlert("success","لقد تم تحديث المعطيات بنجاح","");
+            }else{
+              addAlert("warning","لقد حدث خطأ اثناء تحديث المعطيات","");
+            }
+          }
+        });
+        $('#modalEditJugement').modal('toggle');
       });
     </script>
   </head>
