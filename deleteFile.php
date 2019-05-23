@@ -12,7 +12,7 @@
       if($db->count()>0){
         $idFile = $db->first()->fileID;
         $stat = $db->first()->stat;
-        $db->query("SELECT name path FROM upfile_register where idFile = '".$idFile."'");
+        $db->query("SELECT * FROM upfile_register where idFile = '".$idFile."'");
         if($db->count()>0){
           if($stat == NULL){
             if(file_exists($db->first()->path.$db->first()->name)){
