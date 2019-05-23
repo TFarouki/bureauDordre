@@ -504,6 +504,9 @@
                             "remaindText" : $('#remaindText').val(),
                             "lastId" : $("#dataTable tr:first td:nth-child(3)").html()
                           };
+            var demandeur = $('#demandeur').val();
+            var dossierAssocier = $("#dossierAssocier").val();
+            var remarque = $("#R1").val();
             json = JSON.stringify(form_data);
             $.ajax({
               url : "setRow.php",
@@ -519,7 +522,7 @@
                         </div>`;
                 json=JSON.parse(data);
                 if(isset(json.json)){
-                    row = "";
+                  row = "";
                   for (var i = 0; i < json.json.length; i++) {
                     if(json.json[i].fileID!= null){
                       td=`<td name="file">`+dUp1+`<a class="dropdown-toggle caret-off" data-toggle="dropdown" href='#' style='color:#E94B3C;'><i class="fa fa-file-pdf-o" aria-hidden="true" data-toggle="tooltip" title="الاطلاع على النسخة الضوئية!"></i></a>`+dUp2+dUp3+dUp4+`</td>`;
@@ -558,6 +561,24 @@
                   }
                   ($('#dataTable tr').length>0)?$('#dataTable tr:first').before(row):$('#dataTable').html(row);
                   $('#dataTable tr:first').addClass("table-success");
+                  if(dossierAssocier){
+                    var form_data2={
+                                    "type" : $('#type').val(),
+                                    "demandeur" : demandeur,
+                                    "dossierAssocier" : dossierAssocier,
+                                    "remarque" : remarque,
+                                    "num_order" : json.json[0].num_ordre
+                                  };
+                    json = JSON.stringify(form_data2);
+                    $.ajax({
+                      url : "setDocNum.php",
+                      method : "POST",
+                      data : {json : json},
+                      success:function(data){
+
+                      }
+                    });
+                  }
                 }else if(isset(json.validation)){
                   addAlert("warning","تنبيه",json.validation);
                 }else if (isset(json.insert)) {
@@ -573,9 +594,12 @@
                 $('#customFile').val("");
                 $('#displayFileName').html(" نسخة الماسح الضوئي");
               }
-
-
             });
+            $('#dossierAssocier').val('');
+            $('#dossierAssocier').removeClass('highlight redlight');
+            $('#demandeur').val('');
+            $('#remarque').html('');
+
           }
         });
         $(document).on('click','td[name="file"] div div a:first-child',function(e){
@@ -978,6 +1002,9 @@
           $(this).attr('placeholder',$(this).next().html());
           $(this).next().html('');
         });
+        $(document).on('click','#save10',function(e){
+          $('#ModalSetAttachement').modal('toggle');
+        });
       </script>
     </head>
     <body>
@@ -1046,63 +1073,46 @@
                             <label for="" class="puping-label" ></label>
                           </div>
                           <div class="col-3 input-col">
-                            <input class="form-control input-poping" type="text" name="dossierAssocier" placeholder="مرتبطة بملف" id="dossierAssocier" autocomplete="on">
-                            <label for="" class="puping-label" ></label>
-                          </div>
-                          <div class="col-3 input-col">
                             <input placeholder="تاريخ الارسال" class="form-control input-poping" type="text" name="dateArriver" id="dateArriver">
                             <label for="" class="puping-label" ></label>
                           </div>
+                          <div class=" bnt-control">
+                              <div id="upload&Progressbar">
+                                <div class="form-group" id="fileUpload">
+                                      <div class="custom-file mb-3">
+                                        <input type="file" class="custom-file-input" id="customFile" name="filename">
+                                        <label class="custom-file-label text-center" for="customFile" id="filelab"><i style="font-size:12px;" class="fa fa-clone" aria-hidden="true" id="displayFileName"> نسخة الماسح الضوئي</i></label>
+                                        <input type="hidden" value="" id="fileTmpName">
+                                      </div>
+                                </div>
+                                <div class="form-group" style="display:none;" id="progersUpload">
+
+                                      <div class="small-text">
+                                        <span style="float:right;font:12px;font-weight: bold;" id="fileUploadName"></span><br/>
+                                        <div class="row text-right">
+                                          <div class="col-3"><span id="percentage"></span></div>
+                                          <div class="col-5"></div>
+                                          <div class="col-4"><span id="size"></span></div>
+                                        </div>
+                                        <div class="progress " style="height:2px">
+                                          <div class="progress-bar" id="progressbar" style="width:0%;height:2px"></div>
+                                        </div>
+                                      </div>
+                                  </div>
+
+                              </div>
+                          </div>
                         </div>
                         <div class="form-group row">
-                            <div class=" bnt-control">
-                                <div id="upload&Progressbar">
-                                  <div class="form-group" id="fileUpload">
-                                        <div class="custom-file mb-3">
-                                          <input type="file" class="custom-file-input" id="customFile" name="filename">
-                                          <label class="custom-file-label text-center" for="customFile" id="filelab"><i style="font-size:12px;" class="fa fa-clone" aria-hidden="true" id="displayFileName"> نسخة الماسح الضوئي</i></label>
-                                          <input type="hidden" value="" id="fileTmpName">
-                                        </div>
-                                  </div>
-                                  <div class="form-group" style="display:none;" id="progersUpload">
-
-                                        <div class="small-text">
-                                          <span style="float:right;font:12px;font-weight: bold;" id="fileUploadName"></span><br/>
-                                          <div class="row text-right">
-                                            <div class="col-3"><span id="percentage"></span></div>
-                                            <div class="col-5"></div>
-                                            <div class="col-4"><span id="size"></span></div>
-                                          </div>
-                                          <div class="progress " style="height:2px">
-                                            <div class="progress-bar" id="progressbar" style="width:0%;height:2px"></div>
-                                          </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                            <button type="button" class="btn btn-info bnt-control" data-toggle="modal" data-target="#ModalSetRemaind" /><i class="fa fa-bell-o" aria-hidden="true"> ضبط تذكير</i></button>
-                            <input type="hidden" id="remaindDate" name="remaindDate" value="">
-                            <input type="hidden" id="remaindText" name="remaindText" value="">
-                            <button type="button" class="btn btn-success bnt-control" id="submit"><i class="fa fa-check" aria-hidden="true"> إضافة</i></button>
-                            <button type="button" class="btn btn-danger bnt-control" data-toggle="collapse" data-target="#collapseOne" id="annulation"><i class="fa fa-undo" aria-hidden="true"> الغاء</i></button>
+                          <button type="button" class="btn btn-warning bnt-control" data-toggle="modal" data-target="#ModalSetAttachement" /><i class="fa fa-link" aria-hidden="true"> ربط بملف</i></button>
+                          <button type="button" class="btn btn-info bnt-control" data-toggle="modal" data-target="#ModalSetRemaind" /><i class="fa fa-bell-o" aria-hidden="true"> ضبط تذكير</i></button>
+                          <input type="hidden" id="remaindDate" name="remaindDate" value="">
+                          <input type="hidden" id="remaindText" name="remaindText" value="">
+                          <button type="button" class="btn btn-success bnt-control" id="submit"><i class="fa fa-check" aria-hidden="true"> إضافة</i></button>
+                          <button type="button" class="btn btn-danger bnt-control" data-toggle="collapse" data-target="#collapseOne" id="annulation"><i class="fa fa-undo" aria-hidden="true"> الغاء</i></button>
                         </div>
                       </from>
                     </div>
-                  </div>
-                </div>
-              </div>
-              <div class="card">
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-                  <div class="card-body">
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                  </div>
-                </div>
-              </div>
-              <div class="card">
-                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
-                  <div class="card-body">
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
                   </div>
                 </div>
               </div>
@@ -1410,6 +1420,41 @@
             </div>
           </div>
         </div>
+        <div class="modal fade" id="ModalSetAttachement" tabindex="-1" role="dialog" >
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header row">
+                <div class="text-right col-6">
+                  <h5 class="modal-title">ربط مع ملف </h5>
+                </div>
+                <div class="col-5"></div>
+                <div class="col-1">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+              </div>
+              <div class="modal-body">
+                <form style="width:80%;margin:0 auto;">
+                  <div class="form-group">
+                      <input class="form-control" type="text" name="dossierAssocier" placeholder="مرتبطة بملف" id="dossierAssocier" autocomplete="on">
+                  </div>
+                  <div class="form-group">
+                      <input class="form-control" type="text" name="dossierAssocier" placeholder="الجهة المعنية بالاجراء" id="demandeur" autocomplete="on">
+                  </div>
+                  <div class="form-group">
+                      <textarea class="form-control" type="text" name="dossierAssocier" id="R1" placeholder="ملاحظات"  autocomplete="on"></textarea>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" style="margin-left:5px;" id='save10'>اضافة</button>
+                <button type="button" class="btn btn-secondary" id="dismiss_modal9" data-dismiss="modal">الغاء</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
 
         <input type="hidden" id="idForRemaindEdit" name="" value="">
         <input type="hidden" id="idForMultRow" name="" value="">
