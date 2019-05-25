@@ -598,7 +598,7 @@
             $('#dossierAssocier').val('');
             $('#dossierAssocier').removeClass('highlight redlight');
             $('#demandeur').val('');
-            $('#remarque').html('');
+            $('#R1').val('');
 
           }
         });
