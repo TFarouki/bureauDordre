@@ -9,16 +9,19 @@
       $db = Db::getInstance();
       $db->get("register_bureaudordre",array("num_ordre","=",$json->num_order));
       $fileId = $db->first()->fileID;
-      echo $fileId;
-      /*$db->insert("docNum",array("type"=>,
-                                  "subtype"=>,
-                                  "demandeur"=>,
-                                  "remarque"=>,
-                                  "idFile"=>$fileId,
-                                  "dossierAssocier"=>,)
-                  );*/
+      $ar = array("type"=>$json->type,
+                  "subType"=>"ok",
+                  "demandeur"=>$json->demandeur,
+                  "remarque"=>$json->remarque,
+                  "idFile"=>$fileId,
+                  "dossierAssocier"=>$json->dossierAssocier,
+                  "object"=>$json->objet,
+                  "num_order"=>$json->num_order);
+      if(!$db->insert("docnum",$ar)){
+                      $return->stat = false;
+      }
     }
-    //echo json_encode($return);
+    echo json_encode($return);
   }else{
       Redirect::to("login.php");
   }

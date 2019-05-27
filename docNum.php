@@ -100,6 +100,46 @@
           }
         });
       }
+      function loadDocNum(docNum,highlight=false){
+        $('#tbRslt').html('');
+        json = JSON.stringify({'docNum':docNum});
+        $.ajax({
+          url : "loadDocNum.php",
+          method : "POST",
+          data : {json : json},
+          success:function(data){
+            //$('#loader').modal("hide");
+            json = JSON.parse(data);
+            if(json.count>0){
+              $.each(json.rows, function( index, value ){
+                dropup = `<div class="dropup">
+                            <a class="dropdown-toggle caret-off" data-toggle="dropdown" href="#" style="color:#E94B3C;">
+                              <i class="fa fa-file-pdf-o" style="color:#E94B3C;" aria-hidden="true"></i>
+                            </a>
+                            <div class="dropdown-menu bg-primary   text-right">
+                              <a class="dropdown-item opt11" href="#" style="color:#fff"><i class="fa fa-folder-open-o" aria-hidden="true"></i> الاطلاع على النسخة</a>
+                              <a class="dropdown-item opt12" href="#" style="color:#fff"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> تعديل النسخة</a>
+                            </div>
+                          </div>`;
+                row = '<tr class="td-border" id="'+value.ref+'"><td class="text-center"><i class="fa fa-pencil opt13" style="color:rgba(255,120,0,0.8);" aria-hidden="true"></i></td><td style="padding-right:20px;">'+
+                          value.date_reg.substring(0,10)+'</td><td class="text-center">'+
+                          value.type +'</td><td class="text-center" >'+
+                          value.demandeur+'</td><td class="text-center" >'+
+                          value.remarque+'</td><td class="text-center" >'+
+                          value.object+'</td><td class="text-center opt10" id="'+value.idFile+
+                          '">'+dropup+'</td></tr>';
+                $('#tbRslt4').append(row);
+              });
+              $('#nb_docNum').html(json.rows.length);
+              if(highlight){
+                $('#tbRslt4 tr:first').attr("style","background-color:rgba(0,200,160,0.7);color:#fff;");
+              }
+            }else{
+              addAlert("warning","تنبيه !..  ","هدا الملف لا يتوفر على وثائق ممسوحة الكترونيا");
+            }
+          }
+        });
+      }
       $(document).on('click','#search',function(){
         if($('#numeroDossier').val()!=''){
           //$('#loader').modal("toggle");
@@ -172,6 +212,8 @@
           });
           */
           loadjugement($('#numeroDossier').val());
+          loadDocNum($('#numeroDossier').val());
+
           $('#results').show();
         }
       });
@@ -537,10 +579,10 @@
             <a class="nav-link" data-toggle="tab" href="#pross"><i class="fa fa-history" aria-hidden="true"></i> الإجراءات <span id='nb_pross' class="badge badge-danger"></span></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#docNum"><i class="fa fa-tasks" aria-hidden="true"></i> الملف الالكتروني <span id='nb_docNum' class="badge badge-danger">9</span></a>
+            <a class="nav-link active" data-toggle="tab" href="#docNum"><i class="fa fa-tasks" aria-hidden="true"></i> الملف الالكتروني <span id='nb_docNum' class="badge badge-danger">9</span></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" data-toggle="tab" href="#jugeTab"><i class="fa fa-gavel" aria-hidden="true"></i> الاحكام <span id='nb_juge' class="badge badge-danger"></span></a>
+            <a class="nav-link" data-toggle="tab" href="#jugeTab"><i class="fa fa-gavel" aria-hidden="true"></i> الاحكام <span id='nb_juge' class="badge badge-danger"></span></a>
           </li>
         </ul>
         <div class="tab-content" >
@@ -607,24 +649,34 @@
               </tbody>
             </table>
           </div>
-          <div id="docNum" class="tab-pane fade">
+          <div id="docNum" class="tab-pane active">
             <br/><br/>
+            <div class="row">
+              <div class="col-4">
+              </div>
+              <div class="col-4">
+                <button type="input" id="addDoc" class="btn btn-success btn-block">اضافة وثيقة <i class="fa fa-plus" aria-hidden="true"></i></button>
+              </div>
+            </div>
+            <br/><br/><br/>
             <table class="table text-right table-bordered ">
               <thead>
                 <tr class="text-center td-back" style="width:90%;direction:rtl;margin:0 auto;font-size:1.5em;font-family:'DIN_Light'!important;font-weight: bold;">
-                  <th>تاريخ الاجراء</th>
-                  <th>الساعة</th>
-                  <th>نوع المقرر</th>
-                  <th>مضمون المقرر</th>
-                  <th>الجلسة المقبلة</th>
+                  <th></th>
+                  <th>تاريخ التسجيل</th>
+                  <th>نوعها</th>
+                  <th>المعني بالوثيقة</th>
+                  <th>الموضوع</th>
+                  <th>ملاحظات</th>
+                  <th></th>
                 </tr>
               </thead>
-              <tbody id='tbRslt2' style="font-family:'DIN_Light'!important;font-weight: bold;">
+              <tbody id='tbRslt4' style="font-family:'DIN_Light'!important;font-weight: bold;">
 
               </tbody>
             </table>
           </div>
-          <div id="jugeTab" class="tab-pane active">
+          <div id="jugeTab" class="tab-pane fade">
             <br/><br/>
             <div class="row">
               <div class="col-4">
@@ -633,9 +685,8 @@
                 <button type="input" id="addJugement" class="btn btn-success btn-block">اضافة حكم <i class="fa fa-plus" aria-hidden="true"></i></button>
               </div>
             </div>
-          </br/>
-          <br/><br/>
-          <table class="table text-right table-bordered " style="margin:0 auto;width:70%;">
+            <br/><br/><br/>
+            <table class="table text-right table-bordered " style="margin:0 auto;width:70%;">
             <thead>
             	<tr class="text-center td-back" style="direction:rtl;font-size:1.5em;font-family:'DIN_Light'!important;font-weight: bold;">
                   <th></th>

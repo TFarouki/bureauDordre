@@ -567,7 +567,8 @@
                                     "demandeur" : demandeur,
                                     "dossierAssocier" : dossierAssocier,
                                     "remarque" : remarque,
-                                    "num_order" : json.json[0].num_ordre
+                                    "num_order" : json.json[0].num_ordre,
+                                    "objet" : json.json[0].objet
                                   };
                     json = JSON.stringify(form_data2);
                     $.ajax({
