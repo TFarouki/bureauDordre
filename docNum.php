@@ -101,7 +101,7 @@
         });
       }
       function loadDocNum(docNum,highlight=false){
-        $('#tbRslt').html('');
+        $('#tbRslt4').html('');
         json = JSON.stringify({'docNum':docNum});
         $.ajax({
           url : "loadDocNum.php",
@@ -125,8 +125,8 @@
                           value.date_reg.substring(0,10)+'</td><td class="text-center">'+
                           value.type +'</td><td class="text-center" >'+
                           value.demandeur+'</td><td class="text-center" >'+
-                          value.remarque+'</td><td class="text-center" >'+
-                          value.object+'</td><td class="text-center opt10" id="'+value.idFile+
+                          value.object+'</td><td class="text-center" >'+
+                          value.remarque+'</td><td class="text-center opt10" id="'+value.idFile+
                           '">'+dropup+'</td></tr>';
                 $('#tbRslt4').append(row);
               });
@@ -140,6 +140,20 @@
           }
         });
       }
+      $(document).ready(function(){
+        $.ajax({
+          url:"naw3.php",
+          method:"POST",
+          success:function(data){
+            var json = JSON.parse(data);
+            var htm = "";
+            for (var i = 0; i < json.length; i++) {
+              htm+= '<option value="'+json[i].naw3+'">';
+            }
+            $("#lisDataTypeDoc").html(htm);
+          }
+        });
+      });
       $(document).on('click','#search',function(){
         if($('#numeroDossier').val()!=''){
           //$('#loader').modal("toggle");
@@ -401,6 +415,173 @@
           }
         }
       });
+      $(document).on('change','#customFile3',function(){
+        var file = document.getElementById('customFile3');
+
+        var hidden = $('#fileTmpName3').val();
+        var lab = document.getElementById('filelab3');
+        var fullPath = file.value;
+        if (fullPath) {
+          $('#progersUpload3').show();
+          $('#fileUpload3').hide();
+          var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+          var filename = fullPath.substring(startIndex);
+          if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+              filename = filename.substring(1);
+          }
+          //lab.innerHTML = filename;
+          $('#fileUploadName3').html(filename);
+          sizefile = $('#customFile3')[0].files[0].size;
+          sizefile = sizefile / (1024*1024);
+          $('#size3').html(sizefile.toFixed(2) + " Mo");
+
+          var property = file.files[0];
+          var form_data = new FormData();
+          form_data.append('hidden',hidden);
+          var file_name = property.name;
+          var ext = file_name.split('.').pop().toLowerCase();
+          var allowExt = ['pdf','doc','docx','bmp','gif','jpeg','jpg','png','tif','tiff','xls','xlsx','mdb'];
+
+          if($.inArray(ext,allowExt) == -1){
+            alert('المرجوا التأكد من صيغة الملف..!');
+            $('#fileTmpName3').val("");
+            $('#fileUpload3').show();
+            $('#progersUpload3').hide();
+            $('#filelab3').removeClass("bg-success text-white");
+            $('#displayFileName3').html(" نسخة الماسح الضوئي");
+          }else{
+            form_data.append('file',property);
+            var nbpages = '';
+            var pdfDoc = file.files[0];
+            if (!pdfDoc) {
+              return;
+            }
+            var fileReader = new FileReader();
+            fileReader.onload = function (e) {
+                pdf = new Uint8Array(e.target.result);
+                PDFJS.getDocument({data: pdf}).then(function(pdf) {
+                  nbpages = pdf.pdfInfo.numPages;
+                  form_data.append('nbPages',nbpages);
+                  $.ajax({
+                    xhr: function(){
+                        var xhr = new window.XMLHttpRequest();
+                        xhr.upload.addEventListener("progress", function(evt) {
+                            if (evt.lengthComputable) {
+                                var percentComplete = (evt.loaded / evt.total) * 100;
+                                percentComplete = percentComplete.toFixed(2)+'%';
+                                $('#Progressbar3').width(percentComplete);
+                                $('#percentage3').html(percentComplete);
+                                $('#size3').width(evt.total);
+                            }
+                       }, false);
+                       return xhr;
+                    },
+                    url:"upfile.php",
+                    method:"POST",
+                    data : form_data,
+                    contentType : false,
+                    processData : false,
+                    beforeSend:function(){
+                      $('#progressbar3').width('0%')
+                    },
+                    success:function(data){
+                      $('#fileUpload3').show();
+                      $('#progersUpload3').hide();
+                      $('#filelab3').addClass("bg-success text-white");
+                      $('#displayFileName3').html(" " + file_name);
+                      $('#fileTmpName3').val(data);
+                    }
+                  });
+                });
+            };
+            fileReader.readAsArrayBuffer(pdfDoc);
+          }
+        }
+      });
+      $(document).on('change','#customFile4',function(){
+        var file = document.getElementById('customFile4');
+
+        var hidden = $('#fileTmpName4').val();
+        var lab = document.getElementById('filelab4');
+        var fullPath = file.value;
+        if (fullPath) {
+          $('#progersUpload4').show();
+          $('#fileUpload4').hide();
+          var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+          var filename = fullPath.substring(startIndex);
+          if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+              filename = filename.substring(1);
+          }
+          //lab.innerHTML = filename;
+          $('#fileUploadName4').html(filename);
+          sizefile = $('#customFile4')[0].files[0].size;
+          sizefile = sizefile / (1024*1024);
+          $('#size4').html(sizefile.toFixed(2) + " Mo");
+
+          var property = file.files[0];
+          var form_data = new FormData();
+          form_data.append('hidden',hidden);
+          var file_name = property.name;
+          var ext = file_name.split('.').pop().toLowerCase();
+          var allowExt = ['pdf','doc','docx','bmp','gif','jpeg','jpg','png','tif','tiff','xls','xlsx','mdb'];
+
+          if($.inArray(ext,allowExt) == -1){
+            alert('المرجوا التأكد من صيغة الملف..!');
+            $('#fileTmpName4').val("");
+            $('#fileUpload4').show();
+            $('#progersUpload4').hide();
+            $('#filelab4').removeClass("bg-success text-white");
+            $('#displayFileName4').html(" نسخة الماسح الضوئي");
+          }else{
+            form_data.append('file',property);
+            var nbpages = '';
+            var pdfDoc = file.files[0];
+            if (!pdfDoc) {
+              return;
+            }
+            var fileReader = new FileReader();
+            fileReader.onload = function (e) {
+                pdf = new Uint8Array(e.target.result);
+                PDFJS.getDocument({data: pdf}).then(function(pdf) {
+                  nbpages = pdf.pdfInfo.numPages;
+                  form_data.append('nbPages',nbpages);
+                  $.ajax({
+                    xhr: function(){
+                        var xhr = new window.XMLHttpRequest();
+                        xhr.upload.addEventListener("progress", function(evt) {
+                            if (evt.lengthComputable) {
+                                var percentComplete = (evt.loaded / evt.total) * 100;
+                                percentComplete = percentComplete.toFixed(2)+'%';
+                                $('#Progressbar4').width(percentComplete);
+                                $('#percentage4').html(percentComplete);
+                                $('#size4').width(evt.total);
+                            }
+                       }, false);
+                       return xhr;
+                    },
+                    url:"upfile.php",
+                    method:"POST",
+                    data : form_data,
+                    contentType : false,
+                    processData : false,
+                    beforeSend:function(){
+                      $('#progressbar4').width('0%')
+                    },
+                    success:function(data){
+                      $('#fileUpload4').show();
+                      $('#progersUpload4').hide();
+                      $('#filelab4').addClass("bg-success text-white");
+                      $('#displayFileName4').html(" " + file_name);
+                      $('#fileTmpName4').val(data);
+                    }
+                  });
+                });
+            };
+            fileReader.readAsArrayBuffer(pdfDoc);
+          }
+        }
+      });
+
       $(document).on('click','#jugementSave',function(){
         $('#yearJuge').removeAttr('style');
         $('#filelab').removeAttr('style');
@@ -534,6 +715,143 @@
         });
         $('#modalEditJugement').modal('toggle');
       });
+      $(document).on('click','#addDoc',function(){
+        $("#typeDoc").val('');
+        $("#objectDoc").val('');
+        $("#demandeurDoc").val('');
+        $("#remarqueDoc").val('');
+
+        $('#fileTmpName3').val("");
+        $('#filelab3').removeClass("bg-success");
+        $('#filelab3').removeClass("text-white");
+        $('#displayFileName3').html(" نسخة الماسح الضوئي");
+        $('#modalAddDoc').modal('toggle');
+      });
+      $(document).on('click','#addDocSave',function(){
+        $('#typeDoc').removeAttr('style');
+        $('#objectDoc').removeAttr('style');
+        $('#demandeurDoc').removeAttr('style');
+        var t = true;
+        if(  $('#typeDoc').val() == ''){
+          $('#typeDoc').attr('style','border:1px solid rgba(255,0,0,0.8);');
+          t=false;
+        }
+        if(  $('#objectDoc').val() == ''){
+          $('#objectDoc').attr('style','border:1px solid rgba(255,0,0,0.8);');
+          t=false;
+        }
+        if(  $('#demandeurDoc').val() == ''){
+          $('#demandeurDoc').attr('style','border:1px solid rgba(255,0,0,0.8);');
+          t=false;
+        }
+        if(t){
+          if(confirm("سيتم اضافة تسجيل جديد :")){
+            var form_data={
+                            "type" : $('#typeDoc').val(),
+                            "demandeur" : $('#demandeurDoc').val(),
+                            "dossierAssocier" : $('#numeroDossier').val(),
+                            "remarque" : $('#remarqueDoc').val(),
+                            "num_order" : null,
+                            "objet" : $('#objectDoc').val(),
+                            "dataFile" : JSON.parse($('#fileTmpName3').val())
+                          };
+            json = JSON.stringify(form_data);
+            $.ajax({
+              url : "setDocNum2.php",
+              method : "POST",
+              data : {json : json},
+              success:function(data){
+                json = JSON.parse(data);
+                if(json.stat){
+                  loadDocNum($('#numeroDossier').val(),true);
+                }
+              }
+            });
+            $('#modalAddDoc').modal('toggle');
+          }
+        }
+      });
+      $(document).on('click','.opt10 .opt11',function(){
+        var id=$(this).closest('td').attr('id');
+        json = JSON.stringify({"id":id});
+        $.ajax({
+          url : "getDocJuge.php",
+          method : "POST",
+          data : {json : json},
+          success:function(data){
+            json = JSON.parse(data);
+            if(json.stat){
+              $('#embedPdf').removeAttr('src');
+              $('#embedPdf').attr('src',json.path);
+              $('#pdfModal').modal('toggle');
+            }else{
+              addAlert("danger","تنبيه !","حدث خطأ اثناء عرض النسخة الالكترونية");
+            }
+          }
+        });
+      });
+      $(document).on('click','.opt10 .opt12',function(){
+        $('#idChangeCopy').val($(this).closest('tr .opt10').attr('id'));
+        $('#fileTmpName4').val("");
+        $('#filelab4').removeClass("bg-success");
+        $('#filelab4').removeClass("text-white");
+        $('#displayFileName4').html(" نسخة الماسح الضوئي");
+        $('#modalChangeCopy2').modal('toggle');
+      });
+
+      $(document).on('click','#docNumSave',function(){
+        if(confirm("سيتم اضافة تسجيل جديد :")){
+          var upfile = JSON.parse($('#fileTmpName4').val());
+          var form_data={"id":$("#idChangeCopy").val(),"upfile":upfile};
+          json = JSON.stringify(form_data);
+          $.ajax({
+            url : "upFileUpdate.php",
+            method : "POST",
+            data : {json : json},
+            success:function(data){
+              json = JSON.parse(data);
+              if(json.stat){
+                addAlert("success","لقد تم التعديل بنجاح","");
+              }else {
+                addAlert("danger","حدث خطأ اثناء التعديل","");
+              }
+            }
+          });
+          $('#modalChangeCopy2').modal('toggle');
+        }
+      });
+      $(document).on('click','.opt13',function(){
+        $('#idChangeJuge').val($(this).closest('tr').attr('id'));
+        tr=$(this).closest('tr');
+        $("#typeDoc2").val(tr.children('td:nth-child(3)').html());
+        $("#objectDoc2").val(tr.children('td:nth-child(5)').html());
+        $("#demandeurDoc2").val(tr.children('td:nth-child(4)').html());
+        $("#remarqueDoc2").val(tr.children('td:nth-child(6)').html());
+
+        $('#modalEditDocNum').modal('toggle');
+
+      });
+      $(document).on('click','#docNumSave2',function(){
+        id=$('#idChangeJuge').val();
+        json = JSON.stringify({"id":id,"type":$("#typeDoc2").val(),"object":$("#objectDoc2").val(),"demandeur":$("#demandeurDoc2").val(),"remarque":$("#remarqueDoc2").val()});
+        $.ajax({
+          url : "changeDataDocNum.php",
+          method : "POST",
+          data : {json : json},
+          success:function(data){
+            json = JSON.parse(data);
+            if(json.stat){
+              loadDocNum($("#numeroDossier").val());
+              addAlert("success","لقد تم تحديث المعطيات بنجاح","");
+            }else{
+              addAlert("warning","لقد حدث خطأ اثناء تحديث المعطيات","");
+            }
+          }
+        });
+        $('#modalEditDocNum').modal('toggle');
+      });
+
+
     </script>
   </head>
   <body>
@@ -849,6 +1167,7 @@
           <embed id="embedPdf" width="100%" height="100%" alt="pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html">
 
         </div>
+
         <div class="modal fade" id="modalChangeCopy" tabindex="-1" role="dialog" >
           <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -902,9 +1221,175 @@
             </div>
           </div>
         </div>
+        <div class="modal fade" id="modalChangeCopy2" tabindex="-1" role="dialog" >
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header row">
+                <div class="text-right col-6">
+                  <h5 class="modal-title">تغيير نسخة الوثيقة</h5>
+                </div>
+                <div class="col-5"></div>
+                <div class="col-1">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+              </div>
+              <div class="modal-body">
+                <form style="width:80%;margin:0 auto;">
+                  <div class="form-group">
+                    <label for="customFile4" style="float:right;">نسخة الحكم :</label>
+                    <div class=" bnt-control">
+                        <div id="upload&Progressbar4">
+                          <div class="form-group" id="fileUpload4">
+                                <div class="custom-file mb-3">
+                                  <input type="file" class="custom-file-input" id="customFile4" name="filename">
+                                  <label class="custom-file-label text-center" for="customFile4" id="filelab4"><i style="font-size:12px;" class="fa fa-clone" aria-hidden="true" id="displayFileName4"> نسخة الماسح الضوئي</i></label>
+                                  <input type="hidden" value="" id="fileTmpName4">
+                                </div>
+                          </div>
+                          <div class="form-group" style="display:none;" id="progersUpload4">
+                                <div class="small-text">
+                                  <span style="float:right;font:12px;font-weight: bold;" id="fileUploadName4"></span><br/>
+                                  <div class="row text-right">
+                                    <div class="col-3"><span id="percentage4"></span></div>
+                                    <div class="col-5"></div>
+                                    <div class="col-4"><span id="size4"></span></div>
+                                  </div>
+                                  <div class="progress " style="height:2px">
+                                    <div class="progress-bar" id="progressbar4" style="width:0%;height:2px"></div>
+                                  </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" style="margin-left:5px;" id='docNumSave'>اضافة</button>
+                <button type="button" class="btn btn-secondary" id="dismiss_modal2" data-dismiss="modal">الغاء</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal fade" id="modalEditDocNum" tabindex="-1" role="dialog" >
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header row">
+                <div class="text-right col-6">
+                  <h5 class="modal-title">تغيير معلومات النسخة</h5>
+                </div>
+                <div class="col-5"></div>
+                <div class="col-1">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+              </div>
+              <div class="modal-body">
+                <form style="width:80%;margin:0 auto;">
+                  <div class="form-group">
+                    <div class="form-group">
+                      <label for="typeDoc2" class="float-right">نوع الوثيقة</label>
+                      <input type="text" class="form-control" name="" list="lisDataTypeDoc" value="" placeholder="نوع الوثيقة" id="typeDoc2">
+                    </div>
+                    <div class="form-group">
+                      <label for="objectDoc2" class="float-right">موضوعها</label>
+                      <input type="text" class="form-control" name="" value="" placeholder="موضوعها" id="objectDoc2">
+                    </div>
+                    <div class="form-group" >
+                       <label for="demandeurDoc2" class="float-right">الجهة المعنية بالاجراء</label>
+                      <input type="text" class="form-control" name="" value="" placeholder="الجهة المعنية بالاجراء" id="demandeurDoc2">
+                    </div>
+                    <div class="form-group">
+                      <label for="remarqueDoc2" class="float-right">ملاحظات</label>
+                      <input type="text" class="form-control" name="" value="" placeholder="ملاحظات" id="remarqueDoc2">
+                    </div>
+
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" style="margin-left:5px;" id='docNumSave2'>اضافة</button>
+                <button type="button" class="btn btn-secondary" id="dismiss_modal2" data-dismiss="modal">الغاء</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade" id="modalAddDoc" tabindex="-1" role="dialog" >
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header row">
+                <div class="text-right col-6">
+                  <h5 class="modal-title">تعديل معلومات نسخة الوثيقة</h5>
+                </div>
+                <div class="col-5"></div>
+                <div class="col-1">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+              </div>
+              <div class="modal-body">
+                <form style="width:80%;margin:0 auto;">
+                  <div class="form-group">
+                    <input type="text" class="form-control" name="" list="lisDataTypeDoc" value="" placeholder="نوع الوثيقة" id="typeDoc">
+                  </div>
+                  <div class="form-group">
+                    <input type="text" class="form-control" name="" value="" placeholder="موضوعها" id="objectDoc">
+                  </div>
+                  <div class="form-group">
+                    <input type="text" class="form-control" name="" value="" placeholder="الجهة المعنية بالاجراء" id="demandeurDoc">
+                  </div>
+                  <div class="form-group">
+                    <input type="text" class="form-control" name="" value="" placeholder="ملاحظات" id="remarqueDoc">
+                  </div>
+                  <div class="form-group">
+                    <label for="customFile3" style="float:right;">نسخة الحكم :</label>
+                    <div class=" bnt-control">
+                        <div id="upload&Progressbar3">
+                          <div class="form-group" id="fileUpload3">
+                                <div class="custom-file mb-3">
+                                  <input type="file" class="custom-file-input" id="customFile3" name="filename">
+                                  <label class="custom-file-label text-center" for="customFile3" id="filelab3"><i style="font-size:12px;" class="fa fa-clone" aria-hidden="true" id="displayFileName3"> نسخة الماسح الضوئي</i></label>
+                                  <input type="hidden" value="" id="fileTmpName3">
+                                </div>
+                          </div>
+                          <div class="form-group" style="display:none;" id="progersUpload3">
+                                <div class="small-text">
+                                  <span style="float:right;font:12px;font-weight: bold;" id="fileUploadName3"></span><br/>
+                                  <div class="row text-right">
+                                    <div class="col-3"><span id="percentage3"></span></div>
+                                    <div class="col-5"></div>
+                                    <div class="col-4"><span id="size3"></span></div>
+                                  </div>
+                                  <div class="progress " style="height:2px">
+                                    <div class="progress-bar" id="progressbar2" style="width:0%;height:2px"></div>
+                                  </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" style="margin-left:5px;" id='addDocSave'>اضافة</button>
+                <button type="button" class="btn btn-secondary" id="dismiss_modal7" data-dismiss="modal">الغاء</button>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <input type="hidden" id="idChangeCopy" name="" value="">
         <input type="hidden" id="idChangeJuge" name="" value="">
+
+        <datalist id="lisDataTypeDoc">
+          </datalist>
       </div>
 
     <?php

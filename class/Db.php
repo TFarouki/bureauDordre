@@ -43,6 +43,8 @@
       }else{
         $this->_error = true;
       }
+      //print_r($this->_query);
+
       return $this;
     }
 

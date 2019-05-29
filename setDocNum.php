@@ -10,7 +10,6 @@
       $db->get("register_bureaudordre",array("num_ordre","=",$json->num_order));
       $fileId = $db->first()->fileID;
       $ar = array("type"=>$json->type,
-                  "subType"=>"ok",
                   "demandeur"=>$json->demandeur,
                   "remarque"=>$json->remarque,
                   "idFile"=>$fileId,

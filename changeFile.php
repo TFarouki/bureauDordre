@@ -1,4 +1,4 @@
-*<?php
+<?php
   require_once 'core/init.php';
   $return = new stdClass();
   $user = new User();
