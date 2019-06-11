@@ -897,7 +897,7 @@
             <a class="nav-link" data-toggle="tab" href="#pross"><i class="fa fa-history" aria-hidden="true"></i> الإجراءات <span id='nb_pross' class="badge badge-danger"></span></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" data-toggle="tab" href="#docNum"><i class="fa fa-tasks" aria-hidden="true"></i> الملف الالكتروني <span id='nb_docNum' class="badge badge-danger">9</span></a>
+            <a class="nav-link active" data-toggle="tab" href="#docNum"><i class="fa fa-tasks" aria-hidden="true"></i> الملف الالكتروني <span id='nb_docNum' class="badge badge-danger">0</span></a>
           </li>
           <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#jugeTab"><i class="fa fa-gavel" aria-hidden="true"></i> الاحكام <span id='nb_juge' class="badge badge-danger"></span></a>

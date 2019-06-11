@@ -894,7 +894,7 @@
         $(document).on('click',"#upfile2",function(){
           file = JSON.parse($("#fileTmpName1").val());
           id= $("#idForSetNewScan").val();
-          newFile ="";
+          newFile =($('#'+id+' td:nth-child(11)').attr("name")=="addFile")?true:false;
           json=JSON.stringify({"id":id,"file":file,"newFile":newFile});
           $.ajax({
             url : "changeFile.php",

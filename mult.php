@@ -25,7 +25,7 @@
         for ($i=1; $i <= $json->nbCopy; $i++){
           $num_ordre=$newID + $i;
           $sql .= "(".$num_ordre.",'".$db->first()->dateEnrg."','".$db->first()->direction."','".$db->first()->dateArriver."','".$db->first()->expediteur."','".$db->first()->destinataire."','".$db->first()->type."','";
-          $sql .= $db->first()->objet."','".$db->first()->dossierAssocier."',$originDateR,'".$db->first()->textRemaind."',$originFileID,'".$user->data()->name."','".$memeberOfLabel."','copy of ".$lastid."')";
+          $sql .= $db->first()->objet."','".$db->first()->dossierAssocier."',$originDateR,'".$db->first()->textRemaind."',$originFileID,'".$user->data()->name."','".$memeberOfLabel."','link to-".$lastid."')";
           if($i<$json->nbCopy){
             $sql .=",";
           }
