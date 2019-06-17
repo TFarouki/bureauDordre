@@ -118,7 +118,7 @@
             success:function(data){
               var dUp1=`<div class="dropup">`;
               var dUp2=`<div class="dropdown-menu bg-primary   text-right"  style="margin-left:-90px;">`;
-                var dUp3=`  <a class="dropdown-item " href="#" style="color:#fff"><i class="fa fa-folder-open-o" aria-hidden="true"></i> الاطلاع على الملف</a>
+              var dUp3=`  <a class="dropdown-item " href="#" style="color:#fff"><i class="fa fa-folder-open-o" aria-hidden="true"></i> الاطلاع على الملف</a>
                           <a class="dropdown-item " href="#" style="color:#fff"><i class="fa fa-trash-o" aria-hidden="true"></i> حذف الملف</a>`;
               var dUp4=`  <a class="dropdown-item " href="#"  style="color:#fff"><i class="fa fa-plus" aria-hidden="true"></i> اضافة او تغيير ملف</a>
                         </div>
@@ -145,6 +145,12 @@
                 }else{
                   td3='<td></td>';
                 }
+                td4 = '';
+                if(isset(json[i].dossierAssocier)){
+                  td4=`<td name='associer'><a href='#' style="color:#EFC050;"><i class="fa fa-link" aria-hidden="true" data-toggle="tooltip" title="تحيين الارتباط بملف!"></i></a></td>`;
+                }else {
+                  td4=`<td name='associer'><a href='#' style="color:#777;"><i class="fa fa-link" aria-hidden="true" data-toggle="tooltip" title="تحيين الارتباط بملف!"></i></a></td>`;
+                }
                 row = `
                       <tr id="`+json[i].num_ordre+`">
                         <td name="editRow"><a href='#' style='color:#EFC050;'><i class='fa fa-pencil' aria-hidden='true' data-toggle="tooltip" title="تغيير!"></i></a></td>
@@ -155,8 +161,8 @@
                         <td>`+ignoreNull(json[i].expediteur)+`</td>
                         <td>`+ignoreNull(json[i].destinataire)+`</td>
                         <td>`+ignoreNull(json[i].type)+`</td>
-                        <td>`+ignoreNull(json[i].objet)+`</td>
-                        <td>`+ignoreNull(json[i].dossierAssocier)+`</td>`+
+                        <td>`+ignoreNull(json[i].objet)+`</td>`+
+                        td4+
                         td+
                         td3+
                         td2+`
@@ -980,7 +986,7 @@
             url:"getReg.php",
             method:"POST",
             data:{json : json},
-              success:function(data){
+            success:function(data){
                 if(isset(data)){
                   json = JSON.parse(data);
                   var link = document.createElement('a');
@@ -1005,6 +1011,33 @@
         });
         $(document).on('click','#save10',function(e){
           $('#ModalSetAttachement').modal('toggle');
+        });
+        $(document).on('click','td[name="associer"]',function(e){
+          e.preventDefault();
+          //var id=$(this).closest('tr').children('td:nth-child(3)').html();
+          var id=$(this).closest('tr').attr('id');
+          $("#idForEditAssocier").val(id);
+          $("#dossierAssocier20").val('');
+          $("#demandeur20").val('');
+          $("#r201").val('');
+          json=JSON.stringify({"id":id});
+          $.ajax({
+            url:"getAttachmentData.php",
+            method:"POST",
+            data:{json : json},
+            success:function(data){
+                if(isset(data)){
+                  json = JSON.parse(data);
+                  if(json.stat){
+                    $("#dossierAssocier20").val(json.data.dossierAssocier);
+                    $("#demandeur20").val(json.data.demandeur);
+                    $("#r201").val(json.data.remarque);
+
+                  }
+                }
+            }
+          });
+          $("#ModalSetAttachement2").modal('toggle');
         });
       </script>
     </head>
@@ -1129,11 +1162,11 @@
                     <th class="align-middle" style="width: 4%;">الرقم الترتيبي</th>
                     <th class="align-middle" style="width: 4%;">صادر / وارد</th>
                     <th class="align-middle" style="width: 10%;">تاريخ الورود / الاصدار</th>
-                    <th class="align-middle" style="width: 21%;">المرسل</th>
-                    <th class="align-middle" style="width: 21%;">المرسل اليه</th>
+                    <th class="align-middle" style="width: 23%;">المرسل</th>
+                    <th class="align-middle" style="width: 23%;">المرسل اليه</th>
                     <th class="align-middle" style="width: 6%;">نوعها</th>
-                    <th class="align-middle" style="width: 12%;">موضوعها</th>
-                    <th class="align-middle" style="width: 10%;">الملف المرتبط</th>
+                    <th class="align-middle" style="width: 14%;">موضوعها</th>
+                    <th class="align-middle" style="width: 2%;"></th>
                     <th class="align-middle" style="width: 2%;"></th>
                     <th class="align-middle" style="width: 2%;"></th>
                     <th class="align-middle" style="width: 2%;"></th>
@@ -1308,16 +1341,16 @@
                     </div>
                   </div>
                   <div class="form-group row">
-                    <div class="col-3">
+                    <div class="col-4">
                       <input class="form-control" list="lisDataNaw3" type="text" name="type" placeholder="نوعها" id="type2">
                     </div>
-                    <div class="col-3">
+                    <div class="col-4">
                       <input class="form-control" list="lisDataMawdo3" type="text" name="object" placeholder="موضوعها" id="objct2">
                     </div>
-                    <div class="col-3">
+                    <div class="col-3" style="display:none;visibility:hidden;" >
                       <input class="form-control" type="text" name="dossierAssocier" placeholder="مرتبطة بملف" id="dossierAssocier2" autocomplete="on">
                     </div>
-                    <div class="col-3">
+                    <div class="col-4">
                       <input placeholder="تاريخ الوصول" class="form-control" type="text" name="dateArriver" id="dateArriver2">
                     </div>
                   </div>
@@ -1455,8 +1488,45 @@
             </div>
           </div>
         </div>
+        <div class="modal fade" id="ModalSetAttachement2" tabindex="-1" role="dialog" >
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header row">
+                <div class="text-right col-6">
+                  <h5 class="modal-title">ارتباط الملف</h5>
+                </div>
+                <div class="col-5"></div>
+                <div class="col-1">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+              </div>
+              <div class="modal-body">
+                <form style="width:80%;margin:0 auto;">
+                  <div class="form-group row">
+                      <label for="dossierAssocier20" class="float-right text-right col-4">مرتبطة بملف</label>
+                      <input class="form-control col-8" type="text" name="dossierAssocier" placeholder="مرتبطة بملف" id="dossierAssocier20" autocomplete="on">
+                  </div>
+                  <div class="form-group row">
+                      <label for="demandeur20" class="float-right text-right col-4">الجهة المعنية بالاجراء</label>
+                      <input class="form-control col-8" type="text" name="dossierAssocier" placeholder="الجهة المعنية بالاجراء" id="demandeur20" autocomplete="on">
+                  </div>
+                  <div class="form-group row">
+                      <label for="r201" class="float-right text-right col-4">ملاحظات</label>
+                      <textarea class="form-control col-8" type="text" name="dossierAssocier" id="r201" placeholder="ملاحظات"  autocomplete="on"></textarea>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" style="margin-left:5px;" id='save11'>حقظ التعديلات</button>
+                <button type="button" class="btn btn-secondary" id="dismiss_modal11" data-dismiss="modal">الغاء</button>
+              </div>
+            </div>
+          </div>
+        </div>
 
-
+        <input type="hidden" id="idForEditAssocier" name="" value="">
         <input type="hidden" id="idForRemaindEdit" name="" value="">
         <input type="hidden" id="idForMultRow" name="" value="">
         <input type="hidden" id="idForEditRow" name="" value="">
