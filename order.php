@@ -322,16 +322,14 @@
         }
         function isChecked(x){
             $("#sendorinbox2").attr('checked', $(x).children().hasClass('off'));
+            dst = $('#destinataire').val();
+            exp = $('#expediteur').val();
+            $('#destinataire').val(exp);
+            $('#expediteur').val(dst);
             if($(x).children().hasClass('off')){
-              $('#destinataire').val('رئيس مصلحة كتابة الضبط بالمحكمة الادارية بأكادير');
-              $('#expediteur').val('');
               $("#dateArriver").attr('placeholder','تاريخ اصدار الوثيقة');
-
             }else{
-              $('#expediteur').val('رئيس مصلحة كتابة الضبط بالمحكمة الادارية بأكادير');
-              $('#destinataire').val('');
               $("#dateArriver").attr('placeholder','تاريخ الارسال');
-
             }
         }
 
@@ -1020,6 +1018,9 @@
           $("#dossierAssocier20").val('');
           $("#demandeur20").val('');
           $("#r201").val('');
+          $("#demandeur20").removeAttr("style");
+          $("#dossierAssocier20").removeAttr("style");
+
           json=JSON.stringify({"id":id});
           $.ajax({
             url:"getAttachmentData.php",
@@ -1035,6 +1036,64 @@
 
                   }
                 }
+            }
+          });
+          $("#ModalSetAttachement2").modal('toggle');
+        });
+        $(document).on('click','#save11',function(e){
+          e.preventDefault();
+          test = false;
+          if(isset($("#dossierAssocier20").val())){
+            test=true;
+            $("#dossierAssocier20").removeAttr("style");
+          }else {
+            test=false;
+            $("#dossierAssocier20").attr("style","border-color:rgba(255,0,0,0.7);");
+          }
+          if(isset($("#demandeur20").val())){
+            test=true;
+            $("#demandeur20").removeAttr("style");
+          }else {
+            test=false;
+            $("#demandeur20").attr("style","border-color:rgba(255,0,0,0.7);");
+          }
+          if(test){
+            var id=$("#idForEditAssocier").val();
+            json=JSON.stringify({"num_ordre":id,"dossierAssocier":$("#dossierAssocier20").val(),"demandeur":$("#demandeur20").val(),"remarque":$("#r201").val()});
+            $.ajax({
+              url:"updateAttachment.php",
+              method:"POST",
+              data:{json : json},
+              success:function(data){
+                  if(isset(data)){
+                    json = JSON.parse(data);
+                    if(json.stat && json.icon){
+                      $("#"+id+" td[name='associer'] a").attr("style","color:#EFC050;");
+                      addAlert("success","تم ربط التسجيل بنجاح مع الملف",$("#dossierAssocier20").val());
+                    }
+                  }
+              }
+            });
+            $("#ModalSetAttachement2").modal('toggle');
+          }
+        });
+        $(document).on('click','#delete11',function(e){
+          e.preventDefault();
+          var id=$("#idForEditAssocier").val();
+          json=JSON.stringify({"num_ordre":id});
+
+          $.ajax({
+            url:"deleteAttachment.php",
+            method:"POST",
+            data:{json : json},
+            success:function(data){
+              if(isset(data)){
+                json = JSON.parse(data);
+                if(json.stat && json.icon==false){
+                  $("#"+id+" td[name='associer'] a").attr("style","color:#777;");
+                  addAlert("warning","تم حدف الارتباط بنجاح","");
+                }
+              }
             }
           });
           $("#ModalSetAttachement2").modal('toggle');
@@ -1089,7 +1148,13 @@
                             <input type="checkbox" name="sendorinbox" class="toogle-switch" id="sendorinbox" data-width="100" data-toggle="toggle" data-on="وارد" data-off="صادر" data-onstyle="success" data-offstyle="warning">
                           </div>
                           <div class="col-5 input-col">
-                            <input class="form-control input-poping" list="lisDataAtraf" type="text" name="expediteur" placeholder="اسم المرسل" id="expediteur" value="رئيس مصلحة كتابة الضبط بالمحكمة الادارية بأكادير">
+                            <input class="form-control input-poping" list="lisDataAtraf" type="text" name="expediteur" placeholder="اسم المرسل" id="expediteur" value="<?php
+                                if($user->memeberOf("مكتب الضبط")["label"]!="سجل الكتابة الخاصة"){
+                                  echo "رئيس مصلحة كتابة الضبط بالمحكمة الادارية بأكادير";
+                                }else{
+                                  echo "رئيس المحكمة الادارية بأكادير";
+                                }
+                              ?>">
                             <label for="" class="puping-label" ></label>
                           </div>
                           <div class="col-5 input-col">
@@ -1519,6 +1584,7 @@
                 </form>
               </div>
               <div class="modal-footer">
+                <button type="button" class="btn btn-danger" style="margin-left:5px;" id='delete11'>حدف الارتباط</button>
                 <button type="button" class="btn btn-primary" style="margin-left:5px;" id='save11'>حقظ التعديلات</button>
                 <button type="button" class="btn btn-secondary" id="dismiss_modal11" data-dismiss="modal">الغاء</button>
               </div>
