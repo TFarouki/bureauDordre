@@ -357,6 +357,30 @@
             }
           });
         });
+        $(document).on('blur','#dossierAssocier20',function(){
+          $(this).removeClass('highlight');
+          $(this).removeClass('redlight');
+          json={'NumeroDossier':$(this).val(),'IdJuridiction':293};
+          $.ajax({
+            url : "inf.php",
+            method : "POST",
+            data : {json : json},
+            success:function(data){
+              if(isset(data)){
+                json = JSON.parse(data).d;
+                if(!(json.CarteDossier == '' || json.CarteDossier == 'undefined' || json.CarteDossier == 'null' || json.CarteDossier == null)){
+                  if(json.CarteDossier.NumeroCompletDossier!=''){
+                    $('#dossierAssocier20').addClass('highlight');
+                    //alert(json.CarteDossier.NumeroCompletDossier);
+                  }
+                }else{
+                  $('#dossierAssocier20').addClass('redlight');
+
+                }
+              }
+            }
+          });
+        });
         $(document).on('change','#customFile',function(){
           var file = document.getElementById('customFile');
           var hidden = $('#fileTmpName').val();
@@ -544,6 +568,12 @@
                     }else{
                       td3='<td></td>';
                     }
+                    td4 = '';
+                    if(isset(json.json[i].dossierAssocier)){
+                      td4=`<td name='associer'><a href='#' style="color:#EFC050;"><i class="fa fa-link" aria-hidden="true" data-toggle="tooltip" title="تحيين الارتباط بملف!"></i></a></td>`;
+                    }else {
+                      td4=`<td name='associer'><a href='#' style="color:#777;"><i class="fa fa-link" aria-hidden="true" data-toggle="tooltip" title="تحيين الارتباط بملف!"></i></a></td>`;
+                    }
                     row += `
                       <tr id="`+json.json[i].num_ordre+`">
                         <td name="editRow"><a href='#' style='color:#EFC050;'><i class='fa fa-pencil' aria-hidden='true' data-toggle="tooltip" title="تغيير!"></i></a></td>
@@ -554,8 +584,8 @@
                         <td>`+ignoreNull(json.json[i].expediteur)+`</td>
                         <td>`+ignoreNull(json.json[i].destinataire)+`</td>
                         <td>`+ignoreNull(json.json[i].type)+`</td>
-                        <td>`+ignoreNull(json.json[i].objet)+`</td>
-                        <td>`+ignoreNull(json.json[i].dossierAssocier)+`</td>`+
+                        <td>`+ignoreNull(json.json[i].objet)+`</td>`+
+                        td4+
                         td+
                         td3+
                         td2+
@@ -871,7 +901,13 @@
         });
         $(document).on('click',"#goEditRow3",function(){
           var id=$("#idForEditRow2").val();
-          json = JSON.stringify({"id":id,"direction":($('#sendorinbox2').is(':checked'))?"وارد":"صادر","expediteur":$("#expediteur2").val(),"destinataire":$('#destinataire2').val(),"type":$("#type2").val(),"object":$("#object2").val(),"dossierAssocier":$("#dossierAssocier2").val(),"dateArriver":$("#dateArriver2").val()});
+          json = JSON.stringify({"id":id,
+                                  "direction":($('#sendorinbox2').is(':checked'))?"وارد":"صادر",
+                                  "expediteur":$("#expediteur2").val(),
+                                  "destinataire":$('#destinataire2').val(),
+                                  "type":$("#type2").val(),
+                                  "objet":$("#objct2").val(),
+                                  "dateArriver":$("#dateArriver2").val()});
           $.ajax({
             url : "editRow.php",
             method : "POST",
@@ -883,7 +919,6 @@
                 $('#myTable tr[id='+id+'] td:eq(6)').html($("#destinataire2").val());
                 $('#myTable tr[id='+id+'] td:eq(7)').html($("#type2").val());
                 $('#myTable tr[id='+id+'] td:eq(8)').html($("#objct2").val());
-                $('#myTable tr[id='+id+'] td:eq(9)').html($("#dossierAssocier2").val());
                 $('#myTable tr[id='+id+'] td:eq(4)').html($("#dateArriver2").val());
                 if($('#sendorinbox2').is(':checked')){
                   $('#myTable tr[id='+id+'] td:eq(11)').html('');
@@ -1015,6 +1050,7 @@
           //var id=$(this).closest('tr').children('td:nth-child(3)').html();
           var id=$(this).closest('tr').attr('id');
           $("#idForEditAssocier").val(id);
+          $("#dossierAssocier20").removeClass('redlight highlight');
           $("#dossierAssocier20").val('');
           $("#demandeur20").val('');
           $("#r201").val('');

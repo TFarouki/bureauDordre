@@ -8,26 +8,32 @@
   if($user->isLoggedIn()){
     if(isset($_POST['json'])){
       $json = json_decode($_POST['json']);
-      $db->query("SELECT * FROM docnum Where num_order = '".$json->num_ordre."'");
+      $db->query("SELECT * FROM docnum Where num_ordre = ".$json->num_ordre);
       if($db->count()){
         if(!$db->update("docnum",array("num_order"=>$json->num_ordre),array("dossierAssocier"=>$json->dossierAssocier,"demandeur"=>$json->demandeur,"remarque"=>$json->remarque))){
-          $return->error = "لم يتم تحديث سجل ارتباط الملف";
+          $return->error1 = "لم يتم تحديث سجل ارتباط الملف";
         }else{
           if(!$db->update("register_bureaudordre",array("num_ordre"=>$json->num_ordre),array("dossierAssocier"=>$json->dossierAssocier))){
-            $return->error = "لم يتم تحيين سجل الضبط";
+            $return->error1 = "لم يتم تحيين سجل الضبط";
           }else{
             $return->icon = true;
             $return->stat = true;
           }
         }
       }else{
-        $db->query("SELECT type,objet,fileID FROM register_bureaudordre Where num_ordre = '".$json->num_ordre."'");
+        $db->query("SELECT type,objet,fileID FROM register_bureaudordre Where num_ordre = ".$json->num_ordre);
         if($db->count()){
-          if(!$db->insert("docnum",array("type"=>$db->first()->type,"object"=>$db->first()->objet,"idFile"=>$db->first()->fileID,"num_order"=>$json->num_ordre,"dossierAssocier"=>$json->dossierAssocier,"demandeur"=>$json->demandeur,"remarque"=>$json->remarque))){
-            $return->error = "لم يتم تحديث سجل ارتباط الملف";
+          if(!$db->insert("docnum",array("type"=>$db->first()->type,
+                                          "object"=>$db->first()->objet,
+                                          "idFile"=>$db->first()->fileID,
+                                          "num_ordre"=>$json->num_ordre,
+                                          "dossierAssocier"=>$json->dossierAssocier,
+                                          "demandeur"=>$json->demandeur,
+                                          "remarque"=>$json->remarque))){
+            $return->error2 = "لم يتم تحديث سجل ارتباط الملف";
           }else{
             if(!$db->update("register_bureaudordre",array("num_ordre"=>$json->num_ordre),array("dossierAssocier"=>$json->dossierAssocier))){
-              $return->error = "لم يتم تحيين سجل الضبط";
+              $return->error2 = "لم يتم تحيين سجل الضبط";
             }else{
               $return->stat = true;
               $return->icon = true;
