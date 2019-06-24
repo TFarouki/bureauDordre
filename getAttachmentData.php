@@ -15,7 +15,7 @@
         }else {
           $num_ordre = $db->first()->num_ordre;
         }
-        $db->query("SELECT * FROM docnum where num_order = ".$num_ordre);
+        $db->query("SELECT * FROM docnum where num_ordre = ".$num_ordre);
         if($db->count()){
           $return->data = $db->first();
           $return->stat = true;

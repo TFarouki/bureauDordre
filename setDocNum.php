@@ -15,7 +15,7 @@
                   "idFile"=>$fileId,
                   "dossierAssocier"=>$json->dossierAssocier,
                   "object"=>$json->objet,
-                  "num_order"=>$json->num_order);
+                  "num_ordre"=>$json->num_order);
       if(!$db->insert("docnum",$ar)){
                       $return->stat = false;
       }
