@@ -10,7 +10,7 @@
       $json = json_decode($_POST['json']);
       $db->query("SELECT * FROM docnum Where num_order = '".$json->num_ordre."'");
       if($db->count()){
-          if(!$db->delete("docnum",array("num_order","=",$json->num_ordre))){
+          if(!$db->delete("docnum",array("num_ordre","=",$json->num_ordre))){
             $return->error = "لم يتم تحديث سجل ارتباط الملف";
           }else{
             if(!$db->update("register_bureaudordre",array("num_ordre"=>$json->num_ordre),array("dossierAssocier"=>null))){
