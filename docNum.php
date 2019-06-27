@@ -94,8 +94,6 @@
               if(highlight){
                 $('#tbRslt3 tr:first').attr("style","background-color:rgba(0,200,160,0.7);color:#fff;");
               }
-            }else{
-              addAlert("warning","تنبيه !..  ","هدا الملف لا يتوفر على احكام ممسوحة الكترونيا ");
             }
           }
         });
@@ -166,7 +164,7 @@
           $('#results').attr('style','');
           data = {NumeroDossier: $('#numeroDossier').val(), IdJuridiction: 293};
 
-          /*$.ajax({
+          $.ajax({
             url : "info2.php",
             method : "POST",
             data : {json : data},
@@ -224,7 +222,7 @@
               }
             }
           });
-          */
+
           loadjugement($('#numeroDossier').val());
           loadDocNum($('#numeroDossier').val());
 
