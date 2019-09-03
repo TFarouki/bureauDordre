@@ -108,7 +108,7 @@
         function reload(from,lenght){
           if(from == 0 && lenght == 0){
             from = $('#dataTable tr').length;
-            lenght = Math.round($('#dataTable tr').length/2);
+            lenght = Math.round($('#dataTable tr').length);
           }
           var json = JSON.stringify({'from':from,'lenght':lenght});
           $.ajax({
@@ -1281,6 +1281,12 @@
                   <tr class="">
                     <td colspan="14" class="text-center bt-marge" ><button type="button" onclick="reload(0,0);" class="btn btn-block collapsed btn-default">
                       <strong><i class="fa fa-caret-down" aria-hidden="true"></i> تحميل المزيد <i class="fa fa-caret-down" aria-hidden="true"></i></strong>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr class="">
+                    <td colspan="14" class="text-center bt-marge" ><button type="button" onclick="reload(0,99999);" class="btn btn-block collapsed btn-default">
+                      <strong><i class="fa fa-caret-down" aria-hidden="true"></i>تحميل الكل<i class="fa fa-caret-down" aria-hidden="true"></i></strong>
                       </button>
                     </td>
                   </tr>
