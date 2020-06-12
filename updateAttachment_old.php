@@ -10,7 +10,7 @@
       $json = json_decode($_POST['json']);
       $db->query("SELECT * FROM docnum Where num_ordre = ".$json->num_ordre);
       if($db->count()){
-        if(!$db->update("docnum",array("num_ordre"=>$json->num_ordre),array("dossierAssocier"=>$json->dossierAssocier,"demandeur"=>$json->demandeur,"remarque"=>$json->remarque))){
+        if(!$db->update("docnum",array("num_order"=>$json->num_ordre),array("dossierAssocier"=>$json->dossierAssocier,"demandeur"=>$json->demandeur,"remarque"=>$json->remarque))){
           $return->error1 = "لم يتم تحديث سجل ارتباط الملف";
         }else{
           if(!$db->update("register_bureaudordre",array("num_ordre"=>$json->num_ordre),array("dossierAssocier"=>$json->dossierAssocier))){
@@ -23,14 +23,16 @@
       }else{
         $db->query("SELECT type,objet,fileID FROM register_bureaudordre Where num_ordre = ".$json->num_ordre);
         if($db->count()){
-          if(!$db->insert("docnum",array("type"=>$db->first()->type,
+          $ab = array("type"=>$db->first()->type,
                                           "object"=>$db->first()->objet,
                                           "idFile"=>$db->first()->fileID,
                                           "num_ordre"=>$json->num_ordre,
                                           "dossierAssocier"=>$json->dossierAssocier,
                                           "demandeur"=>$json->demandeur,
-                                          "remarque"=>$json->remarque))){
+                                          "remarque"=>$json->remarque);
+          if(!$db->insert("docnum",$ab)){
             $return->error2 = "لم يتم تحديث سجل ارتباط الملف";
+            $return->d = $ab;
           }else{
             if(!$db->update("register_bureaudordre",array("num_ordre"=>$json->num_ordre),array("dossierAssocier"=>$json->dossierAssocier))){
               $return->error2 = "لم يتم تحيين سجل الضبط";

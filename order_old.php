@@ -650,8 +650,7 @@
               success:function(data){
                 response = JSON.parse(data);
                 if(isset(response.path)){
-                  $('#pdfModal').html("<embed type='application/pdf' width='100%' height='100%' alt='pdf' pluginspage='http://www.adobe.com/products/acrobat/readstep2.html' src='"
-                  + response.path +"'></embed>");
+                  $("#embedPdf").attr("src", response.path);
                   $("#pdfModal").modal("toggle");
                 }else{
                   addAlert('danger','تنبيه',response.error)
@@ -951,16 +950,7 @@
                 $("#"+id+" td:nth-child(11) div div").html(dUp);
                 $("#"+id+" td:nth-child(11) div:first-child a[class='dropdown-toggle caret-off']").attr("style","color:#E94B3C;");
                 addAlert('success','','لقد ثم اضافة الملف بنجاح');
-                //_____________ add row to setDocNum
-                json2 = JSON.stringify({"type":json.data.type,"demandeur":"","dossierAssocier":json.data.dossierAssocier,"remarque":"","num_order":json.data.num_ordre,"objet":""});
-                $.ajax({
-                  url : "setDocNum.php",
-                  method : "POST",
-                  data : {json : json2},
-                  success:function(data){
-                    console.log('ok');
-                  }
-                });
+
               }
               $("#idForSetNewScan").val('');
               $('#fileTmpName1').val("");
@@ -1340,7 +1330,8 @@
         <datalist id="lisDataMawdo3">
           </datalist>
         <div class="modal" id="pdfModal">
-          
+          <embed id="embedPdf" width="100%" height="100%" alt="pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html">
+
         </div>
         <div class="modal fade" id="ModalSetRemaind" tabindex="-1" role="dialog" >
           <div class="modal-dialog modal-dialog-centered" role="document">

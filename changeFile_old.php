@@ -6,7 +6,6 @@
   $stat = null;
   $stat2 = null;
   $db = Db::getInstance();
-  $data = null;
   if($user->isLoggedIn()){
     if(isset($_POST['json'])){
       $json = json_decode($_POST['json']);
@@ -87,13 +86,6 @@
       }
     }else{
       $return->post = "لم يتم ارسال اي استعلام";
-    }
-    //_________________get datafile to make link to docnum_______
-    if($return->statut){
-      $db->query("SELECT type,dossierAssocier,num_ordre FROM register_bureaudordre where num_ordre = '".$json->id."'");
-      if($db->count()>0){
-        $return->data = $db->first();
-      }
     }
     echo json_encode($return);
   }else{

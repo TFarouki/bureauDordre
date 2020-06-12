@@ -39,13 +39,6 @@
     }else{
       $return->post = "لم يتم ارسال اي استعلام";
     }
-    if($return->statut){
-      $return->del = false;
-      $id = json_decode($_POST['json']);
-      if($db->delete("docnum",array('num_ordre','=', $id))){
-        $return->del = true;
-      }
-    }
     echo json_encode($return);
   }else{
     Redirect::to('login.php');

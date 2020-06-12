@@ -123,8 +123,8 @@
                           value.date_reg.substring(0,10)+'</td><td class="text-center">'+
                           value.type +'</td><td class="text-center" >'+
                           value.demandeur+'</td><td class="text-center" >'+
-                          value.object+'</td><td class="text-center" >'+
-                          value.remarque+'</td><td class="text-center opt10" id="'+value.idFile+
+                          ((value.object==null)?"":value.object)+'</td><td class="text-center" ><pre>'+
+                          value.remarque+'</pre></td><td class="text-center opt10" id="'+value.idFile+
                           '">'+dropup+'</td></tr>';
                 $('#tbRslt4').append(row);
               });
@@ -635,8 +635,9 @@
           success:function(data){
             json = JSON.parse(data);
             if(json.stat){
-              $('#embedPdf').removeAttr('src');
-              $('#embedPdf').attr('src',json.path);
+
+              $('#pdfModal').html("<embed type='application/pdf' width='100%' height='100%' alt='pdf' pluginspage='http://www.adobe.com/products/acrobat/readstep2.html' src='"
+                  + json.path +"'></embed>");
               $('#pdfModal').modal('toggle');
             }else{
               addAlert("danger","تنبيه !","حدث خطأ اثناء عرض النسخة الالكترونية");
@@ -779,8 +780,9 @@
           success:function(data){
             json = JSON.parse(data);
             if(json.stat){
-              $('#embedPdf').removeAttr('src');
-              $('#embedPdf').attr('src',json.path);
+
+              $('#pdfModal').html("<embed type='application/pdf' width='100%' height='100%' alt='pdf' pluginspage='http://www.adobe.com/products/acrobat/readstep2.html' src='"
+                  + json.path +"'></embed>");
               $('#pdfModal').modal('toggle');
             }else{
               addAlert("danger","تنبيه !","حدث خطأ اثناء عرض النسخة الالكترونية");
@@ -1162,8 +1164,7 @@
           </div>
         </div>
         <div class="modal" id="pdfModal">
-          <embed id="embedPdf" width="100%" height="100%" alt="pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html">
-
+         
         </div>
 
         <div class="modal fade" id="modalChangeCopy" tabindex="-1" role="dialog" >
